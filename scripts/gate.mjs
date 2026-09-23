@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { loadLesson, launch, fileUrl, plain, SLIDE_TYPES, ITEM_TYPES } from './lib.mjs';
 import { parseIntake, checkReflection } from './intake.mjs';
-import { collect as collectImageRequests, ensureClassroomClause, runCheckPrompt, sha256 } from './images.mjs';
+import { collect as collectImageRequests, ensureClassroomClause, runCheckPrompt, sha256, normalizePromptText } from './images.mjs';
 
 const lessonPath = process.argv[2];
 if (!lessonPath) { console.error('사용: node gate.mjs <lesson.json>'); process.exit(2); }
@@ -289,8 +289,8 @@ await gate('I1', '이미지', async (err, warn) => {
   for (const req of requests) {
     const txtFile = path.join(ctx.dir, 'images', `${req.id}.prompt.txt`);
     let text = null;
-    if (typeof req.prompt === 'string' && req.prompt.trim()) text = req.prompt;
-    else if (fs.existsSync(txtFile)) text = fs.readFileSync(txtFile, 'utf8');
+    if (typeof req.prompt === 'string' && req.prompt.trim()) text = normalizePromptText(req.prompt);
+    else if (fs.existsSync(txtFile)) text = normalizePromptText(fs.readFileSync(txtFile, 'utf8'));
     if (!text) { err('I1-NOPROMPT', `이미지 "${req.id}"에 프롬프트가 없음(images/${req.id}.brief.md 작성 필요)`, '먼저 node scripts/images.mjs <lesson.json> --compile-only를 실행하세요'); continue; }
 
     const finalText = ensureClassroomClause(text, req, accent);

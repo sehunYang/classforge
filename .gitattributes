@@ -1,0 +1,8 @@
+# 텍스트 파일은 어느 OS에서 받아도 LF로 유지 (이미지 프롬프트 해시가 줄바꿈 때문에 바뀌지 않게)
+* text=auto eol=lf
+*.png binary
+*.webp binary
+*.jpg binary
+*.ttf binary
+*.woff binary
+*.woff2 binary

@@ -3,3 +3,4 @@ node_modules/
 **/*.codex.log
 .DS_Store
 Thumbs.db
+.omc/

@@ -55,6 +55,14 @@ function collect(node, out) {
   return out;
 }
 
+// CRLF·트레일링 공백을 통일한다 — Windows git의 autocrlf가 images/<id>.prompt.txt를 체크아웃 시
+// CRLF로 바꿔 놓아도(또는 lesson.json에 개행이 다르게 저장돼 있어도) 해시가 달라지지 않게 한다.
+// images.mjs(생성)와 gate.mjs의 I1(검증)이 lesson.json/.prompt.txt에서 prompt 텍스트를 읽는 자리마다
+// 반드시 이 함수를 거쳐야 두 경로가 항상 같은 문자열 → 같은 해시를 낸다.
+function normalizePromptText(s) {
+  return String(s ?? '').replace(/\r\n?/g, '\n').trim();
+}
+
 // ── 교실 안전 문구 + 프롬프트 검증 (순수 함수) ──────────────
 function classroomClause(req, accent) {
   const pal = accentPalette(accent).join(' ');
@@ -86,7 +94,7 @@ function runCheckPrompt(text) {
 }
 const sha256 = s => 'sha256:' + crypto.createHash('sha256').update(s, 'utf8').digest('hex');
 
-export { CLASSROOM_MARK, collect, classroomClause, ensureClassroomClause, runCheckPrompt, sha256 };
+export { CLASSROOM_MARK, collect, classroomClause, ensureClassroomClause, runCheckPrompt, sha256, normalizePromptText };
 
 // ── CLI 본체 (isMain일 때만 실행 — import만으로는 아무 것도 하지 않는다) ──
 async function main() {
@@ -149,8 +157,8 @@ async function main() {
     for (const req of requests) {
       const txtFile = path.join(imagesDir, `${req.id}.prompt.txt`);
       let source = null, text = null;
-      if (typeof req.prompt === 'string' && req.prompt.trim()) { source = 'lesson'; text = req.prompt; }
-      else if (fs.existsSync(txtFile)) { source = 'file'; text = fs.readFileSync(txtFile, 'utf8'); }
+      if (typeof req.prompt === 'string' && req.prompt.trim()) { source = 'lesson'; text = normalizePromptText(req.prompt); }
+      else if (fs.existsSync(txtFile)) { source = 'file'; text = normalizePromptText(fs.readFileSync(txtFile, 'utf8')); }
       if (!text) { missing.push(req); writeBrief(req); continue; }
 
       const finalText = ensureClassroomClause(text, req, accent);
