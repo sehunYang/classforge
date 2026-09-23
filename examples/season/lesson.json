@@ -1,0 +1,551 @@
+{
+  "meta": {
+    "title": "계절은 왜 생길까?",
+    "short": "계절이 생기는 까닭",
+    "subject": "과학",
+    "grade": "초등 6학년",
+    "level": "elem",
+    "unit": "계절의 변화",
+    "lesson": "4/9차시",
+    "minutes": 40,
+    "standards": [
+      {
+        "code": "",
+        "text": "태양 고도와 기온의 관계, 계절에 따른 태양의 남중 고도 변화를 관찰하고 계절 변화의 원인을 지구의 자전축 기울기와 관련지어 설명할 수 있다.",
+        "verified": false
+      }
+    ]
+  },
+  "objectives": [
+    "태양 고도가 높을 때 기온이 높아지는 까닭을 빛이 닿는 면적으로 설명할 수 있다.",
+    "자전축이 기울어진 채 지구가 공전하기 때문에 계절이 생긴다는 것을 모형으로 설명할 수 있다."
+  ],
+  "facts": [
+    {
+      "id": "f1",
+      "text": "지구의 자전축은 공전 궤도면에 수직인 방향에서 약 23.5° 기울어져 있다.",
+      "source": "초등학교 과학 6-2 「계절의 변화」 단원 개념 (교과서 수치로 확인)"
+    },
+    {
+      "id": "f2",
+      "text": "서울(위도 약 37.5°)의 태양 남중 고도는 하짓날 약 76°, 동짓날 약 29°이다. (남중 고도 = 90° − 위도 ± 23.5°)",
+      "source": "남중 고도 = 90° − 위도 ± 23.5°로 계산한 값"
+    },
+    {
+      "id": "f3",
+      "text": "지구는 태양 둘레를 1년에 한 바퀴 공전한다.",
+      "source": "초등학교 과학 6-2 교과서"
+    },
+    {
+      "id": "f4",
+      "text": "실험 조건: 전등을 90°로 세웠을 때와 40°로 눕혔을 때를 비교한다.",
+      "source": "수업 설계(실험 조건 설정값)"
+    }
+  ],
+  "slides": [
+    {
+      "type": "cover",
+      "kicker": "과학 6-2 · 계절의 변화",
+      "title": "계절은 왜 생길까?",
+      "subtitle": "태양 고도와 기울어진 자전축으로\n여름과 겨울의 차이를 설명해 봅시다.",
+      "visual": "<svg viewBox='0 0 640 640'><circle cx='170' cy='250' r='110' class='v-accent'/><g class='v-accent-s' stroke-width='10' stroke-linecap='round'><line x1='170' y1='100' x2='170' y2='70'/><line x1='170' y1='400' x2='170' y2='430'/><line x1='20' y1='250' x2='50' y2='250'/><line x1='290' y1='250' x2='320' y2='250'/><line x1='64' y1='144' x2='84' y2='164'/><line x1='256' y1='336' x2='276' y2='356'/><line x1='64' y1='356' x2='84' y2='336'/><line x1='256' y1='164' x2='276' y2='144'/></g><ellipse cx='330' cy='420' rx='290' ry='120' class='v-line' stroke-width='3' stroke-dasharray='10 12'/><g transform='translate(520 420) rotate(23.5)'><circle r='78' class='v-mid'/><path d='M-78 0 A78 78 0 0 0 78 0 Z' class='v-soft'/><line y1='-120' y2='120' class='v-ink-s' stroke-width='6' stroke-linecap='round'/><ellipse rx='78' ry='18' class='v-ink-s' stroke-width='3' opacity='.5'/></g><text x='590' y='300' class='v-label-a' text-anchor='end'>23.5°</text></svg>",
+      "notes": "지난 시간에 하루 동안 태양 고도가 어떻게 변하는지 측정했죠. 오늘은 여름과 겨울이 왜 생기는지 그 까닭을 찾아봅니다. 그림 속 지구의 막대가 왜 기울어져 있는지 먼저 물어보고 시작합니다."
+    },
+    {
+      "type": "goals",
+      "question": "여름에 햇볕이 더 뜨겁게 느껴지는 까닭은 무엇일까?",
+      "reveal": true,
+      "notes": "학습 목표 두 개를 한 줄씩 공개하며 읽어 줍니다. 중심 질문은 칠판 오른쪽 위에 적어 두고, 수업 끝에 다시 답합니다."
+    },
+    {
+      "type": "hook",
+      "kicker": "생각 열기",
+      "question": "같은 태양인데, 여름은 덥고 겨울은 추운 까닭은?",
+      "lead": "태양과의 거리 때문이라고 생각하는 친구가 많아요. 정말 그럴까요?",
+      "visual": "<svg viewBox='0 0 760 560'><rect x='0' y='0' width='360' height='560' rx='28' class='v-soft'/><rect x='400' y='0' width='360' height='560' rx='28' class='v-paper2'/><circle cx='180' cy='110' r='58' class='v-accent'/><circle cx='640' cy='330' r='50' class='v-muted' opacity='.55'/><line x1='40' y1='440' x2='320' y2='440' class='v-ink-s' stroke-width='5'/><line x1='440' y1='440' x2='720' y2='440' class='v-ink-s' stroke-width='5'/><line x1='180' y1='170' x2='180' y2='430' class='v-accent-s' stroke-width='6' stroke-dasharray='14 12'/><line x1='600' y1='370' x2='470' y2='430' class='v-ink-s' stroke-width='6' stroke-dasharray='14 12' opacity='.5'/><path d='M180 440 m-70 0 a70 70 0 0 1 70 -70' class='v-accent-s' stroke-width='4'/><path d='M580 440 m-70 0 a70 70 0 0 1 60 -28' class='v-ink-s' stroke-width='4' opacity='.6'/><text x='180' y='515' class='v-label' text-anchor='middle'>여름 낮</text><text x='580' y='515' class='v-label' text-anchor='middle'>겨울 낮</text></svg>",
+      "caption": "여름에는 태양이 높이 뜨고, 겨울에는 낮게 뜹니다.",
+      "notes": "손을 들어 예상을 말하게 합니다. 태양과의 거리라는 오개념이 나오면 칠판에 적어 두고, 오늘 실험으로 확인해 보자고 연결합니다. 정답은 아직 말하지 않습니다."
+    },
+    {
+      "type": "vocab",
+      "title": "오늘 쓰는 낱말 넷",
+      "terms": [
+        {
+          "term": "태양 고도",
+          "def": "태양이 지표면과 이루는 각"
+        },
+        {
+          "term": "남중 고도",
+          "def": "하루 중 태양이 가장 높이 떴을 때의 고도"
+        },
+        {
+          "term": "자전축",
+          "def": "지구가 스스로 도는 중심이 되는 가상의 막대"
+        },
+        {
+          "term": "공전",
+          "def": "지구가 태양 둘레를 1년에 한 바퀴 도는 것"
+        }
+      ],
+      "reveal": true,
+      "notes": "낱말을 하나씩 공개하며 몸짓으로 표현하게 합니다. 태양 고도는 팔을 들어 각도로, 자전축은 연필을 세워 돌리며, 공전은 교실 가운데 전등 둘레를 걸으며 보여 줍니다."
+    },
+    {
+      "type": "concept",
+      "kicker": "탐구 1",
+      "title": "태양이 높을수록 좁은 곳에 빛이 모인다",
+      "points": [
+        {
+          "h": "고도가 높으면 빛이 좁게 모임",
+          "t": "같은 빛이 좁은 곳에 모여 땅이 빨리 데워져요."
+        },
+        {
+          "h": "고도가 낮으면 빛이 넓게 퍼짐",
+          "t": "같은 빛이 넓게 퍼져 땅이 덜 데워져요."
+        },
+        {
+          "h": "그래서 여름 기온이 높다",
+          "t": "여름에는 남중 고도가 높아요."
+        }
+      ],
+      "visual": "<svg viewBox='0 0 700 620'><line x1='30' y1='520' x2='670' y2='520' class='v-ink-s' stroke-width='6'/><polygon points='120,60 220,60 220,520 120,520' class='v-mid'/><polygon points='560,150 640,210 470,520 330,520' class='v-soft'/><g class='v-accent-s' stroke-width='5'><line x1='120' y1='60' x2='120' y2='520'/><line x1='220' y1='60' x2='220' y2='520'/></g><g class='v-ink-s' stroke-width='5' opacity='.55'><line x1='560' y1='150' x2='330' y2='520'/><line x1='640' y1='210' x2='470' y2='520'/></g><rect x='120' y='510' width='100' height='20' class='v-accent'/><rect x='330' y='510' width='140' height='20' class='v-muted'/><text x='170' y='585' class='v-label-a' text-anchor='middle'>좁다</text><text x='400' y='585' class='v-label' text-anchor='middle'>넓다</text><text x='170' y='40' class='v-label-s' text-anchor='middle'>높은 고도</text><text x='600' y='120' class='v-label-s' text-anchor='middle'>낮은 고도</text></svg>",
+      "caption": "같은 폭의 햇빛이 땅에 닿는 넓이를 비교해 보세요.",
+      "reveal": true,
+      "notes": "그림의 두 빛다발 폭이 같다는 점을 먼저 확인시킵니다. 그다음 땅에 닿는 막대 길이를 비교하게 합니다. 좁은 곳에 모이면 왜 더 따뜻한지는 돋보기로 햇빛을 모으는 경험과 연결합니다."
+    },
+    {
+      "type": "diagram",
+      "kicker": "탐구 1 · 실험",
+      "title": "전등을 기울이면 빛이 닿는 넓이가 달라진다",
+      "visual": "<svg viewBox='0 0 1600 560'><g><rect x='60' y='430' width='560' height='26' rx='6' class='v-paper3'/><rect x='250' y='40' width='120' height='70' rx='14' class='v-ink'/><polygon points='270,110 350,110 380,430 240,430' class='v-mid' opacity='.85'/><ellipse cx='310' cy='432' rx='74' ry='14' class='v-accent'/><text x='310' y='520' class='v-label' text-anchor='middle'>전등을 세웠을 때 (고도 90°)</text></g><g transform='translate(820 0)'><rect x='60' y='430' width='640' height='26' rx='6' class='v-paper3'/><g transform='rotate(-50 150 90)'><rect x='90' y='50' width='120' height='70' rx='14' class='v-ink'/></g><polygon points='205,150 262,98 610,430 300,430' class='v-soft'/><ellipse cx='455' cy='432' rx='160' ry='14' class='v-muted' opacity='.8'/><text x='380' y='520' class='v-label' text-anchor='middle'>전등을 눕혔을 때 (고도 40°)</text></g><line x1='780' y1='60' x2='780' y2='470' class='v-line' stroke-width='3' stroke-dasharray='8 10'/></svg>",
+      "caption": "모눈종이 위에서 빛이 닿은 칸 수를 세어 비교합니다. 칸 수가 적을수록 같은 넓이에 더 많은 빛이 닿습니다.",
+      "notes": "모둠별로 손전등과 모눈종이를 나눠 줍니다. 전등과 종이 사이 거리를 같게 유지해야 공정한 실험이 된다는 점을 먼저 짚어 줍니다. 90°와 40°는 예시이며 각도기로 직접 맞춥니다."
+    },
+    {
+      "type": "bignum",
+      "kicker": "우리 동네의 태양",
+      "value": "76",
+      "unit": "°",
+      "label": "하짓날 서울의 태양 남중 고도",
+      "caption": "동짓날에는 약 29°까지 낮아져요. 같은 서울인데 반년 사이에 태양 높이가 이렇게 달라집니다.",
+      "source": "남중 고도 = 90° − 위도 ± 23.5° (서울 위도 약 37.5°)",
+      "fact": "f2",
+      "notes": "76도와 29도를 팔 각도로 흉내 내게 합니다. 여름에 그림자가 짧고 겨울에 그림자가 긴 경험과 연결하면 이해가 빠릅니다.",
+      "visual": "<svg viewBox='0 0 780 520'><line x1='40' y1='440' x2='600' y2='440' class='v-ink-s' stroke-width='6'/><path d='M60 440 A260 260 0 0 1 580 440' class='v-line' stroke-width='3' stroke-dasharray='10 12'/><line x1='320' y1='440' x2='383' y2='188' class='v-accent-s' stroke-width='7' stroke-linecap='round'/><line x1='320' y1='440' x2='547' y2='314' class='v-ink-s' stroke-width='6' stroke-linecap='round' opacity='.45'/><circle cx='383' cy='188' r='40' class='v-accent'/><circle cx='547' cy='314' r='32' class='v-muted' opacity='.6'/><path d='M430 440 A110 110 0 0 0 346 333' class='v-accent-s' stroke-width='5'/><path d='M470 440 A150 150 0 0 0 451 367' class='v-ink-s' stroke-width='4' opacity='.55'/><text x='383' y='120' class='v-label-a' text-anchor='middle'>하지 76°</text><text x='596' y='326' class='v-label' text-anchor='start'>동지 29°</text><rect x='300' y='440' width='40' height='16' class='v-ink'/><text x='320' y='500' class='v-label-s' text-anchor='middle'>서울</text></svg>"
+    },
+    {
+      "type": "quiz",
+      "question": "태양 고도가 높을 때 기온이 높은 까닭으로 알맞은 것은?",
+      "choices": [
+        "태양과 지구 사이의 거리가 가까워져서",
+        "같은 넓이의 땅에 닿는 빛의 양이 많아서",
+        "태양이 더 밝게 빛나서",
+        "낮의 길이가 짧아져서"
+      ],
+      "answer": 2,
+      "explain": "태양 고도가 높으면 빛이 좁은 면적에 모여 같은 넓이의 땅에 더 많은 빛이 닿습니다.",
+      "notes": "손가락으로 번호를 동시에 들게 해서 반 전체의 응답을 한눈에 봅니다. 1번을 고른 학생이 많으면 거리 오개념을 다시 짚습니다."
+    },
+    {
+      "type": "chapter",
+      "no": "02",
+      "title": "왜 태양 높이가 달라질까?",
+      "sub": "기울어진 자전축과 공전을 모형으로 확인합니다.",
+      "notes": "탐구 1에서 태양 고도가 기온을 바꾼다는 것을 알았습니다. 이제 그 태양 고도가 계절마다 왜 달라지는지로 넘어간다고 안내합니다."
+    },
+    {
+      "type": "compare",
+      "title": "자전축이 기울어져야 계절이 생긴다",
+      "left": {
+        "label": "자전축이 곧게 서 있다면",
+        "items": [
+          "남중 고도가 늘 같음",
+          "기온 변화가 거의 없음",
+          "계절이 생기지 않음"
+        ],
+        "visual": "<svg viewBox='0 0 600 240'><ellipse cx='300' cy='130' rx='270' ry='80' class='v-line' stroke-width='3' stroke-dasharray='8 10'/><circle cx='300' cy='130' r='34' class='v-muted' opacity='.6'/><g transform='translate(60 130)'><circle r='34' class='v-paper3'/><line y1='-60' y2='60' class='v-ink-s' stroke-width='5'/></g><g transform='translate(540 130)'><circle r='34' class='v-paper3'/><line y1='-60' y2='60' class='v-ink-s' stroke-width='5'/></g></svg>"
+      },
+      "right": {
+        "label": "자전축이 23.5° 기울어져 있으면",
+        "items": [
+          "위치마다 남중 고도가 다름",
+          "높으면 여름, 낮으면 겨울",
+          "1년마다 계절이 되풀이"
+        ],
+        "visual": "<svg viewBox='0 0 600 240'><ellipse cx='300' cy='130' rx='270' ry='80' class='v-line' stroke-width='3' stroke-dasharray='8 10'/><circle cx='300' cy='130' r='34' class='v-accent'/><g transform='translate(60 130) rotate(23.5)'><circle r='34' class='v-mid'/><line y1='-60' y2='60' class='v-accent-s' stroke-width='5'/></g><g transform='translate(540 130) rotate(23.5)'><circle r='34' class='v-mid'/><line y1='-60' y2='60' class='v-accent-s' stroke-width='5'/></g></svg>"
+      },
+      "note": "기운 방향 그대로 공전하는 것이 핵심!",
+      "reveal": true,
+      "notes": "왼쪽을 먼저 보여 주고 이런 지구라면 계절이 있을지 예측하게 합니다. 그다음 오른쪽을 공개합니다. 자전축이 항상 같은 쪽을 가리킨다는 점을 지구본으로 직접 보여 줍니다."
+    },
+    {
+      "type": "steps",
+      "kicker": "탐구 2 · 모형 실험",
+      "title": "전등 둘레로 지구본을 옮기며 고도를 잰다",
+      "steps": [
+        {
+          "h": "전등 켜기",
+          "t": "전등을 태양으로 삼아요.",
+          "visual": "<svg viewBox='0 0 240 200'><rect x='60' y='150' width='120' height='18' rx='6' class='v-paper3'/><rect x='112' y='70' width='16' height='82' class='v-ink'/><path d='M70 70 L170 70 L150 20 L90 20 Z' class='v-ink'/><polygon points='80,72 160,72 200,150 40,150' class='v-mid' opacity='.55'/><circle cx='120' cy='74' r='12' class='v-accent'/></svg>"
+        },
+        {
+          "h": "지구본 기울이기",
+          "t": "자전축을 한쪽으로 기울여요.",
+          "visual": "<svg viewBox='0 0 240 200'><rect x='80' y='170' width='80' height='14' rx='6' class='v-paper3'/><line x1='120' y1='170' x2='120' y2='150' class='v-ink-s' stroke-width='8'/><g transform='translate(120 92) rotate(23.5)'><circle r='58' class='v-mid'/><path d='M-58 0 A58 58 0 0 0 58 0 Z' class='v-soft'/><ellipse rx='58' ry='14' class='v-ink-s' stroke-width='3' opacity='.5'/><line y1='-80' y2='80' class='v-accent-s' stroke-width='7' stroke-linecap='round'/></g></svg>"
+        },
+        {
+          "h": "네 곳으로 공전",
+          "t": "전등 둘레 네 곳으로 옮겨요.",
+          "visual": "<svg viewBox='0 0 240 200'><ellipse cx='120' cy='100' rx='100' ry='62' class='v-line' stroke-width='3' stroke-dasharray='8 8'/><circle cx='120' cy='100' r='22' class='v-accent'/><g class='v-mid'><circle cx='20' cy='100' r='15'/><circle cx='220' cy='100' r='15'/><circle cx='120' cy='38' r='15'/><circle cx='120' cy='162' r='15'/></g><polygon points='186,40 212,50 190,66' class='v-ink'/></svg>"
+        },
+        {
+          "h": "고도 재기",
+          "t": "우리나라 위치에서 재요.",
+          "visual": "<svg viewBox='0 0 240 200'><line x1='20' y1='170' x2='220' y2='170' class='v-ink-s' stroke-width='6'/><line x1='60' y1='170' x2='190' y2='60' class='v-accent-s' stroke-width='6' stroke-linecap='round'/><circle cx='196' cy='52' r='20' class='v-accent'/><path d='M130 170 A70 70 0 0 0 113 125' class='v-ink-s' stroke-width='5'/><rect x='50' y='160' width='20' height='20' class='v-ink'/></svg>"
+        }
+      ],
+      "reveal": true,
+      "notes": "지구본의 자전축 방향이 네 위치에서 모두 같아야 한다는 점을 반복해서 강조합니다. 태양 고도 측정기는 우리나라 위치에 붙인 채 옮깁니다."
+    },
+    {
+      "type": "activity",
+      "title": "모둠 모형 실험: 네 위치의 태양 고도 재기",
+      "mode": "4인 모둠",
+      "worksheetRef": "활동지 02",
+      "minutes": 10,
+      "steps": [
+        "역할 나누기: 지구본·측정·기록·발표",
+        "기울인 지구본을 네 곳으로 옮기며 재기",
+        "자전축을 세운 지구본도 똑같이 재기",
+        "두 결과를 비교해 한 문장으로 쓰기"
+      ],
+      "output": "활동지 02 기록표와 한 문장 결론",
+      "notes": "타이머를 켜고 시작합니다. 순회하면서 자전축 방향이 바뀌는 모둠을 먼저 도와줍니다. 끝나기 2분 전에 결론 문장을 쓰도록 알립니다."
+    },
+    {
+      "type": "quiz",
+      "question": "자전축이 기울어지지 않은 채 공전한다면 어떤 일이 생길까?",
+      "choices": [
+        "여름만 계속된다",
+        "겨울만 계속된다",
+        "계절 변화가 거의 없다",
+        "하루의 길이가 매일 달라진다"
+      ],
+      "answer": 3,
+      "explain": "자전축이 기울지 않으면 공전 위치와 관계없이 남중 고도가 거의 같아 계절 변화가 생기지 않습니다.",
+      "notes": "모둠 실험 결과를 떠올리며 답하게 합니다. 3번을 고른 까닭을 한 모둠이 발표하게 합니다."
+    },
+    {
+      "type": "summary",
+      "title": "계절은 기울어진 자전축이 만든다",
+      "items": [
+        "태양 고도가 높으면 빛이 좁은 곳에 모여 기온이 높다",
+        "자전축이 기울어진 채 공전하면 남중 고도가 달라진다",
+        "그래서 1년을 주기로 여름과 겨울이 번갈아 온다"
+      ],
+      "next": "계절에 따라 낮의 길이가 어떻게 달라지는지 알아봅니다.",
+      "reveal": true,
+      "notes": "중심 질문으로 돌아가 칠판에 적어 둔 예상과 비교합니다. 거리 때문이라는 생각이 왜 틀렸는지 학생 입으로 말하게 합니다."
+    },
+    {
+      "type": "exit",
+      "question": "친구에게 “여름이 더운 건 태양이 가까워서야”라고 들었다면, 뭐라고 설명해 줄까요?",
+      "hint": "태양 고도, 빛이 닿는 넓이, 자전축이라는 낱말을 넣어 두 문장으로 써 보세요.",
+      "notes": "활동지 마지막 칸에 쓰고 나가게 합니다. 걷어서 다음 시간 도입에 몇 개를 소개합니다."
+    }
+  ],
+  "worksheet": {
+    "title": "계절은 왜 생길까?",
+    "subtitle": "태양 고도와 자전축으로 계절의 까닭을 설명해 봅시다.",
+    "sections": [
+      {
+        "title": "개념 정리",
+        "minutes": 5,
+        "items": [
+          {
+            "type": "concept",
+            "obj": 1,
+            "text": "태양이 지표면과 이루는 각을 {{태양 고도}}라고 하고, 하루 중 태양이 가장 높이 떴을 때의 고도를 {{남중 고도}}라고 한다.\n태양 고도가 높으면 같은 양의 빛이 {{좁은}} 면적에 닿아 땅이 더 많이 데워진다."
+          },
+          {
+            "type": "choice",
+            "obj": 1,
+            "q": "태양 고도가 높을 때 기온이 높은 까닭으로 알맞은 것을 고르세요.",
+            "choices": [
+              "태양과 지구 사이의 거리가 가까워져서",
+              "같은 넓이의 땅에 닿는 빛의 양이 많아서",
+              "태양이 더 밝게 빛나서",
+              "낮의 길이가 짧아져서"
+            ],
+            "answer": 2,
+            "explain": "태양 고도가 높으면 빛이 좁은 면적에 모여 같은 넓이의 땅에 더 많은 빛이 닿는다."
+          },
+          {
+            "type": "ox",
+            "obj": 1,
+            "q": "태양 고도에 대한 설명으로 맞으면 O, 틀리면 X에 표시하세요.",
+            "rows": [
+              {
+                "s": "태양 고도가 높을수록 그림자의 길이는 짧아진다.",
+                "a": true
+              },
+              {
+                "s": "하루 중 태양 고도는 해가 뜰 때 가장 높다.",
+                "a": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "모형 실험 기록",
+        "lead": "자전축을 기울인 지구본과 세운 지구본을 전등 둘레 네 위치로 옮기며 태양 고도를 재어 봅시다.",
+        "minutes": 10,
+        "items": [
+          {
+            "type": "table",
+            "obj": 2,
+            "q": "위치별로 잰 태양 고도를 쓰고, 그때의 계절을 적어 보세요.",
+            "head": [
+              "지구본 위치",
+              "자전축을 기울였을 때 고도",
+              "자전축을 세웠을 때 고도",
+              "우리나라의 계절"
+            ],
+            "rows": [
+              [
+                "가",
+                "{{높다}}",
+                "{{네 곳 모두 같음}}",
+                "{{여름}}"
+              ],
+              [
+                "나",
+                "{{중간}}",
+                "{{네 곳 모두 같음}}",
+                "{{가을}}"
+              ],
+              [
+                "다",
+                "{{낮다}}",
+                "{{네 곳 모두 같음}}",
+                "{{겨울}}"
+              ],
+              [
+                "라",
+                "{{중간}}",
+                "{{네 곳 모두 같음}}",
+                "{{봄}}"
+              ]
+            ]
+          },
+          {
+            "type": "short",
+            "obj": 2,
+            "q": "두 실험 결과를 비교하여, 계절이 생기는 까닭을 한 문장으로 써 보세요.",
+            "lines": 2,
+            "answer": "지구의 자전축이 기울어진 채 태양 둘레를 공전하기 때문에 위치에 따라 태양의 남중 고도가 달라져 계절이 생긴다.",
+            "explain": "자전축의 기울기와 공전 두 가지가 모두 들어가야 한다."
+          }
+        ]
+      },
+      {
+        "title": "확인 문제",
+        "minutes": 8,
+        "items": [
+          {
+            "type": "ox",
+            "obj": 1,
+            "q": "맞는 설명에는 O, 틀린 설명에는 X에 표시하세요.",
+            "rows": [
+              {
+                "s": "여름에는 태양의 남중 고도가 겨울보다 높다.",
+                "a": true
+              },
+              {
+                "s": "여름이 더운 까닭은 태양과 지구가 가까워지기 때문이다.",
+                "a": false
+              },
+              {
+                "s": "태양 고도가 낮으면 빛이 넓은 면적에 퍼진다.",
+                "a": true
+              }
+            ]
+          },
+          {
+            "type": "match",
+            "obj": 2,
+            "q": "알맞은 것끼리 선으로 이어 보세요.",
+            "left": [
+              "자전축",
+              "공전",
+              "남중 고도"
+            ],
+            "right": [
+              "지구가 태양 둘레를 1년에 한 바퀴 도는 것",
+              "하루 중 가장 높이 뜬 태양의 고도",
+              "지구가 스스로 도는 중심 막대"
+            ],
+            "answer": [
+              [
+                1,
+                3
+              ],
+              [
+                2,
+                1
+              ],
+              [
+                3,
+                2
+              ]
+            ]
+          },
+          {
+            "type": "draw",
+            "obj": 2,
+            "q": "자전축이 기울어진 지구가 태양 둘레를 공전하는 모습을 그리고, 우리나라가 여름일 때의 위치에 ‘여름’이라고 써 보세요.",
+            "height": 52,
+            "model": "자전축이 같은 방향으로 기울어진 지구를 네 위치에 그리고, 북반구가 태양 쪽으로 기울어진 위치에 ‘여름’을 표시하면 정답이다.",
+            "placeholder": "공전 궤도를 먼저 타원으로 그려 보세요"
+          },
+          {
+            "type": "short",
+            "obj": 1,
+            "q": "나가기 전에: 친구가 “여름이 더운 건 태양이 가까워서야”라고 한다면 어떻게 설명해 줄지 두 문장으로 써 보세요.",
+            "lines": 3,
+            "answer": "여름에는 태양의 남중 고도가 높아서 같은 넓이의 땅에 더 많은 빛이 닿아 기온이 높다. 이것은 태양과의 거리가 아니라 기울어진 자전축 때문에 생기는 차이이다."
+          }
+        ]
+      }
+    ],
+    "tip": "헷갈리면 손전등 실험을 떠올려 보세요. 빛이 좁은 곳에 모일수록 더 따뜻해집니다."
+  },
+  "plan": {
+    "model": "모형 탐구 수업 (예상 → 실험 → 설명)",
+    "materials": [
+      "손전등",
+      "모눈종이",
+      "각도기",
+      "전등",
+      "지구본",
+      "태양 고도 측정기",
+      "활동지"
+    ],
+    "flow": [
+      {
+        "stage": "도입",
+        "element": "동기 유발",
+        "minutes": 3,
+        "teacher": [
+          "여름 낮과 겨울 낮의 태양 높이 그림을 보여 주며 더위와 추위의 까닭을 묻는다"
+        ],
+        "student": [
+          "경험을 떠올려 예상을 말한다"
+        ],
+        "material": "슬라이드 1~3",
+        "note": "거리 때문이라는 오개념은 칠판에 적어 두고 정리 단계에서 다시 다룬다"
+      },
+      {
+        "stage": "도입",
+        "element": "학습 목표 확인",
+        "minutes": 2,
+        "teacher": [
+          "학습 목표와 중심 질문을 안내한다"
+        ],
+        "student": [
+          "학습 목표를 함께 읽는다"
+        ],
+        "material": "슬라이드 2"
+      },
+      {
+        "stage": "전개",
+        "element": "탐구 1: 태양 고도와 기온",
+        "minutes": 10,
+        "teacher": [
+          "용어를 소개하고 손전등 실험 방법을 안내한다",
+          "빛이 닿는 칸 수를 비교하게 한다"
+        ],
+        "student": [
+          "전등을 세웠을 때와 눕혔을 때 빛이 닿는 칸 수를 센다",
+          "확인 문제에 답한다"
+        ],
+        "material": "슬라이드 4~8, 손전등, 모눈종이",
+        "note": "전등과 종이 사이 거리를 같게 유지하도록 지도한다"
+      },
+      {
+        "stage": "전개",
+        "element": "탐구 2: 자전축과 계절",
+        "minutes": 15,
+        "teacher": [
+          "자전축이 기울어진 경우와 세운 경우를 비교해 보인다",
+          "모둠 모형 실험을 안내하고 순회 지도한다"
+        ],
+        "student": [
+          "지구본을 네 위치로 옮기며 태양 고도를 잰다",
+          "활동지 기록표를 채우고 결론 문장을 쓴다"
+        ],
+        "material": "슬라이드 9~13, 전등, 지구본, 활동지 02",
+        "note": "자전축 방향이 네 위치에서 같게 유지되는지 확인한다"
+      },
+      {
+        "stage": "전개",
+        "element": "확인 문제",
+        "minutes": 3,
+        "teacher": [
+          "확인 문제를 내고 응답을 살핀다"
+        ],
+        "student": [
+          "손가락으로 답을 동시에 표시한다"
+        ],
+        "material": "슬라이드 13"
+      },
+      {
+        "stage": "정리",
+        "element": "정리와 나가기 질문",
+        "minutes": 7,
+        "teacher": [
+          "중심 질문으로 돌아가 오개념을 바로잡는다",
+          "나가기 질문을 안내한다"
+        ],
+        "student": [
+          "오늘 배운 낱말로 계절의 까닭을 설명한다",
+          "활동지 나가기 질문을 쓴다"
+        ],
+        "material": "슬라이드 14~15, 활동지 03",
+        "note": "나가기 질문은 걷어서 다음 차시 도입에 활용한다"
+      }
+    ],
+    "evaluation": [
+      {
+        "what": "태양 고도와 기온의 관계 설명",
+        "method": "관찰·활동지",
+        "criteria": {
+          "상": "빛이 닿는 면적과 빛의 양을 연결하여 정확히 설명한다",
+          "중": "고도가 높으면 기온이 높다는 사실만 말한다",
+          "하": "태양과의 거리로 설명한다"
+        }
+      },
+      {
+        "what": "계절 변화의 원인 설명",
+        "method": "모형 실험·서술",
+        "criteria": {
+          "상": "자전축의 기울기와 공전을 모두 넣어 설명한다",
+          "중": "둘 중 하나만 넣어 설명한다",
+          "하": "실험 결과를 설명과 연결하지 못한다"
+        }
+      }
+    ],
+    "questions": [
+      {
+        "q": "지구가 태양에 가까울 때가 여름 아닌가요?",
+        "a": "실제로 북반구가 여름일 때 지구는 태양에서 조금 더 멀리 있습니다. 거리가 아니라 태양 고도가 기온을 결정합니다."
+      },
+      {
+        "q": "남반구도 우리와 같은 계절인가요?",
+        "a": "자전축이 기울어진 방향 때문에 남반구는 계절이 반대입니다. 우리나라가 여름일 때 호주는 겨울입니다."
+      }
+    ],
+    "checkpoint": "모둠의 결론 문장에 ‘자전축의 기울기’와 ‘공전’이 모두 들어 있으면 다음 차시로 넘어간다."
+  }
+}

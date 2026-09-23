@@ -1,0 +1,381 @@
+{
+  "meta": {
+    "title": "설득하는 글, 어떻게 짜여 있을까?",
+    "short": "설득하는 글의 구조",
+    "subject": "영어",
+    "grade": "고등학교 1학년",
+    "level": "high",
+    "unit": "설득하는 글 읽기와 쓰기",
+    "lesson": "3/12차시",
+    "minutes": 50,
+    "standards": [
+      {
+        "code": "",
+        "text": "설득하는 글을 읽고 주장, 근거, 반론과 재반박, 결론의 짜임을 파악하며, 주어진 주제에 대해 자신의 주장을 표현할 수 있다.",
+        "verified": false
+      }
+    ]
+  },
+  "objectives": [
+    "설득하는 글의 구조(주장, 근거, 반론과 재반박, 결론)를 설명할 수 있다.",
+    "영어 지문에서 주장, 근거, 반론과 재반박, 결론에 해당하는 부분을 찾아 표시할 수 있다.",
+    "주어진 주제에 대해 자신의 주장을 한 문장으로 쓸 수 있다."
+  ],
+  "facts": [],
+  "slides": [
+    {
+      "type": "cover",
+      "kicker": "고1 공통영어 · 설득하는 글",
+      "subtitle": "Claim, Reasons, Counterargument & Rebuttal, Conclusion\n설득하는 글은 이 네 부분으로 짜여 있어요.",
+      "visual": "<svg viewBox='0 0 640 640'><rect x='60' y='40' width='520' height='110' rx='20' class='v-mid'/><rect x='60' y='40' width='14' height='110' class='v-accent'/><text x='330' y='105' class='v-label-a' text-anchor='middle'>Claim</text><line x1='320' y1='150' x2='320' y2='185' class='v-ink-s' stroke-width='6' stroke-linecap='round'/><rect x='60' y='185' width='520' height='110' rx='20' class='v-paper2'/><rect x='60' y='185' width='14' height='110' class='v-ink'/><text x='330' y='250' class='v-label' text-anchor='middle'>Reasons</text><line x1='320' y1='295' x2='320' y2='330' class='v-ink-s' stroke-width='6' stroke-linecap='round'/><rect x='60' y='330' width='520' height='110' rx='20' class='v-paper3'/><rect x='60' y='330' width='14' height='110' class='v-ink'/><text x='330' y='378' class='v-label' text-anchor='middle'>Counterargument</text><text x='330' y='412' class='v-label' text-anchor='middle'>&amp; Rebuttal</text><line x1='320' y1='440' x2='320' y2='475' class='v-ink-s' stroke-width='6' stroke-linecap='round'/><rect x='60' y='475' width='520' height='110' rx='20' class='v-paper2'/><rect x='60' y='475' width='14' height='110' class='v-ink'/><text x='330' y='540' class='v-label' text-anchor='middle'>Conclusion</text></svg>",
+      "notes": "지난 시간까지 글의 종류를 배웠죠. 오늘은 설득하는 글이 어떤 순서로 주장을 펼치는지 확인합니다. 표지의 네 조각이 각각 무엇을 뜻할지 먼저 학생에게 물어보고 시작합니다."
+    },
+    {
+      "type": "goals",
+      "question": "짜임을 알면 왜 글을 더 잘 읽고 쓸 수 있을까?",
+      "reveal": true,
+      "notes": "학습 목표 세 가지를 하나씩 공개하며 읽어 줍니다. 짜임을 알면 읽을 때는 글쓴이의 생각을 빨리 찾고, 쓸 때는 짜임 있게 쓸 수 있다는 점을 미리 언급합니다."
+    },
+    {
+      "type": "hook",
+      "kicker": "생각 열기",
+      "question": "다음 두 의견 중 어느 쪽이 더 설득력 있을까요?",
+      "lead": "짧은 의견 두 개를 비교하며 읽어 봅시다.",
+      "visual": "<svg viewBox='0 0 900 420'><rect x='20' y='40' width='380' height='300' rx='28' class='v-muted' opacity='.5'/><rect x='480' y='40' width='380' height='300' rx='28' class='v-soft'/><text x='210' y='200' class='v-label' text-anchor='middle'>Phones are bad.</text><text x='670' y='200' class='v-label-a' text-anchor='middle'>Phones break focus.</text><text x='210' y='320' class='v-label' text-anchor='middle'>이유 없음</text><text x='670' y='320' class='v-label' text-anchor='middle'>이유 있음</text></svg>",
+      "caption": "이유가 있는 의견이 왜 더 설득력 있을지 생각해 봅시다.",
+      "notes": "왼쪽 의견은 이유가 없고 오른쪽은 이유가 있다는 것을 학생이 스스로 발견하게 유도합니다. 정답을 바로 말하지 않고 오늘 배울 내용과 연결한다고 안내합니다."
+    },
+    {
+      "type": "vocab",
+      "title": "오늘 쓰는 낱말 넷",
+      "terms": [
+        { "term": "주장", "en": "claim", "def": "글쓴이가 내세우는 의견" },
+        { "term": "근거", "en": "reason", "def": "주장이 옳은 까닭" },
+        { "term": "반론", "en": "counterargument", "def": "주장에 반대하는 다른 의견" },
+        { "term": "재반박", "en": "rebuttal", "def": "반론에 다시 답하는 것" }
+      ],
+      "reveal": true,
+      "notes": "낱말을 하나씩 공개하며 영어 표현과 짝지어 읽어 줍니다. 반론과 재반박을 헷갈려 하는 학생이 많으니 두 낱말을 짝지어 설명합니다."
+    },
+    {
+      "type": "concept",
+      "kicker": "짜임 1",
+      "title": "설득하는 글은 네 부분으로 짜여 있다",
+      "points": [
+        { "h": "주장(Claim)", "t": "글쓴이가 가장 하고 싶은 말이에요." },
+        { "h": "근거(Reasons)", "t": "주장이 옳은 까닭을 두 가지 이상 들어요." },
+        { "h": "반론과 재반박(Counterargument & Rebuttal)", "t": "다른 생각을 인정하고 다시 답해요." },
+        { "h": "결론(Conclusion)", "t": "주장을 다시 정리하며 글을 마무리해요." }
+      ],
+      "visual": "<svg viewBox='0 0 700 620'><rect x='30' y='28' width='640' height='120' rx='18' class='v-mid'/><rect x='30' y='28' width='14' height='120' class='v-accent'/><text x='350' y='99' class='v-label-a' text-anchor='middle'>Claim</text><line x1='350' y1='148' x2='350' y2='176' class='v-ink-s' stroke-width='6' stroke-linecap='round'/><rect x='30' y='176' width='640' height='120' rx='18' class='v-paper2'/><rect x='30' y='176' width='14' height='120' class='v-ink'/><text x='350' y='247' class='v-label' text-anchor='middle'>Reasons</text><line x1='350' y1='296' x2='350' y2='324' class='v-ink-s' stroke-width='6' stroke-linecap='round'/><rect x='30' y='324' width='640' height='120' rx='18' class='v-paper3'/><rect x='30' y='324' width='14' height='120' class='v-ink'/><text x='350' y='395' class='v-label' text-anchor='middle'>Counterargument &amp; Rebuttal</text><line x1='350' y1='444' x2='350' y2='472' class='v-ink-s' stroke-width='6' stroke-linecap='round'/><rect x='30' y='472' width='640' height='120' rx='18' class='v-paper2'/><rect x='30' y='472' width='14' height='120' class='v-ink'/><text x='350' y='543' class='v-label' text-anchor='middle'>Conclusion</text></svg>",
+      "caption": "네 조각이 이어지면 설득하는 글이 됩니다.",
+      "reveal": true,
+      "notes": "포인트를 하나씩 공개하며 각 부분의 역할을 영어 용어와 함께 설명합니다. 반론과 재반박은 한 조각처럼 붙어 다닌다는 점을 강조합니다."
+    },
+    {
+      "type": "passage",
+      "kicker": "지문 읽기 1",
+      "title": "먼저 주장과 근거를 읽어 보자",
+      "chunks": [
+        { "label": "배경 (Background)", "text": "Most students carry smartphones to school every day." },
+        { "label": "주장 (Claim)", "text": "However, schools should limit phone use during class time.", "hot": true },
+        { "label": "근거 (Reasons)", "text": "First, phones make it hard for students to focus on lessons; even a short glance at a notification can break their concentration for several minutes. Second, constant phone checking during breaks often leads to stress, because students compare themselves with others on social media." }
+      ],
+      "note": "밑줄과 색으로 표시하며 짝과 함께 읽어 봅시다.",
+      "reveal": true,
+      "notes": "지문의 앞부분입니다. 배경 문장 다음에 오는 주장 문장과 두 근거 문장을 짝과 함께 소리 내어 읽고, however와 first, second에 동그라미를 칩니다."
+    },
+    {
+      "type": "passage",
+      "kicker": "지문 읽기 2",
+      "title": "이어서 반론과 재반박, 결론을 읽어 보자",
+      "chunks": [
+        { "label": "반론과 재반박", "text": "Some students argue that phones are necessary for emergencies and for contacting their parents. This is a fair concern, but schools can solve it by allowing phone use during breaks and lunchtime, not during lessons." },
+        { "label": "결론 (Conclusion)", "text": "For these reasons, limiting phone use in classrooms will help students concentrate better and feel less stressed, while still keeping them safe in an emergency." }
+      ],
+      "note": "반론 다음에 재반박이, 마지막에 결론이 옵니다.",
+      "reveal": true,
+      "notes": "지문의 뒷부분입니다. some argue와 but, for these reasons에 동그라미를 치며 반론·재반박·결론을 짝과 함께 확인합니다."
+    },
+    {
+      "type": "quiz",
+      "question": "반론(counterargument)을 바르게 설명한 것은?",
+      "choices": [
+        "주장을 뒷받침하는 까닭이다",
+        "글쓴이의 주장과 다른 의견을 미리 밝히는 것이다",
+        "글의 마지막에 주장을 다시 정리하는 것이다",
+        "글의 처음에 나오는 글쓴이의 의견이다"
+      ],
+      "answer": 2,
+      "explain": "반론은 글쓴이와 다른 생각을 미리 소개하는 부분이에요. 그다음 재반박으로 다시 답합니다.",
+      "notes": "손가락으로 답을 표시하게 합니다. 1번을 고른 학생에게는 근거와 헷갈린 것 같다고 짚어 줍니다."
+    },
+    {
+      "type": "steps",
+      "kicker": "짜임 찾기 순서",
+      "title": "지문에서 짜임을 찾는 순서",
+      "steps": [
+        { "h": "주장 찾기", "t": "however, should 주변을 살펴요.", "visual": "<svg viewBox='0 0 240 200'><line x1='20' y1='50' x2='140' y2='50' class='v-ink-s' stroke-width='8' stroke-linecap='round'/><line x1='20' y1='90' x2='160' y2='90' class='v-ink-s' stroke-width='8' stroke-linecap='round' opacity='.5'/><line x1='20' y1='130' x2='120' y2='130' class='v-ink-s' stroke-width='8' stroke-linecap='round' opacity='.5'/><circle cx='140' cy='90' r='45' class='v-mid'/><circle cx='140' cy='90' r='45' fill='none' class='v-accent-s' stroke-width='9'/><line x1='172' y1='122' x2='210' y2='160' class='v-ink-s' stroke-width='15' stroke-linecap='round'/></svg>" },
+        { "h": "근거 표시", "t": "first, second 뒤 문장에 번호를 매겨요.", "visual": "<svg viewBox='0 0 240 200'><circle cx='45' cy='60' r='28' class='v-accent'/><text x='45' y='71' class='v-label-a' text-anchor='middle' style='fill:var(--paper)'>1</text><line x1='85' y1='60' x2='210' y2='60' class='v-ink-s' stroke-width='8' stroke-linecap='round'/><circle cx='45' cy='140' r='28' class='v-mid'/><text x='45' y='151' class='v-label' text-anchor='middle'>2</text><line x1='85' y1='140' x2='190' y2='140' class='v-ink-s' stroke-width='8' stroke-linecap='round' opacity='.5'/></svg>" },
+        { "h": "반론 확인", "t": "some argue, but 주변에 물결선을 그어요.", "visual": "<svg viewBox='0 0 240 200'><path d='M30 70 H150' fill='none' class='v-ink-s' stroke-width='9' stroke-linecap='round'/><path d='M150 70 A40 40 0 0 1 150 150 H90' fill='none' class='v-accent-s' stroke-width='11' stroke-linecap='round'/><path d='M108 132 L86 150 L108 168' fill='none' class='v-accent-s' stroke-width='11' stroke-linecap='round' stroke-linejoin='round'/></svg>" },
+        { "h": "결론 밑줄", "t": "for these reasons 뒤 문장에 밑줄을 그어요.", "visual": "<svg viewBox='0 0 240 200'><line x1='30' y1='60' x2='190' y2='60' class='v-ink-s' stroke-width='8' stroke-linecap='round' opacity='.5'/><line x1='30' y1='100' x2='210' y2='100' class='v-ink-s' stroke-width='9' stroke-linecap='round'/><line x1='30' y1='135' x2='210' y2='135' class='v-accent-s' stroke-width='13' stroke-linecap='round'/></svg>" }
+      ],
+      "reveal": true,
+      "notes": "표시 방법을 시연한 뒤 짝과 함께 첫 문장에서 해 보게 합니다. 신호말에 동그라미를 치면 부분을 더 쉽게 찾을 수 있다고 안내합니다."
+    },
+    {
+      "type": "chapter",
+      "no": "02",
+      "title": "이제 직접 찾아볼까요?",
+      "sub": "짝과 함께 지문의 짜임을 찾아 표시해요.",
+      "notes": "지금까지 익힌 네 부분과 신호말을 활용해 실제 지문에서 직접 찾아보는 활동으로 넘어간다고 안내합니다."
+    },
+    {
+      "type": "activity",
+      "title": "짝 활동: 지문 짜임 표시하기",
+      "mode": "짝 활동",
+      "worksheetRef": "활동지 1번",
+      "minutes": 12,
+      "steps": [
+        "지문을 짝과 함께 소리 내어 읽기",
+        "however, first, but 같은 신호말 찾기",
+        "주장·근거·반론과 재반박·결론에 다른 색으로 표시하기",
+        "표시한 부분을 짝과 비교하기"
+      ],
+      "output": "색으로 표시한 지문",
+      "notes": "순회하며 신호말을 못 찾는 짝에게 힌트를 줍니다. 반론과 재반박은 한 덩어리로 표시해도 된다고 안내합니다. 타이머를 켜고 시작합니다."
+    },
+    {
+      "type": "quiz",
+      "question": "Some students argue that...로 시작하면 어느 부분일까요?",
+      "choices": ["주장", "근거", "반론과 재반박", "결론"],
+      "answer": 3,
+      "explain": "some argue는 글쓴이와 다른 생각을 소개하는 반론의 신호말이에요. 뒤에 재반박이 이어집니다.",
+      "notes": "짝 활동에서 찾은 신호말을 떠올리며 답하게 합니다. 반론 다음에는 늘 재반박이 이어진다는 것도 확인합니다."
+    },
+    {
+      "type": "activity",
+      "title": "나의 주장 한 문장 쓰기",
+      "mode": "개인 활동",
+      "worksheetRef": "활동지 2번",
+      "minutes": 8,
+      "steps": [
+        "학교 휴대폰 사용 제한에 대한 내 생각 정하기",
+        "should 같은 표현으로 주장 문장 시작하기",
+        "짝에게 소리 내어 읽어 주기"
+      ],
+      "output": "영어 주장 문장 한 개",
+      "notes": "완벽한 문법보다 주장이 분명한지가 중요하다고 안내합니다. 시간이 남으면 이유도 한 가지 덧붙이게 합니다."
+    },
+    {
+      "type": "summary",
+      "title": "설득하는 글은 네 부분이 이어진 것",
+      "items": [
+        "주장 뒤에는 근거가, 반론 뒤에는 재반박이 온다",
+        "however, first, but 같은 신호말이 짜임을 알려 준다",
+        "짜임을 알면 글을 더 잘 읽고 쓸 수 있다"
+      ],
+      "next": "다음 시간에는 자신의 주장에 근거 두 가지를 더해 문단을 완성합니다.",
+      "reveal": true,
+      "notes": "goals에서 던진 중심 질문으로 돌아가 답을 함께 정리합니다. 오늘 찾은 신호말 목록을 다시 한 번 훑어봅니다."
+    },
+    {
+      "type": "exit",
+      "question": "오늘 배운 낱말을 하나 골라 짝에게 설명해 볼까요?",
+      "hint": "claim, reason, counterargument, rebuttal 중 하나를 골라 우리말로 설명해 보세요.",
+      "notes": "활동지 나가기 칸에 쓰게 하고, 시간이 남으면 한두 명이 발표합니다. 다음 시간 예고와 연결해 마무리합니다."
+    }
+  ],
+  "worksheet": {
+    "title": "설득하는 글, 어떻게 짜여 있을까?",
+    "subtitle": "학교 휴대폰 사용 제한 지문으로 설득하는 글의 짜임을 확인해 봅시다.",
+    "sections": [
+      {
+        "title": "개념 정리",
+        "minutes": 5,
+        "items": [
+          {
+            "type": "concept",
+            "obj": 1,
+            "text": "설득하는 글은 먼저 글쓴이의 {{주장}}을 밝히고, 그 주장이 옳은 까닭인 {{근거}}를 듭니다.\n그다음 다른 생각인 {{반론}}을 소개하고, 그 반론에 다시 답하는 {{재반박}}을 제시합니다. 마지막으로 주장을 다시 정리하는 {{결론}}으로 글을 마칩니다."
+          },
+          {
+            "type": "choice",
+            "obj": 1,
+            "q": "다음 중 결론(conclusion)의 역할로 알맞은 것은?",
+            "choices": [
+              "새로운 근거를 추가한다",
+              "주장을 다시 정리하며 글을 마무리한다",
+              "반론을 처음 소개한다",
+              "독자에게 질문을 던진다"
+            ],
+            "answer": 2,
+            "explain": "결론은 앞에서 편 주장을 요약하며 글을 마무리하는 부분이다."
+          }
+        ]
+      },
+      {
+        "title": "지문 읽기: 학교 휴대폰 사용 제한",
+        "lead": "다음은 오늘 읽을 설득하는 글입니다. 지문을 읽고, 아래 표에 신호말과 짜임을 써 보세요.",
+        "minutes": 20,
+        "items": [
+          {
+            "type": "passage",
+            "obj": 2,
+            "title": "학교 휴대폰 사용 제한 (1)",
+            "text": "Most students carry smartphones to school every day. However, schools should limit phone use during class time.\nFirst, phones make it hard for students to focus on lessons; even a short glance at a notification can break their concentration for several minutes. Second, constant phone checking during breaks often leads to stress, because students compare themselves with others on social media."
+          },
+          {
+            "type": "passage",
+            "obj": 2,
+            "title": "학교 휴대폰 사용 제한 (2)",
+            "text": "Some students argue that phones are necessary for emergencies and for contacting their parents. This is a fair concern, but schools can solve it by allowing phone use during breaks and lunchtime, not during lessons.\nFor these reasons, limiting phone use in classrooms will help students concentrate better and feel less stressed, while still keeping them safe in an emergency."
+          },
+          {
+            "type": "table",
+            "obj": 2,
+            "q": "다음 문장이 설명하는 내용을 보고, 글의 짜임과 지문 속 신호말을 표에 써 보세요.",
+            "head": ["문장이 말하는 내용", "짜임", "신호말"],
+            "rows": [
+              ["Schools should limit phone use during class time.", "{{주장}}", "{{However}}"],
+              ["Phones make it hard to focus and checking them often causes stress.", "{{근거}}", "{{First, Second}}"],
+              ["Some people say phones are needed for emergencies.", "{{반론과 재반박}}", "{{Some students argue}}"],
+              ["Schools can allow phone use only during breaks and lunchtime.", "{{반론과 재반박}}", "{{This is a fair concern, but}}"],
+              ["Limiting phone use will help students focus and feel less stressed.", "{{결론}}", "{{For these reasons}}"]
+            ]
+          },
+          {
+            "type": "short",
+            "obj": 2,
+            "q": "반론(counterargument) 문장 전체를 지문에서 찾아 써 보세요.",
+            "lines": 2,
+            "answer": "Some students argue that phones are necessary for emergencies and for contacting their parents.",
+            "explain": "반론은 글쓴이의 주장과 다른 생각을 미리 소개하는 문장이다."
+          }
+        ]
+      },
+      {
+        "title": "확인 문제와 나의 주장",
+        "minutes": 15,
+        "items": [
+          {
+            "type": "ox",
+            "obj": 1,
+            "q": "맞는 설명에는 O, 틀린 설명에는 X에 표시하세요.",
+            "rows": [
+              { "s": "주장 뒤에는 보통 근거가 이어진다.", "a": true },
+              { "s": "결론에서는 반론을 처음 소개한다.", "a": false },
+              { "s": "however, first, but 같은 낱말은 글의 짜임을 알려주는 신호말이다.", "a": true }
+            ]
+          },
+          {
+            "type": "match",
+            "obj": 1,
+            "q": "우리말 용어와 알맞은 영어 표현을 이어 보세요.",
+            "left": ["주장", "근거", "반론과 재반박", "결론"],
+            "right": ["Conclusion", "Claim", "Counterargument & Rebuttal", "Reasons"],
+            "answer": [[1, 2], [2, 4], [3, 3], [4, 1]]
+          },
+          {
+            "type": "short",
+            "obj": 3,
+            "q": "학교 휴대폰 사용 제한에 대한 나의 주장을 한 문장으로 영어로 써 보세요.",
+            "lines": 2,
+            "answer": "Schools should limit phone use during class time to help students focus and reduce stress.",
+            "explain": "claim은 한 문장으로 분명한 입장을 나타내야 한다. should, must 같은 표현을 써 본다."
+          }
+        ]
+      }
+    ],
+    "tip": "헷갈리면 however, first, but, for these reasons 같은 신호말을 먼저 찾아보세요."
+  },
+  "plan": {
+    "model": "구조 중심 읽기·쓰기 수업 (구조 확인 → 지문 적용 → 주장 쓰기)",
+    "materials": ["활동지", "색연필 또는 형광펜"],
+    "flow": [
+      {
+        "stage": "도입",
+        "element": "동기 유발과 목표 확인",
+        "minutes": 8,
+        "teacher": ["이유 없는 의견과 이유 있는 의견을 보여 주며 어느 쪽이 더 설득력 있는지 묻는다", "학습 목표와 중심 질문을 안내한다"],
+        "student": ["경험을 떠올려 예상을 말한다", "학습 목표를 함께 읽는다"],
+        "material": "슬라이드 1~3",
+        "note": "정답은 아직 말하지 않고 오늘 배울 내용과 연결한다"
+      },
+      {
+        "stage": "전개",
+        "element": "핵심 용어와 짜임 익히기",
+        "minutes": 8,
+        "teacher": ["주장·근거·반론과 재반박·결론 네 낱말을 소개한다", "네 부분의 순서를 그림으로 보여 준다"],
+        "student": ["낱말을 영어 표현과 짝지어 익힌다", "이해 확인 문제에 답한다"],
+        "material": "슬라이드 4~8",
+        "note": "반론과 재반박을 헷갈리는 학생을 짚어 준다"
+      },
+      {
+        "stage": "전개",
+        "element": "신호말로 짜임 찾는 법 익히기",
+        "minutes": 6,
+        "teacher": ["신호말과 표시 방법을 시연한다"],
+        "student": ["첫 문장에서 신호말을 함께 찾아본다"],
+        "material": "슬라이드 9"
+      },
+      {
+        "stage": "전개",
+        "element": "짝 활동과 이해 확인",
+        "minutes": 16,
+        "teacher": ["활동 방법을 안내하고 순회 지도한다", "짜임 찾기 확인 문제를 낸다"],
+        "student": ["짝과 함께 지문을 읽고 짜임을 표시한다", "표시한 부분을 짝과 비교한다", "손가락으로 답을 동시에 표시한다"],
+        "material": "슬라이드 11~12, 활동지 1번",
+        "note": "타이머로 시간을 안내한다"
+      },
+      {
+        "stage": "전개",
+        "element": "나의 주장 쓰기",
+        "minutes": 8,
+        "teacher": ["주장 문장 쓰는 법을 안내하고 순회 지도한다"],
+        "student": ["학교 휴대폰 사용 제한에 대한 주장을 한 문장으로 쓴다"],
+        "material": "슬라이드 13, 활동지 2번"
+      },
+      {
+        "stage": "정리",
+        "element": "정리와 나가기 질문",
+        "minutes": 4,
+        "teacher": ["중심 질문으로 돌아가 함께 정리한다", "나가기 질문을 안내한다"],
+        "student": ["오늘 배운 낱말로 짜임을 설명한다", "활동지 나가기 칸에 쓴다"],
+        "material": "슬라이드 14~15",
+        "note": "나가기 질문은 걷어서 다음 시간에 활용한다"
+      }
+    ],
+    "evaluation": [
+      {
+        "what": "설득하는 글의 짜임 이해와 찾기",
+        "method": "관찰·활동지",
+        "criteria": {
+          "상": "네 부분의 역할을 알고 지문에서 정확히 찾는다",
+          "중": "부분을 일부만 찾거나 신호말과 연결하지 못한다",
+          "하": "부분을 구분하거나 찾지 못한다"
+        }
+      },
+      {
+        "what": "주장 문장 쓰기",
+        "method": "활동지 서술형",
+        "criteria": {
+          "상": "주제에 맞는 분명한 주장을 한 문장으로 쓴다",
+          "중": "주장은 쓰지만 분명하지 않다",
+          "하": "주장을 쓰지 못한다"
+        }
+      }
+    ],
+    "questions": [
+      {
+        "q": "반론과 재반박을 꼭 다 써야 하나요?",
+        "a": "한 문장씩만 써도 됩니다. 인정하고 다시 답하는 흐름이면 충분합니다."
+      },
+      {
+        "q": "주장 문장에 이유를 꼭 넣어야 하나요?",
+        "a": "오늘은 주장 한 문장이면 충분합니다. 근거는 다음 시간에 더합니다."
+      }
+    ],
+    "checkpoint": "짝 활동지에서 네 부분을 모두 올바르게 표시했으면 다음 차시(근거 쓰기)로 넘어간다."
+  }
+}

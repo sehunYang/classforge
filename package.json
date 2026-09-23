@@ -1,0 +1,13 @@
+{
+  "name": "classforge",
+  "private": true,
+  "type": "module",
+  "description": "수업 자료(슬라이드·활동지·지도안) 빌드와 품질 게이트",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "gate": "node scripts/gate.mjs"
+  },
+  "dependencies": {
+    "playwright-core": "1.63.0"
+  }
+}

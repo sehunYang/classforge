@@ -1,0 +1,308 @@
+/* classforge deck — 밝은 교실 프로젝터용 16:9 슬라이드 (1920×1080 무대를 창 크기에 맞춰 확대/축소)
+   원칙: 종이 톤 라이트 배경 · 강조색 1개 · 채운 카드/그림자 대신 헤어라인 · 어절 단위 줄바꿈 */
+
+:root{
+  --paper:#FBFAF6; --paper-2:#F3F1EA; --paper-3:#E9E6DC;
+  --ink:#15171C; --ink-2:#343A46; --muted:#555C69;
+  --line:rgba(21,23,28,.14); --line-2:rgba(21,23,28,.28);
+  --accent:#2952CC; --accent-ink:#1E3FA3;
+  --accent-soft:color-mix(in srgb,var(--accent) 10%,var(--paper));
+  --accent-mid:color-mix(in srgb,var(--accent) 30%,var(--paper));
+  --good:#1A7F4B; --warn:#B45309;
+  /* 학교급 프리셋은 body[data-level]에서 덮어쓴다 (기본=중학교) */
+  --fs-display:112px; --fs-title:66px; --fs-lead:42px; --fs-body:38px; --fs-small:30px; --fs-chrome:22px;
+  --pad-x:112px; --pad-top:120px; --pad-bottom:104px;
+  --font:'CF Pretendard','Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+}
+body[data-level="elem"]{ --fs-display:120px; --fs-title:72px; --fs-lead:46px; --fs-body:42px; --fs-small:32px; }
+body[data-level="high"]{ --fs-display:104px; --fs-title:62px; --fs-lead:40px; --fs-body:35px; --fs-small:28px; }
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#1c1d21;overflow:hidden}
+body{font-family:var(--font);color:var(--ink);-webkit-font-smoothing:antialiased;
+  word-break:keep-all;overflow-wrap:break-word;line-break:strict}
+strong{font-weight:800;color:var(--ink)}
+mark{background:linear-gradient(transparent 58%,var(--accent-mid) 58%);color:inherit;padding:0 .08em}
+em{font-style:normal;color:var(--accent-ink);font-weight:700}
+
+/* ── 무대와 슬라이드 ─────────────────────────── */
+#viewport{position:fixed;inset:0;display:grid;place-items:center}
+#stage{width:1920px;height:1080px;position:relative;transform-origin:center center;flex:none}
+.slide{position:absolute;inset:0;background:var(--paper);overflow:hidden;
+  opacity:0;visibility:hidden;transition:opacity .35s ease,visibility .35s}
+.slide.on{opacity:1;visibility:visible}
+.slide .body{position:absolute;left:var(--pad-x);right:var(--pad-x);top:var(--pad-top);bottom:var(--pad-bottom);
+  display:flex;flex-direction:column}
+
+/* 네 모서리 크롬 */
+.chrome{position:absolute;font-size:var(--fs-chrome);color:var(--muted);font-weight:600;letter-spacing:.01em;display:flex;gap:14px;align-items:center}
+.chrome.tl{top:44px;left:var(--pad-x)} .chrome.tr{top:44px;right:var(--pad-x)}
+.chrome.bl{bottom:40px;left:var(--pad-x)} .chrome.br{bottom:40px;right:var(--pad-x);font-variant-numeric:tabular-nums}
+.chip{display:inline-flex;align-items:center;gap:10px;padding:6px 16px;border:1.5px solid var(--line-2);border-radius:999px;color:var(--ink-2)}
+.chip i{width:12px;height:12px;border-radius:50%;background:var(--accent);display:block}
+.progress{position:absolute;left:0;bottom:0;height:8px;background:var(--accent);transition:width .35s ease}
+
+/* 공통 타이포 */
+.kicker{font-size:var(--fs-small);font-weight:700;color:var(--accent-ink);letter-spacing:.02em;margin-bottom:22px;display:flex;align-items:center;gap:16px}
+.kicker::before{content:"";width:44px;height:6px;border-radius:3px;background:var(--accent)}
+.title{font-size:var(--fs-title);font-weight:800;line-height:1.22;letter-spacing:-.025em}
+.lead{font-size:var(--fs-lead);font-weight:500;line-height:1.5;color:var(--ink-2);margin-top:28px;max-width:1500px}
+.text{font-size:var(--fs-body);line-height:1.55;color:var(--ink-2)}
+.small{font-size:var(--fs-small);line-height:1.5;color:var(--muted)}
+.rule{height:2px;background:var(--line);margin:40px 0}
+.grow{flex:1;min-height:0}
+
+/* 삽화(SVG) 테마 클래스 — 레슨 작성자가 SVG 안에서 사용 */
+.visual{display:flex;align-items:center;justify-content:center;min-height:0}
+.visual svg{width:100%;height:100%;max-height:100%;overflow:visible}
+.v-ink{fill:var(--ink)} .v-ink-s{stroke:var(--ink);fill:none}
+.v-accent{fill:var(--accent)} .v-accent-s{stroke:var(--accent);fill:none}
+.v-soft{fill:var(--accent-soft)} .v-mid{fill:var(--accent-mid)}
+.v-paper{fill:var(--paper)} .v-paper2{fill:var(--paper-2)} .v-paper3{fill:var(--paper-3)}
+.v-line{stroke:var(--line-2);fill:none} .v-muted{fill:var(--muted)}
+.v-warn{fill:var(--warn)} .v-good{fill:var(--good)}
+.v-label{fill:var(--ink);font-family:var(--font);font-weight:700;font-size:34px}
+.v-label-s{fill:var(--muted);font-family:var(--font);font-weight:600;font-size:28px}
+.v-label-a{fill:var(--accent-ink);font-family:var(--font);font-weight:800;font-size:34px}
+.caption{font-size:var(--fs-small);color:var(--muted);line-height:1.45;margin-top:18px;padding-top:16px;border-top:2px solid var(--line)}
+
+/* 생성 이미지(images.mjs) 슬롯 — 칸을 채운다(object-fit:cover), 모서리는 둥글게 */
+.visual.img-fill{overflow:hidden;border-radius:20px}
+.visual.img-fill img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* 수식 인라인 표기 ($...$ → build.mjs의 md()가 변환) — 문자체 수식 글꼴, 변수만 이탤릭 */
+.math{font-family:'Cambria Math','Cambria','STIX Two Math','Times New Roman',serif;font-style:italic}
+.math .mup{font-style:normal}
+.math sub,.math sup{font-size:.9em;line-height:0}
+.math sub{vertical-align:sub} .math sup{vertical-align:super}
+
+/* ── cover ─────────────────────────────────── */
+.s-cover .body{flex-direction:row;align-items:center;gap:72px}
+.s-cover .left{flex:1.25;display:flex;flex-direction:column;justify-content:center}
+.s-cover .right{flex:1;height:100%}
+.s-cover .display{font-size:var(--fs-display);font-weight:800;line-height:1.12;letter-spacing:-.035em}
+.s-cover .subtitle{font-size:var(--fs-lead);color:var(--ink-2);margin-top:36px;line-height:1.45;font-weight:500}
+.s-cover .meta{margin-top:56px;display:flex;gap:18px;flex-wrap:wrap}
+.s-cover .meta span{font-size:var(--fs-small);font-weight:700;padding:10px 24px;border-radius:999px;background:var(--accent-soft);color:var(--accent-ink)}
+.s-cover .band{position:absolute;left:0;top:0;bottom:0;width:22px;background:var(--accent)}
+/* role:cover 이미지 — 오른쪽 절반을 슬라이드 가장자리까지 풀블리드(위·아래·오른쪽 여백 제거) */
+.s-cover .right.bleed{margin:calc(var(--pad-top) * -1) calc(var(--pad-x) * -1) calc(var(--pad-bottom) * -1) 0}
+.s-cover .right.bleed .visual.img-fill{border-radius:0;height:100%}
+
+/* ── goals ─────────────────────────────────── */
+.goals{list-style:none;margin:36px 0 32px;display:flex;flex-direction:column;justify-content:center;gap:12px;flex:1}
+.goals li{display:grid;grid-template-columns:120px 1fr;align-items:baseline;font-size:calc(var(--fs-lead) * 1.12);font-weight:700;line-height:1.4;padding:30px 0;border-bottom:2px solid var(--line)}
+.goals li:last-child{border-bottom:none}
+.goals li b{font-size:calc(var(--fs-lead) * 1.12);font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums}
+.bigq{display:flex;gap:28px;align-items:center;padding:32px 40px;background:var(--accent-soft);border-radius:20px}
+.bigq .q{font-size:var(--fs-small);font-weight:800;color:var(--accent-ink);white-space:nowrap}
+.bigq .t{font-size:var(--fs-lead);font-weight:700;line-height:1.4}
+
+/* ── hook ──────────────────────────────────── */
+.s-hook .body{flex-direction:row;gap:80px;align-items:stretch}
+.s-hook .left{flex:1;display:flex;flex-direction:column;justify-content:center}
+.s-hook .right{flex:1.1;display:flex;flex-direction:column;min-height:0}
+.s-hook .question{font-size:calc(var(--fs-title) * 1.12);font-weight:800;line-height:1.25;letter-spacing:-.03em}
+.s-hook .qmark{user-select:none;font-size:220px;font-weight:800;color:var(--accent-mid);line-height:.8;margin-bottom:12px}
+
+/* ── chapter ───────────────────────────────── */
+.s-chapter{background:var(--accent)}
+.s-chapter .chrome{color:rgba(255,255,255,.9)} .s-chapter .chip{border-color:rgba(255,255,255,.55);color:#fff} .s-chapter .chip i{background:#fff}
+.s-chapter .body{justify-content:center}
+.s-chapter .no{font-size:200px;font-weight:800;color:rgba(255,255,255,.35);line-height:1;letter-spacing:-.04em}
+.s-chapter .ctitle{font-size:var(--fs-display);font-weight:800;color:#fff;line-height:1.15;letter-spacing:-.035em;margin-top:12px}
+.s-chapter .csub{font-size:var(--fs-lead);color:#fff;margin-top:32px;font-weight:500;opacity:.95}
+.s-chapter .progress{background:#fff}
+
+/* ── concept ───────────────────────────────── */
+.s-concept .cols{display:flex;gap:72px;flex:1;min-height:0;margin-top:44px}
+.s-concept .cols .l{flex:1.05;display:flex;flex-direction:column;min-height:0}
+.s-concept .cols .r{flex:1;display:flex;flex-direction:column;min-height:0}
+.s-concept.novis .cols .l{flex:1}
+.points{list-style:none;display:flex;flex-direction:column}
+.points li{padding:26px 0;border-top:2px solid var(--line)}
+.points li:first-child{border-top:none;padding-top:0}
+.points .h{font-size:var(--fs-body);font-weight:800;line-height:1.35;display:flex;gap:20px;align-items:baseline}
+.points .h b{color:var(--accent);font-variant-numeric:tabular-nums;min-width:48px}
+.points .t{font-size:var(--fs-body);line-height:1.5;color:var(--ink-2);margin-top:8px;padding-left:68px}
+.novis .points{display:grid;grid-template-columns:repeat(var(--n,3),1fr);gap:56px}
+.novis .points li{border-top:6px solid var(--accent);padding-top:30px}
+.novis .points .t{padding-left:0} .novis .points .h b{display:block;font-size:var(--fs-small)}
+
+/* ── compare ───────────────────────────────── */
+.s-compare .vs{display:grid;grid-template-columns:1fr 1fr;gap:0;flex:1 0 auto;margin-top:40px}
+.s-compare .side{padding:0 56px;display:flex;flex-direction:column}
+.s-compare .side:first-child{padding-left:0;border-right:2px solid var(--line)}
+.s-compare .side:last-child{padding-right:0}
+.s-compare .label{font-size:var(--fs-lead);font-weight:800;padding-bottom:22px;margin-bottom:10px;border-bottom:6px solid var(--ink)}
+.s-compare .side:last-child .label{border-color:var(--accent);color:var(--accent-ink)}
+.s-compare ul{list-style:none}
+.s-compare li{font-size:var(--fs-lead);line-height:1.38;padding:16px 0;border-bottom:2px solid var(--line);color:var(--ink-2)}
+.s-compare .visual{height:220px;margin-bottom:12px}
+.note{margin-top:28px;font-size:var(--fs-body);font-weight:700;display:flex;gap:18px;align-items:baseline}
+.note::before{content:"→";color:var(--accent);font-weight:800}
+
+/* ── steps ─────────────────────────────────── */
+.s-steps .track{display:grid;grid-template-columns:repeat(var(--n,4),1fr);gap:48px;margin-top:80px;flex:1;min-height:0;align-content:center}
+.s-steps .st{position:relative;padding-top:64px;border-top:8px solid var(--line-2);display:flex;flex-direction:column}
+.s-steps .st.hot{border-top-color:var(--accent)}
+.s-steps .num{position:absolute;top:-52px;left:0;width:96px;height:96px;border-radius:50%;background:var(--paper);border:8px solid var(--line-2);display:grid;place-items:center;font-size:44px;font-weight:800;color:var(--ink-2)}
+.s-steps .st.hot .num{border-color:var(--accent);background:var(--accent);color:#fff}
+.s-steps .h{font-size:calc(var(--fs-lead) * 1.08);font-weight:800;line-height:1.3;margin-top:18px;letter-spacing:-.015em}
+.s-steps .t{font-size:var(--fs-body);line-height:1.5;color:var(--ink-2);margin-top:14px}
+.s-steps .visual{height:260px;margin:0 0 8px;justify-content:flex-start}
+
+/* ── diagram ───────────────────────────────── */
+.s-diagram .visual{flex:1;min-height:0;margin-top:28px}
+
+/* ── bignum ────────────────────────────────── */
+.s-bignum .body{justify-content:center}
+.s-bignum .num{font-size:260px;font-weight:800;letter-spacing:-.05em;line-height:1;color:var(--accent);font-variant-numeric:tabular-nums;display:flex;align-items:baseline;gap:18px}
+.s-bignum .num small{font-size:96px;letter-spacing:-.02em;color:var(--ink)}
+.s-bignum .lbl{font-size:var(--fs-title);font-weight:800;margin-top:28px;line-height:1.25;letter-spacing:-.02em}
+.s-bignum .cap{font-size:var(--fs-body);color:var(--ink-2);margin-top:26px;line-height:1.5;max-width:1400px}
+.s-bignum .src{font-size:var(--fs-small);color:var(--muted);margin-top:44px}
+
+/* ── quiz ──────────────────────────────────── */
+.s-quiz .q{font-size:calc(var(--fs-title) * .92);font-weight:800;line-height:1.3;margin-top:36px;letter-spacing:-.02em}
+.s-quiz .choices{list-style:none;display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:minmax(0,1fr);gap:24px 40px;margin:40px 0 28px;flex:1;min-height:0;max-height:400px}
+.s-quiz .choices li{font-size:calc(var(--fs-lead) * 1.05);font-weight:600;padding:18px 36px;border:3px solid var(--line-2);border-radius:20px;display:flex;gap:22px;align-items:center;line-height:1.35;transition:all .3s;background:#fff}
+.s-quiz .choices li b{color:var(--muted);font-weight:800}
+.s-quiz.revealed .choices li.ok{border-color:var(--accent);background:var(--accent-soft)}
+.s-quiz.revealed .choices li.ok b{color:var(--accent)}
+.s-quiz .ans{padding:30px 40px;border-left:10px solid var(--accent);background:var(--accent-soft);border-radius:0 18px 18px 0;opacity:0;transform:translateY(16px);transition:all .35s}
+.s-quiz.revealed .ans{opacity:1;transform:none}
+.s-quiz .ans .a{font-size:var(--fs-lead);font-weight:800;color:var(--accent-ink)}
+.s-quiz .ans .e{font-size:var(--fs-body);line-height:1.5;margin-top:10px;color:var(--ink-2)}
+.s-quiz .hint{font-size:var(--fs-small);color:var(--muted)}
+.s-quiz.revealed .hint{display:none}
+
+/* ── activity ──────────────────────────────── */
+.s-activity .top{display:flex;justify-content:space-between;align-items:flex-start;gap:48px}
+.s-activity .timer{flex:none;text-align:right;cursor:pointer;user-select:none}
+.s-activity .timer .tv{font-size:132px;font-weight:800;letter-spacing:-.04em;font-variant-numeric:tabular-nums;line-height:1;color:var(--accent)}
+.s-activity .timer .tl{font-size:var(--fs-small);color:var(--muted);font-weight:600;margin-top:8px}
+.s-activity .timer.done .tv{color:var(--warn)}
+.s-activity .tags{display:flex;gap:16px;margin-top:22px}
+.s-activity .tags span{font-size:var(--fs-small);font-weight:700;padding:8px 22px;border-radius:999px;background:var(--accent-soft);color:var(--accent-ink)}
+.s-activity .tags span.o{background:var(--paper-2);color:var(--ink-2)}
+.s-activity ol{list-style:none;counter-reset:s;margin:28px 0 24px;display:flex;flex-direction:column;justify-content:center;flex:1}
+.s-activity ol li{counter-increment:s;font-size:var(--fs-lead);font-weight:600;line-height:1.4;padding:18px 0 18px 100px;position:relative;border-bottom:2px solid var(--line)}
+.s-activity ol li::before{content:counter(s);position:absolute;left:0;top:14px;width:64px;height:64px;border-radius:16px;background:var(--ink);color:#fff;font-weight:800;font-size:30px;display:grid;place-items:center}
+.s-activity .out{padding:28px 36px;background:var(--accent-soft);border-radius:18px;display:flex;gap:24px;align-items:baseline;font-size:var(--fs-body);font-weight:700}
+.s-activity .out span{color:var(--accent-ink);font-size:var(--fs-small);font-weight:800;white-space:nowrap}
+
+/* ── vocab ─────────────────────────────────── */
+.s-vocab .terms{display:grid;grid-template-columns:repeat(2,1fr);grid-auto-rows:1fr;gap:0 80px;margin-top:44px;flex:1;min-height:0}
+.s-vocab .term{padding:34px 0;border-top:2px solid var(--line);display:flex;flex-direction:column;justify-content:center}
+.s-vocab .term .w{font-size:calc(var(--fs-title) * .82);font-weight:800;color:var(--accent-ink);display:flex;gap:16px;align-items:baseline;letter-spacing:-.02em}
+.s-vocab .term .w small{font-size:var(--fs-small);color:var(--muted);font-weight:600}
+.s-vocab .term .d{font-size:var(--fs-lead);line-height:1.45;margin-top:14px;color:var(--ink-2)}
+
+/* ── timeline ──────────────────────────────── */
+.s-timeline .line{display:grid;grid-template-columns:repeat(var(--n,4),1fr);margin-top:90px;position:relative}
+.s-timeline .line::before{content:"";position:absolute;left:0;right:0;top:19px;height:6px;background:var(--line-2);border-radius:3px}
+.s-timeline .ev{position:relative;padding-right:36px}
+.s-timeline .dot{width:44px;height:44px;border-radius:50%;background:var(--paper);border:8px solid var(--accent);position:relative}
+.s-timeline .when{font-size:var(--fs-lead);font-weight:800;margin-top:30px;color:var(--accent-ink);font-variant-numeric:tabular-nums}
+.s-timeline .what{font-size:var(--fs-body);line-height:1.5;margin-top:12px;color:var(--ink-2)}
+
+/* ── summary ───────────────────────────────── */
+.s-summary .sum{list-style:none;counter-reset:k;margin:40px 0 28px;display:flex;flex-direction:column;justify-content:center;flex:1}
+.s-summary .sum li{counter-increment:k;display:grid;grid-template-columns:140px 1fr;align-items:baseline;padding:40px 0;border-top:2px solid var(--line);font-size:calc(var(--fs-lead) * 1.18);font-weight:700;line-height:1.38;letter-spacing:-.015em}
+.s-summary .sum li::before{content:counter(k,decimal-leading-zero);font-size:calc(var(--fs-lead) * 1.18);font-weight:800;color:var(--accent)}
+.s-summary .next{padding-top:26px;border-top:2px solid var(--line-2);font-size:var(--fs-body);color:var(--ink-2);display:flex;gap:24px;align-items:baseline}
+.s-summary .next b{font-size:var(--fs-small);color:var(--accent-ink);white-space:nowrap}
+
+/* ── exit ──────────────────────────────────── */
+.s-exit{background:var(--ink)}
+.s-exit .chrome{color:rgba(255,255,255,.72)} .s-exit .chip{border-color:rgba(255,255,255,.35);color:#fff}
+.s-exit .body{justify-content:center}
+.s-exit .kicker{color:#fff} .s-exit .kicker::before{background:var(--accent-mid)}
+.s-exit .q{font-size:calc(var(--fs-title) * 1.15);font-weight:800;color:#fff;line-height:1.3;letter-spacing:-.03em;max-width:1560px}
+.s-exit .h{font-size:var(--fs-body);color:rgba(255,255,255,.86);margin-top:40px;line-height:1.5}
+.s-exit .progress{background:var(--accent-mid)}
+
+/* ── 단계 공개(data-step) · 노트 · 도움말 ───────────── */
+[data-step]{transition:opacity .3s ease,transform .3s ease}
+[data-step].hide{opacity:0;transform:translateY(14px)}
+#notes{position:fixed;left:0;right:0;bottom:0;max-height:34vh;overflow:auto;background:rgba(18,19,23,.94);color:#f4f4f5;
+  font:500 18px/1.6 var(--font);padding:18px 28px;display:none;z-index:10;white-space:pre-wrap}
+#notes.on{display:block}
+#help{position:fixed;right:16px;top:12px;color:#9aa0aa;font:500 13px var(--font);z-index:9;opacity:.0;transition:opacity .3s}
+body:hover #help{opacity:.85}
+
+/* 캡처 모드: 전환 애니메이션 없이 모든 단계 공개 */
+body.shot *,body.shot *::before,body.shot *::after{transition:none!important;animation:none!important}
+body.shot [data-step].hide{opacity:1;transform:none}
+
+/* 인쇄: 슬라이드 1장 = 1쪽 */
+@media print{
+  @page{size:1920px 1080px;margin:0}
+  html,body{background:#fff;overflow:visible;height:auto}
+  #viewport{position:static;display:block} #stage{transform:none!important;width:auto;height:auto}
+  .slide{position:relative;opacity:1;visibility:visible;width:1920px;height:1080px;page-break-after:always;break-after:page}
+  [data-step].hide{opacity:1;transform:none} .s-quiz .ans{opacity:1;transform:none}
+  #notes,#help{display:none!important}
+}
+
+/* bignum + 삽화 */
+.s-bignum.withvis .body{flex-direction:row;align-items:center;gap:72px}
+.s-bignum.withvis .l{flex:1.1;display:flex;flex-direction:column;justify-content:center}
+.s-bignum.withvis .visual{flex:1;height:100%}
+/* exit 장식 */
+.s-exit .deco{position:absolute;right:var(--pad-x);bottom:120px;width:420px}
+.s-exit .deco .d1{fill:none;stroke:var(--accent-mid);stroke-width:10;stroke-linecap:round}
+
+/* 낱말 2~3개: 한 줄에 하나씩 "낱말 | 뜻"으로 크게, 화면 높이를 나눠 채운다 */
+.s-vocab .terms[style*="--n:2"],.s-vocab .terms[style*="--n:3"]{grid-template-columns:1fr;grid-auto-rows:1fr;margin-top:40px}
+.s-vocab .terms[style*="--n:2"] .term,.s-vocab .terms[style*="--n:3"] .term{display:grid;grid-template-columns:minmax(360px,32%) 1fr;align-items:center;gap:48px;padding:0;border-top:2px solid var(--line)}
+.s-vocab .terms[style*="--n:2"] .term .w,.s-vocab .terms[style*="--n:3"] .term .w{font-size:var(--fs-title);flex-direction:column;gap:4px}
+.s-vocab .terms[style*="--n:2"] .term .d,.s-vocab .terms[style*="--n:3"] .term .d{margin-top:0;font-size:calc(var(--fs-lead) * 1.08)}
+
+.s-bignum .num small.sym{align-self:flex-start;margin-top:.12em;font-size:.55em;color:var(--accent)}
+
+/* ── passage: 지문 (읽기 수업) ─────────────────── */
+.s-passage .chunks{display:flex;flex-direction:column;justify-content:center;gap:22px;flex:1;min-height:0;margin-top:36px}
+.s-passage .chunk{display:grid;grid-template-columns:320px 1fr;gap:36px;align-items:start;padding:26px 36px 28px 0;background:var(--paper-2);border-radius:18px;border-left:10px solid var(--ink-2)}
+.s-passage .chunk.hot{background:var(--accent-soft);border-left-color:var(--accent)}
+.s-passage .cl{font-size:var(--fs-small);font-weight:800;color:var(--ink-2);padding:8px 0 0 30px;line-height:1.3;overflow-wrap:normal;word-break:keep-all}
+.s-passage .chunk.hot .cl{color:var(--accent-ink)}
+.s-passage .ct{font-size:var(--fs-body);font-weight:500;line-height:1.5;color:var(--ink);word-break:normal;overflow-wrap:break-word}
+
+/* ── body[data-profile="evidence"] — "증거 중심" 스타일(원작 교사의 스타일)
+   근거: 사용자 제공 원작 교사 자료 분석 — 제목 두께 한 단계 낮춤(Bold≈700, ExtraBold 없음), 본문 Medium(500),
+   챕터 전환은 흰 배경 유지(어두운 배경/강조 채움 없음). 글자 크기·명암비 하한은 그대로(:root 값 상속). ── */
+body[data-profile="evidence"] .title,
+body[data-profile="evidence"] .s-hook .question,
+body[data-profile="evidence"] .s-quiz .q{font-weight:700}
+body[data-profile="evidence"] .text,
+body[data-profile="evidence"] .lead,
+body[data-profile="evidence"] .points .t,
+body[data-profile="evidence"] .term .d,
+body[data-profile="evidence"] .what,
+body[data-profile="evidence"] .cap,
+body[data-profile="evidence"] .caption{font-weight:500}
+body[data-profile="evidence"] .s-chapter{background:var(--paper)}
+body[data-profile="evidence"] .s-chapter .chrome{color:var(--muted)}
+body[data-profile="evidence"] .s-chapter .chip{border-color:var(--line-2);color:var(--ink-2)}
+body[data-profile="evidence"] .s-chapter .chip i{background:var(--accent)}
+body[data-profile="evidence"] .s-chapter .no{color:var(--line-2)}
+body[data-profile="evidence"] .s-chapter .ctitle{color:var(--ink);font-weight:700}
+body[data-profile="evidence"] .s-chapter .csub{color:var(--ink-2);opacity:1}
+body[data-profile="evidence"] .s-chapter .progress{background:var(--accent)}
+/* compare: 판정 전에 색으로 정답을 미리 알려주지 않는다 — 두 쪽을 같은 중립 잉크색으로 놓는다(pedagogy.md 10번 "대칭 비교"). */
+body[data-profile="evidence"] .s-compare .side:last-child .label{border-color:var(--ink);color:var(--ink)}
+/* exit: 원작 자료 전체(122장)에 어두운 배경이 한 번도 없다 — 종이 톤을 유지한다. */
+body[data-profile="evidence"] .s-exit{background:var(--paper)}
+body[data-profile="evidence"] .s-exit .chrome{color:var(--muted)}
+body[data-profile="evidence"] .s-exit .chip{border-color:var(--line-2);color:var(--ink-2)}
+body[data-profile="evidence"] .s-exit .kicker{color:var(--accent-ink)}
+body[data-profile="evidence"] .s-exit .kicker::before{background:var(--accent)}
+body[data-profile="evidence"] .s-exit .q{color:var(--ink)}
+body[data-profile="evidence"] .s-exit .h{color:var(--ink-2)}
+body[data-profile="evidence"] .s-exit .progress{background:var(--accent)}
+body[data-profile="evidence"] .s-exit .deco .d1{stroke:var(--accent-mid)}
+
+/* 지도·지형용 연한 채움 (글자를 올려도 ink 대비 4.5:1 이상) */
+.v-land{fill:#C2E0B0;stroke:#3F7A2E;stroke-width:2.5;stroke-linejoin:round} .v-sea{fill:#CCE0F5} .v-sky{fill:#EAF1FB} .v-land-s{stroke:#3F7A2E;fill:none} .v-sea-s{stroke:#2F6DB5;fill:none}

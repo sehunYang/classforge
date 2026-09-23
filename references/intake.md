@@ -1,0 +1,91 @@
+# 수업 설계서 처리 — 교사 입력을 반영하는 법
+
+교사가 `templates/수업설계서.md`를 채워 주면(전부든 일부든), 그 파일 하나로 lesson.json을 설계한다. 이 문서는 그 절차와, 채운 항목을 어떻게 "반드시" 반영하는지, 빈 항목을 무엇을 근거로 정하는지, 마지막에 교사에게 무엇을 보고하는지를 정한다.
+
+## 0. 파일
+
+- `templates/수업설계서.md` — 교사에게 건네는 빈 양식.
+- `scripts/intake.mjs <설계서.md> [--json out.json]` — 채운 항목을 `intake.json`으로 파싱.
+- `scripts/intake.mjs --check <설계서.md> <lesson.json> [--json report.json]` — 채운 항목이 lesson.json(과 빌드된 out/)에 실제로 반영됐는지 되짚어 확인(반영 안 된 항목은 exit 1).
+- `examples/intake/설계서-예시-일부.md`, `설계서-예시-전체.md` — 참고 예시.
+
+## 1. 절차 (SKILL.md 1~4단계 사이에 끼운다)
+
+1. 교사가 설계서를 줬으면(전부/일부 무관):
+   ```bash
+   node "$SKILL_DIR/scripts/intake.mjs" <설계서.md> --json <작업폴더>/intake.json
+   ```
+   콘솔에 뜨는 "채운 항목 N개 / AI가 정할 항목 M개"와 경고를 읽는다. 경고(`W-`)는 통과를 막지 않지만 교사에게 확인할 거리다(시간 배분 모순, 게이트 기준을 벗어난 요청 등) — 4단계 보고에 포함시킨다.
+2. `intake.json`의 `filled`에 있는 항목은 **그대로 반영한다**(2절 규칙). `empty`에 있는 항목은 `pedagogy.md`·`slides.md`·`design.md`의 규칙으로 AI가 정한다.
+3. 설계서가 없으면(주제만 구두로 받은 기존 방식) 이 문서는 건너뛰고 SKILL.md 1단계대로 질문한다.
+4. lesson.json을 쓰고 평소처럼 build → gate를 돌린다. **S7 게이트**(아래 4절)로 반영 여부까지 확인한다.
+
+## 2. intake.json → lesson.json 매핑과 반영 규칙
+
+| intake.json | lesson.json | 규칙 |
+|---|---|---|
+| `meta.level`(schoolLevel) | `meta.level` | 그대로 |
+| `meta.grade` | `meta.grade` | 그대로(학년/반 전체를 적었으면 반은 지도안에만, `grade`엔 "학교급 학년"만 남겨도 됨) |
+| `meta.subject`,`unit` | 동일 | 그대로 |
+| `meta.lesson`("6 / 10") | `meta.lesson`("6/10차시") | 형식만 맞춤 |
+| `meta.minutes` | `meta.minutes` | 그대로. `flow.timeAllocation`의 도입/전개/정리 분 합계와 다르면 합계를 우선하고 왜 바꿨는지 5절 보고에서 알린다 |
+| `standards` | `meta.standards[0].text` | **원문 그대로**(verbatim). 절대 손보지 않는다. 코드가 없으면 `code:""`, `verified:false`. **비어 있으면(`empty`에 포함) 절대 지어내지 않는다** — `text: "(교사 입력 필요)"`, `code:""`, `verified:false`로 두고, 보고에서 반드시 다시 요청한다 |
+| `objectives` | `objectives` | 교사 문장을 최대한 살려 옮긴다(동사가 관찰 불가능하면 — "이해하다" 등 — 관찰 가능한 동사로 다듬되 내용은 바꾸지 않고, 무엇을 왜 바꿨는지 보고). `--check`는 `lesson.objectives` 배열 자체와 비교한다(지도안이 아니라 이 필드가 기준) |
+| `keyTerms` | `vocab` 슬라이드 또는 `concept` 포인트, 활동지 개념 정리 | 전부 최소 한 곳 이상에 등장해야 한다. **학생이 보는 화면(슬라이드 필드, `notes` 제외)이나 활동지여야 인정된다 — 지도안(`plan`)이나 발표자 노트(`notes`)에만 있으면 인정되지 않는다**(intake --check가 이 범위로 검사) |
+| `excludeScope` | (직접 대응 필드 없음) | 슬라이드·활동지·지도안에서 해당 내용을 넣지 않는다 |
+| `priorKnowledge` | `plan`의 도입 설계, `hook`의 전제 | 이미 아는 것은 반복하지 않고, 오개념은 `misconceptions`와 함께 hook에 반영 |
+| `misconceptions` | `quiz`의 오답 선택지, `compare`, `notes`, `summary` | 각 오개념이 최소 하나의 자리에서 다뤄져야 한다(--check가 검사) |
+| `flow.model` | `plan.model` | 그대로 |
+| `flow.hookIdea` | `hook` 슬라이드의 `question`/`lead`/`caption` | 아이디어를 슬라이드 유형에 맞게 각색(문장을 그대로 베끼지 않아도 됨) |
+| `flow.activityMode` | `activity` 슬라이드 `mode`, `plan.flow` 활동 행 | "individual"→"개인", "pair"→"짝", "group"→"O인 모둠"처럼 인원까지 적어도 됨 |
+| `flow.materials` | `plan.materials` | 목록에 있는 것 전부 포함(추가는 가능) |
+| `flow.timeAllocation` | `plan.flow`의 단계별(도입/전개/정리) `minutes` 합 | 요청한 배분과 맞춘다. 못 맞추면 이유를 보고 |
+| `mustInclude` | 슬라이드/활동지 어딘가 | 항목마다 실제로 **학생이 보는 화면**에 드러나야 한다(문구를 그대로 베끼라는 뜻이 아니라 **내용이 있어야** 한다는 뜻). **지도안 note나 발표자 노트에만 문장을 옮겨 적고 실제 슬라이드·활동지엔 없는 것은 반영이 아니다** — E2E 테스트에서 실제로 이 실수(지도안 note에만 문장을 붙여넣고 통과시킴)가 나와 --check의 검색 범위를 슬라이드 화면·활동지로 좁혔다 |
+| `mustExclude` | (없어야 함) | 지도안·발표자 노트를 포함해 자료 전체 어디에도 해당 낱말/개념이 등장하면 안 된다(mustInclude보다 넓게 본다 — "아예 없어야" 한다는 요청이므로) |
+| `assessment.quizStyle` | `quiz` 슬라이드 `notes`에 응답 방식 서술 | 그대로 반영 |
+| `assessment.quizCount` | `quiz` 타입 슬라이드 개수 | 요청 개수 이상 |
+| `assessment.worksheetQCount` | 활동지 문항 수(범위) | 범위 안에 들게(`5~14` 게이트 한도도 항상 지킨다) |
+| `assessment.worksheetTypes` | 활동지 문항 `type` 종류 | 요청한 유형이 최소 하나씩 등장 |
+| `assessment.difficulty` | 문항 난이도(수치 크기·단계 수·선택지 유사도로 조절) | 직접 대응 필드 없음 — 설계로 반영 |
+| `assessment.hasEssay` | `short` 타입 문항 존재 여부 | "아니오"면 `short` 타입을 넣지 않는다 |
+| `style.slidesCount` | `slides.length` | 범위 안(게이트 8~20장 안에서) |
+| `style.profile`("evidence") | `meta.profile: "evidence"` | 증거 중심 탐구 스타일(공식·주장 옆에 근거를 붙이고 절제된 디자인, `pedagogy.md` §10). "기본"이면 `meta.profile`을 비우거나 `"default"`로. **`--check`는 `meta.profile`이 요청한 값과 같은지만 본다** — evidence의 세부 저작 규칙(공식-근거 인접, 대칭 배치 등)은 게이트 **E1**이 따로 검사한다 |
+| `style.titleStyle` | 슬라이드 `title`/`question` 문체 | "메시지형"이면 핵심을 서술문으로, "질문형"이면 의문문으로, **"명사형"이면 개념 이름 자체를 제목으로**(예: "간섭무늬"). evidence 프로파일은 메시지형·명사형과 어울리고 질문형과는 어긋나기 쉽다(`intake.mjs`가 이 조합에 경고). `slides.md` 리듬 규칙은 항상 지킨다 |
+| `style.tone` | `meta.tone`, 활동지 안내문·슬라이드 lead 어미 | 해요체/합쇼체 하나로 통일하고 **`meta.tone`에 값을 써서 명시한다**(템플릿 기본 문구도 이 값을 따른다). `--check`는 `meta.tone`이 있으면 그것과 직접 비교하고, 없으면 활동지 `tip`·`subtitle`·섹션 `lead`, 슬라이드 `lead`와 빌드된 활동지·정답지(지도안 제외 — 지도안의 예상 질문·답은 교사용 관례상 합쇼체를 쓰기도 함)의 문장 어미로 추정한다 |
+| `style.imageCount`,`imageUse` | `visual: {image:{...}}` 요청 개수와 역할 | `images.md` 절차로 처리 |
+| `style.accentColor` | `meta.accent` | 그대로(대비 4.5:1 확인은 게이트가 함) |
+| `reference.textbookPages` | 지도안 참고에 메모(직접 스키마 필드는 없음) | 자유 메모 또는 `plan.materials`/`note`에 남김 |
+| `reference.material`(기존 자료·참고 슬라이드) | (직접 스키마 필드 없음) | SKILL.md 2단계("참고 자료가 있으면 거꾸로 풀기")의 입력. 순서·구성만 참고하고 **문장·이미지를 그대로 옮기지 않는다**. 자동 검증 대상이 아니므로 사람이 확인해야 할 항목으로 보고한다 |
+| `reference.facts` | `facts[]` | 텍스트+출처를 그대로 옮기고 `id` 부여. 교사가 준 것은 검증 없이 신뢰 |
+| `deliverables` | 만들 산출물 선택 | 선택 안 된 것은 만들지 않아도 됨(비어 있으면 4개 다 만듦) |
+| `etcRequest` | 자유 처리 | 다른 필드에 안 들어가면 지도안 `note`나 5절 보고에 반영 |
+
+`empty` 목록의 항목은 `pedagogy.md`(목표·발문·형성평가·활동지·지도안 규칙)와 `slides.md`(유형·흐름)로 AI가 정한다. 어떤 값을 어떻게 정했는지 5절 보고에 남긴다.
+
+## 3. 충돌 해결
+
+**교사가 명시적으로 고른 값이 기본값보다 우선한다.** 단, 그 값이 다음을 깨면 예외로 두고 교사에게 알린다(값을 조용히 무시하지 않는다):
+- 게이트 한도(슬라이드 8~20장, 활동지 5~14문항, 글자 수 한도 등) — `references/gates.md`
+- 가독성·안전(예: 학교급 대비 너무 어려운 개념어, 화면 글자 수 초과)
+- 사실 관계(교사가 준 수치가 출처 없이 틀린 게 명백한 경우 — 다만 교사가 준 실험값·설계값은 그대로 신뢰)
+
+충돌 시 처리 순서: ① 게이트를 지키는 선에서 교사 의도를 최대한 살릴 방법을 먼저 찾는다(예: 활동지 문항 수를 요청보다 살짝 줄여 범위 안에 맞춤). ② 정말 안 되면 게이트 쪽을 지키고 5절 보고에 "요청하신 OO는 △△ 때문에 이렇게 조정했습니다"라고 적는다. 절대 게이트나 스키마 한도를 늘려서 요청을 맞추지 않는다.
+
+`intake.mjs`가 출력하는 경고는 설계 전에 미리 보고 조정하거나, 조정하지 않았다면 이유를 보고에 남긴다. 흔한 경고: 시간 배분 합이 수업 시간과 다름(`W-TIME`), 슬라이드·활동지 문항 수가 게이트 기준을 벗어남(`W-GATE`), `evidence` 프로파일인데 제목 문체가 질문형(`W-PROFILE-TITLE`), 슬라이드 수에 비해 형성평가가 과함(`W-QUIZ-DENSE`), 넣지 말 것과 반드시 넣을 것/핵심 낱말이 겹침(`W-CONFLICT`).
+
+## 4. S7 게이트 — 반영 확인
+
+`gate.mjs`는 `meta.intake`(설계서 경로)가 있으면 `intake.mjs`의 `parseIntake`/`checkReflection`을 직접 불러와 **S7 "설계서 반영"** 게이트로 돌린다(`gate.mjs` S7 절 참고). 게이트 전체는 S1~S7·I1(이미지)·B1~B8 총 16종이고, evidence 프로파일의 세부 저작 규칙(공식-근거 인접, 대칭 배치 등, `pedagogy.md` §10)을 확인하는 **E1**이 더해지면 17종이 된다(`references/gates.md`). S7 자체는 evidence의 세부 규칙을 검사하지 않는다 — `meta.profile`이 요청과 같은지만 본다.
+
+같은 검사를 독립적으로 돌리거나 사람이 직접 읽고 싶으면:
+```bash
+node "$SKILL_DIR/scripts/intake.mjs" --check <설계서.md> <폴더>/lesson.json
+```
+출력 맨 위에 "자동 확인 N개(통과 …·실패 …) / 사람 확인 M개(n/a)"로 요약이 뜨고, 끝에 사람이 확인해야 할 항목(n/a) 키 목록이 한 줄로 다시 나온다. `FAIL`(`missing`/`violated`)이 있으면 힌트대로 lesson.json을 고치고 4~5단계부터 다시. `n/a`는 자동 검증이 어려운 항목이니 캡처 육안 검수 때 같이 확인한다.
+
+## 5. 교사에게 보고 (SKILL.md 8단계)
+
+산출물 전달 시 다음을 덧붙인다:
+- "채운 항목 N개를 반영했고, M개는 다음 기준으로 AI가 정했습니다: …" — 빈 항목 중 결과에 크게 영향을 준 것(목표·오개념·평가 방식) 위주로 3~5개만 짚는다. 성취기준이 비어 있었다면(`"(교사 입력 필요)"`로 둔 경우) 반드시 따로 다시 요청한다.
+- `intake.mjs`의 경고와 3절에서 조정한 항목(요청과 다르게 처리한 것과 이유).
+- `--check` 결과를 그대로 옮긴다: "자동 확인 N개 통과, 사람 확인 M개 남음"과 그 사람 확인(n/a) 목록(학급 배려 사항, 난이도 체감, 참고 자료 반영, 기타 요청 등). 이 목록에는 애초에 교사가 안 채운 항목과, 채웠지만 자동 검증이 어려운 항목이 섞여 있으므로 후자만 따로 짚어 준다.
