@@ -1,0 +1,158 @@
+{
+  "filled": {
+    "schoolLevel": "middle",
+    "grade": "중학교 2학년",
+    "subject": "과학",
+    "unit": "식물과 에너지",
+    "lesson": "1 / 12",
+    "minutes": 45,
+    "objectives": [
+      "식물이 자라는 데 필요한 물질이 어디에서 오는지 증거를 들어 설명할 수 있다.",
+      "광합성에 필요한 물질과 만들어지는 물질을 말할 수 있다."
+    ],
+    "keyTerms": [
+      "광합성",
+      "이산화 탄소",
+      "녹말"
+    ],
+    "misconceptions": [
+      "식물은 흙 속의 양분을 먹고 몸을 키운다고 생각한다"
+    ],
+    "activityMode": "pair",
+    "materials": [
+      "검정말",
+      "탄산수소 나트륨 수용액",
+      "아이오딘-아이오딘화 칼륨 용액"
+    ],
+    "mustInclude": [
+      "식물의 몸을 이루는 물질이 흙에서 오는지 확인하는 과정"
+    ],
+    "quizCount": 2,
+    "hasEssay": "yes",
+    "profile": "evidence",
+    "titleStyle": "noun",
+    "tone": "합쇼체",
+    "facts": [
+      {
+        "text": "식물은 빛에너지를 이용하여 이산화 탄소와 물로 포도당을 만든다",
+        "source": "중학교 과학 2 교과서"
+      }
+    ],
+    "deliverables": [
+      "slides",
+      "worksheet",
+      "answerKey",
+      "lessonPlan"
+    ]
+  },
+  "empty": [
+    "classSize",
+    "classLevel",
+    "classNeeds",
+    "standards",
+    "excludeScope",
+    "priorKnowledge",
+    "model",
+    "hookIdea",
+    "timeAllocation",
+    "mustExclude",
+    "quizStyle",
+    "worksheetQCount",
+    "worksheetTypes",
+    "difficulty",
+    "slidesCount",
+    "imageCount",
+    "imageUse",
+    "accentColor",
+    "textbookPages",
+    "referenceMaterial",
+    "etcRequest"
+  ],
+  "mustInclude": [
+    "식물의 몸을 이루는 물질이 흙에서 오는지 확인하는 과정"
+  ],
+  "mustExclude": [],
+  "facts": [
+    {
+      "text": "식물은 빛에너지를 이용하여 이산화 탄소와 물로 포도당을 만든다",
+      "source": "중학교 과학 2 교과서"
+    }
+  ],
+  "counts": {
+    "slides": null,
+    "quiz": 2,
+    "worksheetQuestions": null,
+    "images": null
+  },
+  "profile": "evidence",
+  "tone": "합쇼체",
+  "meta": {
+    "level": "middle",
+    "grade": "중학교 2학년",
+    "subject": "과학",
+    "unit": "식물과 에너지",
+    "lesson": "1 / 12",
+    "minutes": 45
+  },
+  "objectives": [
+    "식물이 자라는 데 필요한 물질이 어디에서 오는지 증거를 들어 설명할 수 있다.",
+    "광합성에 필요한 물질과 만들어지는 물질을 말할 수 있다."
+  ],
+  "standards": null,
+  "keyTerms": [
+    "광합성",
+    "이산화 탄소",
+    "녹말"
+  ],
+  "excludeScope": [],
+  "priorKnowledge": null,
+  "misconceptions": [
+    "식물은 흙 속의 양분을 먹고 몸을 키운다고 생각한다"
+  ],
+  "flow": {
+    "model": null,
+    "hookIdea": null,
+    "activityMode": "pair",
+    "materials": [
+      "검정말",
+      "탄산수소 나트륨 수용액",
+      "아이오딘-아이오딘화 칼륨 용액"
+    ],
+    "timeAllocation": null
+  },
+  "assessment": {
+    "quizStyle": null,
+    "quizCount": 2,
+    "worksheetQCount": null,
+    "worksheetTypes": [],
+    "difficulty": null,
+    "hasEssay": "yes"
+  },
+  "style": {
+    "slidesCount": null,
+    "profile": "evidence",
+    "titleStyle": "noun",
+    "tone": "합쇼체",
+    "imageCount": null,
+    "imageUse": null,
+    "accentColor": null
+  },
+  "reference": {
+    "textbookPages": null,
+    "facts": [
+      {
+        "text": "식물은 빛에너지를 이용하여 이산화 탄소와 물로 포도당을 만든다",
+        "source": "중학교 과학 2 교과서"
+      }
+    ],
+    "material": null
+  },
+  "deliverables": [
+    "slides",
+    "worksheet",
+    "answerKey",
+    "lessonPlan"
+  ],
+  "etcRequest": null,
+  "warnings": []
+}

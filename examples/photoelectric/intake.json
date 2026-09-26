@@ -1,0 +1,160 @@
+{
+  "filled": {
+    "schoolLevel": "high",
+    "grade": "고등학교 1학년",
+    "subject": "과학",
+    "unit": "빛과 물질",
+    "lesson": "7 / 12",
+    "minutes": 50,
+    "classLevel": "공식은 외우지만 왜 그 공식이 필요했는지는 설명하지 못함",
+    "objectives": [
+      "광전 효과 실험 결과를 근거로 빛이 입자(광자)의 성질을 가진다고 설명할 수 있다.",
+      "빛의 세기와 진동수가 광전자 방출에 미치는 영향을 구분할 수 있다."
+    ],
+    "keyTerms": [
+      "광전 효과",
+      "광자",
+      "문턱 진동수",
+      "광전자"
+    ],
+    "priorKnowledge": "지난 차시에 이중슬릿 간섭으로 빛의 파동성을 배웠음.",
+    "misconceptions": [
+      "빛을 충분히 세게 비추면 어떤 색의 빛이든 전자가 튀어나온다고 생각한다",
+      "빛이 밝을수록 튀어나오는 전자의 에너지가 커진다고 생각한다"
+    ],
+    "activityMode": "individual",
+    "mustInclude": [
+      "파동설과 입자설이 광전 효과 실험 결과를 각각 어떻게 예측하는지 나란히 비교하기",
+      "아인슈타인이 광양자설을 내놓게 된 역사적 배경"
+    ],
+    "mustExclude": [
+      "일함수를 이용한 계산 문제"
+    ],
+    "quizCount": 2,
+    "hasEssay": "yes",
+    "profile": "evidence",
+    "titleStyle": "noun",
+    "tone": "합쇼체",
+    "facts": [
+      {
+        "text": "아인슈타인은 1905년 광양자설로 광전 효과를 설명하였다",
+        "source": "고등학교 물리학 교과서"
+      }
+    ],
+    "deliverables": [
+      "slides",
+      "worksheet",
+      "answerKey",
+      "lessonPlan"
+    ]
+  },
+  "empty": [
+    "classSize",
+    "classNeeds",
+    "standards",
+    "excludeScope",
+    "model",
+    "hookIdea",
+    "materials",
+    "timeAllocation",
+    "quizStyle",
+    "worksheetQCount",
+    "worksheetTypes",
+    "difficulty",
+    "slidesCount",
+    "imageCount",
+    "imageUse",
+    "accentColor",
+    "textbookPages",
+    "referenceMaterial",
+    "etcRequest"
+  ],
+  "mustInclude": [
+    "파동설과 입자설이 광전 효과 실험 결과를 각각 어떻게 예측하는지 나란히 비교하기",
+    "아인슈타인이 광양자설을 내놓게 된 역사적 배경"
+  ],
+  "mustExclude": [
+    "일함수를 이용한 계산 문제"
+  ],
+  "facts": [
+    {
+      "text": "아인슈타인은 1905년 광양자설로 광전 효과를 설명하였다",
+      "source": "고등학교 물리학 교과서"
+    }
+  ],
+  "counts": {
+    "slides": null,
+    "quiz": 2,
+    "worksheetQuestions": null,
+    "images": null
+  },
+  "profile": "evidence",
+  "tone": "합쇼체",
+  "meta": {
+    "level": "high",
+    "grade": "고등학교 1학년",
+    "subject": "과학",
+    "unit": "빛과 물질",
+    "lesson": "7 / 12",
+    "minutes": 50
+  },
+  "objectives": [
+    "광전 효과 실험 결과를 근거로 빛이 입자(광자)의 성질을 가진다고 설명할 수 있다.",
+    "빛의 세기와 진동수가 광전자 방출에 미치는 영향을 구분할 수 있다."
+  ],
+  "standards": null,
+  "keyTerms": [
+    "광전 효과",
+    "광자",
+    "문턱 진동수",
+    "광전자"
+  ],
+  "excludeScope": [],
+  "priorKnowledge": "지난 차시에 이중슬릿 간섭으로 빛의 파동성을 배웠음.",
+  "misconceptions": [
+    "빛을 충분히 세게 비추면 어떤 색의 빛이든 전자가 튀어나온다고 생각한다",
+    "빛이 밝을수록 튀어나오는 전자의 에너지가 커진다고 생각한다"
+  ],
+  "flow": {
+    "model": null,
+    "hookIdea": null,
+    "activityMode": "individual",
+    "materials": [],
+    "timeAllocation": null
+  },
+  "assessment": {
+    "quizStyle": null,
+    "quizCount": 2,
+    "worksheetQCount": null,
+    "worksheetTypes": [],
+    "difficulty": null,
+    "hasEssay": "yes"
+  },
+  "style": {
+    "slidesCount": null,
+    "profile": "evidence",
+    "titleStyle": "noun",
+    "tone": "합쇼체",
+    "imageCount": null,
+    "imageUse": null,
+    "accentColor": null
+  },
+  "reference": {
+    "textbookPages": null,
+    "facts": [
+      {
+        "text": "아인슈타인은 1905년 광양자설로 광전 효과를 설명하였다",
+        "source": "고등학교 물리학 교과서"
+      }
+    ],
+    "material": null
+  },
+  "deliverables": [
+    "slides",
+    "worksheet",
+    "answerKey",
+    "lessonPlan"
+  ],
+  "etcRequest": null,
+  "warnings": []
+}

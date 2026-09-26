@@ -21,6 +21,22 @@
 | `passage` | 읽기 지문 제시 | 지문을 기능별 덩어리(주장·근거…)로 나눠 `label`을 달고 핵심 덩어리에 `hot` | 지문을 SVG 글자로 그리기(조판이 깨짐) |
 | `exit` | 나가기 질문(exit ticket) | 오늘 배운 낱말을 써서 설명하게 하는 질문 | 예/아니오 질문 |
 
+## 슬라이드 유형별 시각 형태 (세 갈래 규칙, `references/images.md`·`design.md`)
+손그림 `<svg>`는 레거시다(게이트 V1-RAWSVG). 유형별로 어떤 형태를 쓰는지:
+
+| 유형 | 시각 형태 |
+|---|---|
+| `cover` | `{image:{role:"cover"}}` — 주제를 상징하는 분위기 삽화 |
+| `hook` | `{image:{role:"hook"}}` — 대비되는 두 장면도 이미지 두 장(또는 한 장에 대비 구도)으로 |
+| `concept` | 값·위치 관계가 정답이면 도해 엔진, 아니면 `{image:{role:"concept"}}`. 없어도 됨(design.md) |
+| `compare` | `kind:"rival"`(evidence 프로파일)은 이미지 금지(V1-COMPAREIMG) — `{particles}` 등 도해 엔진이나 `{plot}`/`{bars}`. `kind:"contrast"`는 `{image:{role:"scene"}}`도 가능 |
+| `steps` | 각 단계 `{image:{role:"step"}}`(실제 도구·손 동작) — 전 단계가 비어 있으면 V1-IMAGEMISSING |
+| `diagram` | 값·라벨·위치 관계가 정답이면 도해 엔진 또는 `{plot}`, 실제 장치·현상 사진이면 `{image:{role:"scene"}}` |
+| `bignum` | 수치를 뒷받침하는 `{image:{role:"scene"}}`(선택) |
+| `activity` | 실제 장치·재료 사진 `{image:{role:"scene"}}`(선택) — 단계 목록 옆 칸에 들어간다. 제목·태그·타이머 줄은 폭이 그대로라 넘치지 않지만, 목록 칸이 좁아지므로 단계 문구는 짧게 쓴다 |
+| `exit`·`summary` | 필수는 아니지만 여운을 주는 `{image:{role:"scene"}}` 가능(있으면 exit의 기본 장식 곡선은 빠진다) |
+| 그 외(`goals`·`chapter`·`quiz`·`vocab`·`timeline`·`passage`) | 시각 자료를 지원하지 않는다 — `visual`을 써도 화면에 나오지 않고 게이트 **S1-VISUAL-IGNORED**로 FAIL한다 |
+
 ## 권장 흐름 (40~50분, 12~16장)
 
 **개념 탐구형 (과학·사회·수학 개념)**
@@ -48,12 +64,12 @@ cover → goals → hook(사료/장면) → timeline → concept(원인) → big
 ```
 
 **증거 중심 탐구형 (evidence, `meta.profile:"evidence"` — 원작 교사의 스타일, 과학·이과 개념 수업)**
-소단원 하나(현상 → 정의 → 증거 → 활용 → 확인)를 한 바퀴 도는 원작 교사 자료의 반복 패턴을, 45~50분 단일 차시(12~16장)로 압축한 흐름. 소단원이 둘이면 `chapter`로 나눠 이 루프를 두 번 돈다.
+소단원 하나(현상/역사 → 대립 예측 → 판정 실험 → 공식(정의 하나) → **검증(예측 vs 측정)** → 활용/확인)를 한 바퀴 도는 원작 교사 자료의 반복 패턴을, 45~50분 단일 차시(12~16장)로 압축한 흐름. 소단원이 둘이면 `chapter`로 나눠 이 루프를 두 번 돈다.
 ```
 cover → goals → hook(현상/역사 도입) → concept(정의, 명사구 제목 허용) → diagram(핵심 실험·증거 — 공식이 있었다면 그 근거)
-      → compare(대립 관점 대칭 비교) → quiz(비교 판정) → chapter → concept(응용 개념, +수식) → steps(적용 절차) → quiz → summary → exit
+      → compare(대립 관점 대칭 비교) → quiz(비교 판정) → chapter → concept(응용 개념, +수식) → diagram(공식 검증: 예측 vs 측정) → steps(적용 절차) → quiz → summary → exit
 ```
-- 공식이 있는 `concept` 바로 옆(앞뒤 중 하나)에 그 근거를 보여 주는 `diagram`/`steps`를 반드시 붙인다([[pedagogy.md]] 10번).
+- 공식이 있는 `concept` 바로 옆(앞뒤 중 하나)에 그 근거를 보여 주는 `diagram`/`steps`를 반드시 붙인다([[pedagogy.md]] 10번). **그 근거는 공식의 그래프 하나가 아니라 "예측 vs 측정" 비교여야 한다** — `visual.plot`에 예측선(`lines`)과 실측 `data`를 함께 그리고, 캡션·노트에 일치·차이와 그 까닭을 적는다(게이트 **E1-VERIFY**, [[pedagogy.md]] 10번). 그림의 축 이름·라벨 기호는 수식의 문자와 같아야 한다(게이트 **E1-SYMBOL**). `data`(실측값)가 있으면 `plot`은 자동으로 `scale:"free"`가 되어 두 축을 독립적으로 늘린다 — y 범위는 실측값에 맞추고(여유 10~20%) 억지로 늘리지 않는다(`design.md`의 `plot.scale` 참고).
 - **`compare` 바로 다음 장은 반드시 그 대립을 판정하는 증거 슬라이드**여야 한다 — 위 흐름의 `compare(대립 관점 대칭 비교) → quiz(비교 판정)`처럼, `compare`는 항상 그 자리에서 답을 주지 않고(좌우를 대칭·중립으로 두고 — `evidence` 프로파일에서는 색으로도 미리 알려주지 않는다) 바로 다음 슬라이드(`diagram`/`steps`/`quiz`의 `explain`)가 실험 결과로 판정한다. `compare` 뒤에 무관한 슬라이드(예: `chapter`, 새 `vocab`)를 끼우지 않는다.
 - **개념 슬라이드 한 장에 정의 하나** — `concept`의 `points`는 정확히 1개만 쓴다(2개 이상이면 **E1-ONEDEF**로 실패). 짝을 이루는 두 개념(보강간섭/상쇄간섭, 전반사/굴절 같은 쌍)을 한 `concept`의 `points` 두 항목으로 몰아넣지 말고, `concept`를 두 장으로 나눈다(각 장에 명사구 제목 하나 + 그 정의만). 설명이 더 필요하면 `lead`나 발표자 노트로 옮긴다.
 - 오개념·역사 도입을 다루는 `hook`/`concept`는 노트 6문장까지 허용(아래 "발표자 노트" 예외).

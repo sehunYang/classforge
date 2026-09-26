@@ -18,5 +18,15 @@
 - `skills/image-prompt/SKILL.md`, `skills/image-prompt/references/photo-vocab.md` — 프롬프트 작성 시 읽는 참고 문서(Format A 마스터 템플릿·철칙·카메라/조명/색 어휘). `references/images.md`가 이 문서들을 어떻게 쓰는지 안내한다.
 - 이미지 생성 자체는 사용자의 ChatGPT 구독 쿼터로 Codex CLI(`codex exec`, 내장 image_generation 도구)를 호출한다. API 키 방식은 쓰지 않는다.
 
+## 정밀 도식·인라인 수식 (`scripts/diagrams.mjs`)
+`scripts/diagrams.mjs`는 기하·광학·회로·입자 모형처럼 정확한 각도·좌표·기호가 필요한 도식과, 본문 속 `$...$` 수식을 실제 LaTeX으로 조판한다. 엔진은 두 갈래다(`references/design.md` "정밀 도식은 TikZ로"):
+- **시스템 LaTeX**(교사 PC에 설치돼 있으면 우선 사용) — **MiKTeX**(Christian Schenk 외, [miktex.org](https://miktex.org)) 또는 **TeX Live**(TeX User Group, [tug.org/texlive](https://tug.org/texlive)) 배포판의 `latex`·`dvisvgm`을 그대로 호출한다. 이 스킬은 이 배포판들을 동봉하지 않는다 — 사용자가 각자 설치한 것을 찾아 쓸 뿐이다. LaTeX 커널 자체는 **LPPL(LaTeX Project Public License)**, MiKTeX·dvisvgm은 각각 GPL 계열 라이선스(각 프로젝트 배포본의 라이선스 파일 참고)이며, 이 스킬은 그 실행 파일을 외부 프로세스로 호출만 하므로 재배포 의무가 없다. **dvisvgm**(Martin Gieseking, GPL-3.0, [dvisvgm.de](https://dvisvgm.de))으로 DVI→SVG 변환을 하며, `--no-fonts` 옵션으로 글자까지 벡터 경로로 바꿔 별도 글꼴 파일이 전혀 필요 없게 만든다.
+- **node-tikzjax**(npm, LPPL-1.3c — `node_modules/node-tikzjax/LICENSE`) — 시스템 LaTeX이 없는 PC에서만 대체로 쓰는 오프라인 WASM TeX. [TikZJax](https://tikzjax.com)(kisonecat, [artisticat1의 fork](https://github.com/artisticat1/tikzjax))를 Node.js에 이식한 프로젝트다([prinsss/node-tikzjax](https://github.com/prinsss/node-tikzjax)). 회로 그림은 그 안에 함께 실린 **circuitikz**(LaTeX 패키지, LPPL)를 쓴다.
+  - **BaKoMa 폰트**(node-tikzjax가 `css/bakoma/`에 번들) — Computer Modern·AMS 글꼴의 TrueType판. BaKoMa Fonts Licence(Basil K. Malyshev, `node_modules/node-tikzjax/css/bakoma/LICENCE`)는 임베딩·수정·재배포를 요금 없이 허용한다. 이 엔진일 때만(시스템 LaTeX은 `--no-fonts`라 글꼴이 필요 없다) 실제 쓰인 font-family만 골라 그 도식 SVG 안에 base64로 넣는다.
+  - 렌더링·네트워크 요청 없이 완전히 로컬 WASM(`tex.wasm.gz`)과 번들 TeX 패키지(`tex_files.tar.gz`)로 동작한다 — `embedFontCss` 등 기본으로 CDN을 참조하는 옵션은 쓰지 않는다.
+
+두 엔진 모두 한글이 없으므로(design.md) 한글 라벨은 이 스킬이 Pretendard로 직접 겹쳐 그린다 — TeX 글꼴을 벡터 경로로 바꿔 배포하는 일은 어느 엔진에도 없다.
+
 ## 글꼴
 - **Pretendard** (Regular·Medium·SemiBold·Bold·ExtraBold) — SIL Open Font License 1.1, `assets/fonts/LICENSE-Pretendard-OFL.txt`. 빌드 때 문서에 쓰인 글자만 서브셋해 파일 안에 넣는다(OFL이 허용하는 방식).
+- **KoPub World**(한국출판인회의, 문화체육관광부 지원) — 문체부·한국출판인회의가 무료 배포하되 등록이 필요하고, "가공(서브셋 포함)"과 "웹서비스·프로그램에 넣어 배포"는 별도 승인이 필요하며 재배포는 금지된 라이선스(`kopus.org` 이용약관). 그래서 이 스킬은 KoPub 폰트 파일을 **동봉·서브셋·base64 임베딩하지 않는다** — `scripts/fonts.py`가 그 PC에 이미 설치된 KoPub World Dotum을 `local()`로 참조만 한다(`meta.font:"kopub"` 또는 `"auto"`+`profile:"evidence"`일 때, 설치돼 있을 때만). 배포처: https://www.kopus.org/biz-electronic-font2/ · `references/design.md` "글꼴".

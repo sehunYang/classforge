@@ -1,0 +1,17 @@
+<svg data-engine="system" data-diagram="tikz" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-72.0011215209961 -81.85156685113907 227.326171875 137.7656369805336">
+<g id="d6807dcbdebbca66b823f-page1">
+<path d="M-71.25391 24.667968H152.6872" stroke="#fe0012" fill="none" stroke-width="1.49442" class="v-ink-s"></path>
+<path d="M-37.2383 24.667968H-8.0117L12.1992-56.4883L-15.2969-63.3477Z" fill="#fe0014" class="v-soft"></path>
+<path d="M-37.2383 24.667968L-15.2969-63.3477" stroke="#fe0011" fill="none" stroke-width="1.49442" stroke-miterlimit="10" class="v-accent-s"></path>
+<path d="M-8.0117 24.667968L12.1992-56.4883" stroke="#fe0011" fill="none" stroke-width="1.49442" stroke-miterlimit="10" class="v-accent-s"></path>
+<path d="M-37.2383 28.35547V24.667968H-8.0117V28.35547Z" fill="#fe0011" class="v-accent"></path>
+<path d="M59.1402 24.667968H117.6212L152.2342 5.4766L138.4842-19.2969Z" fill="#fe0014" class="v-soft"></path>
+<path d="M59.1402 24.667968L138.4842-19.2969" stroke="#fe0013" fill="none" stroke-width="1.49442" stroke-miterlimit="10" class="v-line"></path>
+<path d="M117.6212 24.667968L152.2342 5.4766" stroke="#fe0013" fill="none" stroke-width="1.49442" stroke-miterlimit="10" class="v-line"></path>
+<path d="M59.1402 28.35547V24.667968H117.6212V28.35547Z" fill="#fe0013" class="v-muted"></path>
+
+
+
+
+</g>
+<text x="-22.637157440185547" y="45.91407012939453" class="v-label-a" text-anchor="middle">좁다</text><text x="-1.5500411987304688" y="-71.85156685113907" class="v-label-s" text-anchor="middle">높은 고도</text><text x="88.35407257080078" y="45.91407012939453" class="v-label" text-anchor="middle">넓다</text><text x="145.3250503540039" y="-27.806591033935547" class="v-label-s" text-anchor="middle">낮은 고도</text></svg>

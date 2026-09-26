@@ -1,0 +1,25 @@
+<svg data-engine="system" data-diagram="tikz" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-72 -72 311.8160095214844 198.42599487304688">
+<g id="d547187fb6ca5267cc6c4-page1">
+<path d="M-72-42.2344V-64.91406C-72-68.82812-68.82812-72-64.91406-72H232.727C236.641-72 239.816-68.82812 239.816-64.91406V-42.2344C239.816-38.3203 236.641-35.1484 232.727-35.1484H-64.91406C-68.82812-35.1484-72-38.3203-72-42.2344Z" fill="#fe0014" class="v-soft"></path>
+<path d="M-72-35.1484V-72H-63.49609V-35.1484Z" fill="#fe0011" class="v-accent"></path>
+<path d="M88.16-32.8828V-25.4102" stroke="#fe0012" fill="none" stroke-width=".3985" stroke-miterlimit="10" class="v-ink-s"></path>
+<path d="M88.16017-20.97656L90.58204-27.417967L88.16017-25.30859L85.73829-27.417967Z" fill="#fe0012" class="v-ink"></path>
+<path d="M88.16017-20.97656L90.58204-27.417967L88.16017-25.30859L85.73829-27.417967Z" stroke="#fe0012" fill="none" stroke-width=".3985" stroke-miterlimit="10" class="v-ink-s"></path>
+<path d="M-72 11.6211V-11.0547C-72-14.9687-68.82812-18.1406-64.91406-18.1406H232.727C236.641-18.1406 239.816-14.9687 239.816-11.0547V11.6211C239.816 15.5352 236.641 18.7109 232.727 18.7109H-64.91406C-68.82812 18.7109-72 15.5352-72 11.6211Z" fill="#fe0013" fill-opacity=".14" class="v-muted"></path>
+<path d="M-72 18.7109V-18.1406H-63.49609V18.7109Z" fill="#fe0012" class="v-ink"></path>
+<path d="M88.16 20.9766V28.449" stroke="#fe0012" fill="none" stroke-width=".3985" stroke-miterlimit="10" class="v-ink-s"></path>
+<path d="M88.16017 32.88285L90.58204 26.441439L88.16017 28.55081L85.73829 26.441439Z" fill="#fe0012" class="v-ink"></path>
+<path d="M88.16017 32.88285L90.58204 26.441439L88.16017 28.55081L85.73829 26.441439Z" stroke="#fe0012" fill="none" stroke-width=".3985" stroke-miterlimit="10" class="v-ink-s"></path>
+<path d="M-72 65.48V42.805C-72 38.891-68.82812 35.719-64.91406 35.719H232.727C236.641 35.719 239.816 38.891 239.816 42.805V65.48C239.816 69.395 236.641 72.57 232.727 72.57H-64.91406C-68.82812 72.57-72 69.395-72 65.48Z" fill="#fe0013" fill-opacity=".14" class="v-muted"></path>
+<path d="M-72 72.57V35.719H-63.49609V72.57Z" fill="#fe0012" class="v-ink"></path>
+<path d="M88.16 74.836V82.309" stroke="#fe0012" fill="none" stroke-width=".3985" stroke-miterlimit="10" class="v-ink-s"></path>
+<path d="M88.16017 86.74216L90.58204 80.30075L88.16017 82.40622L85.73829 80.30075Z" fill="#fe0012" class="v-ink"></path>
+<path d="M88.16017 86.74216L90.58204 80.30075L88.16017 82.40622L85.73829 80.30075Z" stroke="#fe0012" fill="none" stroke-width=".3985" stroke-miterlimit="10" class="v-ink-s"></path>
+<path d="M-72 119.34V96.664C-72 92.75-68.82812 89.578-64.91406 89.578H232.727C236.641 89.578 239.816 92.75 239.816 96.664V119.34C239.816 123.254 236.641 126.426 232.727 126.426H-64.91406C-68.82812 126.426-72 123.254-72 119.34Z" fill="#fe0013" fill-opacity=".14" class="v-muted"></path>
+<path d="M-72 126.426V89.578H-63.49609V126.426Z" fill="#fe0012" class="v-ink"></path>
+
+
+
+
+</g>
+<text x="88.15866088867188" y="-46.4887809753418" class="v-label-a" text-anchor="middle">Claim</text><text x="88.15866088867188" y="7.369453430175781" class="v-label" text-anchor="middle">Reasons</text><text x="88.15866088867188" y="61.22773742675781" class="v-label" text-anchor="middle">Counterargument &amp; Rebuttal</text><text x="88.15866088867188" y="115.08561706542969" class="v-label" text-anchor="middle">Conclusion</text></svg>

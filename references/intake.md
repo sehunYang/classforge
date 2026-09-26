@@ -30,17 +30,17 @@
 | `meta.lesson`("6 / 10") | `meta.lesson`("6/10차시") | 형식만 맞춤 |
 | `meta.minutes` | `meta.minutes` | 그대로. `flow.timeAllocation`의 도입/전개/정리 분 합계와 다르면 합계를 우선하고 왜 바꿨는지 5절 보고에서 알린다 |
 | `standards` | `meta.standards[0].text` | **원문 그대로**(verbatim). 절대 손보지 않는다. 코드가 없으면 `code:""`, `verified:false`. **비어 있으면(`empty`에 포함) 절대 지어내지 않는다** — `text: "(교사 입력 필요)"`, `code:""`, `verified:false`로 두고, 보고에서 반드시 다시 요청한다 |
-| `objectives` | `objectives` | 교사 문장을 최대한 살려 옮긴다(동사가 관찰 불가능하면 — "이해하다" 등 — 관찰 가능한 동사로 다듬되 내용은 바꾸지 않고, 무엇을 왜 바꿨는지 보고). `--check`는 `lesson.objectives` 배열 자체와 비교한다(지도안이 아니라 이 필드가 기준) |
+| `objectives` | `objectives` | 교사 문장을 최대한 살려 **원문 그대로** 옮긴다(동사가 관찰 불가능하면 — "이해하다" 등 — 관찰 가능한 동사로만 다듬고 결론·내용은 바꾸지 않는다). 교사 문장이 `evidence` 수업의 판정 결론을 담고 있어도(예: "빛이 입자(광자)의 성질을 가진다고 설명할 수 있다") **여기서는 고쳐 쓰지 않는다** — `--check`(S7)가 `lesson.objectives` 배열 자체와 그대로 비교하므로(지도안이 아니라 이 필드가 기준), 뜻을 바꾸면 반영 판정이 어긋난다. 그 결론이 compare 판정 전에 학생에게 스포일러가 되는 경우에는 `objectives`를 손대지 말고 **`meta.objectivesStudent`**에 중립화한 학생용 문구를 따로 적는다(goals 슬라이드·활동지·정답지 머리말이 그것을 쓴다, `lesson-schema.md` 참고) — 교사 형태 문구는 지도안에 그대로 남고, 학생이 보는 자리만 중립화된다. 게이트 **E1-PRESPOILER**가 학생이 보는 자리의 결론 노출을 확인한다 |
 | `keyTerms` | `vocab` 슬라이드 또는 `concept` 포인트, 활동지 개념 정리 | 전부 최소 한 곳 이상에 등장해야 한다. **학생이 보는 화면(슬라이드 필드, `notes` 제외)이나 활동지여야 인정된다 — 지도안(`plan`)이나 발표자 노트(`notes`)에만 있으면 인정되지 않는다**(intake --check가 이 범위로 검사) |
 | `excludeScope` | (직접 대응 필드 없음) | 슬라이드·활동지·지도안에서 해당 내용을 넣지 않는다 |
 | `priorKnowledge` | `plan`의 도입 설계, `hook`의 전제 | 이미 아는 것은 반복하지 않고, 오개념은 `misconceptions`와 함께 hook에 반영 |
-| `misconceptions` | `quiz`의 오답 선택지, `compare`, `notes`, `summary` | 각 오개념이 최소 하나의 자리에서 다뤄져야 한다(--check가 검사) |
+| `misconceptions` | `quiz`의 오답 선택지, `compare`, `notes`, `summary` | 각 오개념이 최소 하나의 자리에서 다뤄져야 한다(--check가 검사). **교사는 오개념을 "…(라)고 생각한다/여긴다/믿는다" 식 믿음 문장으로 적지만, 선택지·진술문에는 그 오개념을 단정문(주장)으로 고쳐 쓴다**(예: "기체는 압축되면 입자가 작아진다고 생각한다" → 선택지 "기체는 압축되면 입자 자체가 작아진다") — 믿음 서술 그대로 선택지로 쓰면 "옳은 것은?" 발문의 답이 될 수 없다(게이트 **S5-CHOICE-BELIEF**). `--check`는 믿음 서술 꼬리("…고 생각한다/여긴다/믿는다")를 뗀 주장 부분만으로 대조하므로, 표현을 단정문으로 고쳐 써도 반영 여부는 그대로 확인된다 |
 | `flow.model` | `plan.model` | 그대로 |
 | `flow.hookIdea` | `hook` 슬라이드의 `question`/`lead`/`caption` | 아이디어를 슬라이드 유형에 맞게 각색(문장을 그대로 베끼지 않아도 됨) |
 | `flow.activityMode` | `activity` 슬라이드 `mode`, `plan.flow` 활동 행 | "individual"→"개인", "pair"→"짝", "group"→"O인 모둠"처럼 인원까지 적어도 됨 |
 | `flow.materials` | `plan.materials` | 목록에 있는 것 전부 포함(추가는 가능) |
 | `flow.timeAllocation` | `plan.flow`의 단계별(도입/전개/정리) `minutes` 합 | 요청한 배분과 맞춘다. 못 맞추면 이유를 보고 |
-| `mustInclude` | 슬라이드/활동지 어딘가 | 항목마다 실제로 **학생이 보는 화면**에 드러나야 한다(문구를 그대로 베끼라는 뜻이 아니라 **내용이 있어야** 한다는 뜻). **지도안 note나 발표자 노트에만 문장을 옮겨 적고 실제 슬라이드·활동지엔 없는 것은 반영이 아니다** — E2E 테스트에서 실제로 이 실수(지도안 note에만 문장을 붙여넣고 통과시킴)가 나와 --check의 검색 범위를 슬라이드 화면·활동지로 좁혔다 |
+| `mustInclude` | 슬라이드/활동지 어딘가 | 항목마다 실제로 **학생이 보는 화면**에 드러나야 한다(문구를 그대로 베끼라는 뜻이 아니라 **내용이 있어야** 한다는 뜻). 제목에 억지로 넣을 필요는 없다(제목 글자 수 S2-TITLE과 부딪히면 캡션·본문·활동지에 두면 된다). **지도안 note나 발표자 노트에만 문장을 옮겨 적고 실제 슬라이드·활동지엔 없는 것은 반영이 아니다** — E2E 테스트에서 실제로 이 실수(지도안 note에만 문장을 붙여넣고 통과시킴)가 나와 --check의 검색 범위를 슬라이드 화면·활동지로 좁혔다 |
 | `mustExclude` | (없어야 함) | 지도안·발표자 노트를 포함해 자료 전체 어디에도 해당 낱말/개념이 등장하면 안 된다(mustInclude보다 넓게 본다 — "아예 없어야" 한다는 요청이므로) |
 | `assessment.quizStyle` | `quiz` 슬라이드 `notes`에 응답 방식 서술 | 그대로 반영 |
 | `assessment.quizCount` | `quiz` 타입 슬라이드 개수 | 요청 개수 이상 |
@@ -52,7 +52,7 @@
 | `style.profile`("evidence") | `meta.profile: "evidence"` | 증거 중심 탐구 스타일(공식·주장 옆에 근거를 붙이고 절제된 디자인, `pedagogy.md` §10). "기본"이면 `meta.profile`을 비우거나 `"default"`로. **`--check`는 `meta.profile`이 요청한 값과 같은지만 본다** — evidence의 세부 저작 규칙(공식-근거 인접, 대칭 배치 등)은 게이트 **E1**이 따로 검사한다 |
 | `style.titleStyle` | 슬라이드 `title`/`question` 문체 | "메시지형"이면 핵심을 서술문으로, "질문형"이면 의문문으로, **"명사형"이면 개념 이름 자체를 제목으로**(예: "간섭무늬"). evidence 프로파일은 메시지형·명사형과 어울리고 질문형과는 어긋나기 쉽다(`intake.mjs`가 이 조합에 경고). `slides.md` 리듬 규칙은 항상 지킨다 |
 | `style.tone` | `meta.tone`, 활동지 안내문·슬라이드 lead 어미 | 해요체/합쇼체 하나로 통일하고 **`meta.tone`에 값을 써서 명시한다**(템플릿 기본 문구도 이 값을 따른다). `--check`는 `meta.tone`이 있으면 그것과 직접 비교하고, 없으면 활동지 `tip`·`subtitle`·섹션 `lead`, 슬라이드 `lead`와 빌드된 활동지·정답지(지도안 제외 — 지도안의 예상 질문·답은 교사용 관례상 합쇼체를 쓰기도 함)의 문장 어미로 추정한다 |
-| `style.imageCount`,`imageUse` | `visual: {image:{...}}` 요청 개수와 역할 | `images.md` 절차로 처리 |
+| `style.imageCount`,`imageUse` | `visual: {image:{...}}` 요청 개수와 역할 | `imageCount`는 **상한**(최대 몇 장까지)이지 채워야 할 개수가 아니다. **비어 있으면 상한 없음** — "필요한 만큼"이 기본이며(삽화는 전부 생성 이미지로), 이미지를 많이 써도 `--check`가 반영 안 됨으로 잡지 않는다(빈 값은 `n/a`). 값이 있으면 그 수를 넘지 않게만 하면 되고, 그보다 적게 써도 위반이 아니다. `images.md` 절차로 처리 |
 | `style.accentColor` | `meta.accent` | 그대로(대비 4.5:1 확인은 게이트가 함) |
 | `reference.textbookPages` | 지도안 참고에 메모(직접 스키마 필드는 없음) | 자유 메모 또는 `plan.materials`/`note`에 남김 |
 | `reference.material`(기존 자료·참고 슬라이드) | (직접 스키마 필드 없음) | SKILL.md 2단계("참고 자료가 있으면 거꾸로 풀기")의 입력. 순서·구성만 참고하고 **문장·이미지를 그대로 옮기지 않는다**. 자동 검증 대상이 아니므로 사람이 확인해야 할 항목으로 보고한다 |
@@ -75,7 +75,7 @@
 
 ## 4. S7 게이트 — 반영 확인
 
-`gate.mjs`는 `meta.intake`(설계서 경로)가 있으면 `intake.mjs`의 `parseIntake`/`checkReflection`을 직접 불러와 **S7 "설계서 반영"** 게이트로 돌린다(`gate.mjs` S7 절 참고). 게이트 전체는 S1~S7·I1(이미지)·B1~B8 총 16종이고, evidence 프로파일의 세부 저작 규칙(공식-근거 인접, 대칭 배치 등, `pedagogy.md` §10)을 확인하는 **E1**이 더해지면 17종이 된다(`references/gates.md`). S7 자체는 evidence의 세부 규칙을 검사하지 않는다 — `meta.profile`이 요청과 같은지만 본다.
+`gate.mjs`는 `meta.intake`(설계서 경로)가 있으면 `intake.mjs`의 `parseIntake`/`checkReflection`을 직접 불러와 **S7 "설계서 반영"** 게이트로 돌린다(`gate.mjs` S7 절 참고). 게이트 전체는 S1~S7·I1(이미지)·V1(시각 정책)·B1~B8 총 17종이고, evidence 프로파일의 세부 저작 규칙(공식-근거 인접, 대칭 배치 등, `pedagogy.md` §10)을 확인하는 **E1**이 더해지면 18종, KoPub을 실제로 쓰면 미설치 PC 대체 배치를 재는 **B9**까지 19종이 된다(`references/gates.md`). S7 자체는 evidence의 세부 규칙을 검사하지 않는다 — `meta.profile`이 요청과 같은지만 본다.
 
 같은 검사를 독립적으로 돌리거나 사람이 직접 읽고 싶으면:
 ```bash

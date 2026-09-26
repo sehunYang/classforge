@@ -69,5 +69,26 @@
   pages.filter(p => !p.querySelector('.pg-inner').children.length).forEach(p => { p.remove(); pages.splice(pages.indexOf(p), 1); });
   pages.forEach((p, i) => { p.querySelector('.pn').textContent = `${i + 1} / ${pages.length}`; });
   flow.remove();
+  // 매칭 문항(.match)의 정답 선: 빌드 시점 좌표(x1=0%/x2=100%, 칸 경계)는 실제 점(.dot)이
+  // 테두리·안쪽 여백만큼 칸 안쪽에 있는 걸 반영 못해 선이 점 앞에서(칸 가장자리에서) 끝나
+  // 보이는 사고가 있었다. 레이아웃이 끝난 지금(폰트·페이지 배치 확정 후) 점의 실제 화면
+  // 좌표를 재서 선을 다시 긋는다 — mm값을 다시 계산하는 것보다 훨씬 안전하다.
+  document.querySelectorAll('.match').forEach(m => {
+    const svg = m.querySelector('svg');
+    if (!svg) return;
+    const svgRect = svg.getBoundingClientRect();
+    if (!svgRect.width || !svgRect.height) return;
+    svg.setAttribute('viewBox', `0 0 ${svgRect.width} ${svgRect.height}`);
+    svg.querySelectorAll('line[data-a]').forEach(line => {
+      const dotA = m.querySelector(`.it.l[data-row="${line.dataset.a}"] .dot`);
+      const dotB = m.querySelector(`.it.r[data-row="${line.dataset.b}"] .dot`);
+      if (!dotA || !dotB) return;
+      const ra = dotA.getBoundingClientRect(), rb = dotB.getBoundingClientRect();
+      line.setAttribute('x1', ra.left + ra.width / 2 - svgRect.left);
+      line.setAttribute('y1', ra.top + ra.height / 2 - svgRect.top);
+      line.setAttribute('x2', rb.left + rb.width / 2 - svgRect.left);
+      line.setAttribute('y2', rb.top + rb.height / 2 - svgRect.top);
+    });
+  });
   window.__paged = true;
 })();

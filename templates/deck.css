@@ -12,7 +12,9 @@
   /* 학교급 프리셋은 body[data-level]에서 덮어쓴다 (기본=중학교) */
   --fs-display:112px; --fs-title:66px; --fs-lead:42px; --fs-body:38px; --fs-small:30px; --fs-chrome:22px;
   --pad-x:112px; --pad-top:120px; --pad-bottom:104px;
-  --font:'CF Pretendard','Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  /* 'CF KoPub'은 meta.font 판단에 따라 fonts.py가 만들 때만 존재한다(local() 참조, 설치 PC 전용) —
+     없으면 브라우저가 그냥 다음 이름인 내장 'CF Pretendard'로 넘어간다. references/design.md "글꼴". */
+  --font:'CF KoPub','CF Pretendard','Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
 }
 body[data-level="elem"]{ --fs-display:120px; --fs-title:72px; --fs-lead:46px; --fs-body:42px; --fs-small:32px; }
 body[data-level="high"]{ --fs-display:104px; --fs-title:62px; --fs-lead:40px; --fs-body:35px; --fs-small:28px; }
@@ -61,9 +63,19 @@ em{font-style:normal;color:var(--accent-ink);font-weight:700}
 .v-paper{fill:var(--paper)} .v-paper2{fill:var(--paper-2)} .v-paper3{fill:var(--paper-3)}
 .v-line{stroke:var(--line-2);fill:none} .v-muted{fill:var(--muted)}
 .v-warn{fill:var(--warn)} .v-good{fill:var(--good)}
-.v-label{fill:var(--ink);font-family:var(--font);font-weight:700;font-size:34px}
-.v-label-s{fill:var(--muted);font-family:var(--font);font-weight:600;font-size:28px}
-.v-label-a{fill:var(--accent-ink);font-family:var(--font);font-weight:800;font-size:34px}
+/* --cf-label-scale: diagrams.mjs(TikZ 도식)만 쓴다 — viewBox 단위가 화면 px과 다른 좌표계(TeX bp)라
+   라벨 글자 크기가 그대로면 도식마다 커지거나 작아진다. lookupDiagramSync가 그 도식의 svg 루트에
+   (표시 폭 ÷ viewBox 폭) 비율을 이 변수로 얹어 모든 v-label*이 항상 34/28px로 보이게 맞춘다.
+   손그림 SVG·plot/bars는 이 변수를 안 쓰므로 기본값 1(원래 크기 그대로)로 자동 동작한다. */
+.v-label{fill:var(--ink);font-family:var(--font);font-weight:700;font-size:calc(34px / var(--cf-label-scale, 1))}
+.v-label-s{fill:var(--muted);font-family:var(--font);font-weight:600;font-size:calc(28px / var(--cf-label-scale, 1))}
+.v-label-a{fill:var(--accent-ink);font-family:var(--font);font-weight:800;font-size:calc(34px / var(--cf-label-scale, 1))}
+/* TikZ 도식(svg[data-diagram])만: 선 굵기도 같은 --cf-label-scale로 화면 px 기준으로 맞춘다 — TikZ의
+   thick 등은 절대 pt값이라 도식마다 native viewBox 크기가 달라지면 화면에서 굵기가 들쭉날쭉해진다
+   (실측: 교실 화면에서 약 2px로 너무 가늘었다). 이 규칙은 svg[data-diagram] 안에서만 적용해 plot/bars·
+   손그림 SVG(자기 stroke-width를 이미 화면 px 기준으로 그린다)는 건드리지 않는다. */
+svg[data-diagram] .v-ink-s, svg[data-diagram] .v-line{stroke-width:calc(4px / var(--cf-label-scale, 1)) !important}
+svg[data-diagram] .v-accent-s{stroke-width:calc(5.5px / var(--cf-label-scale, 1)) !important}
 .caption{font-size:var(--fs-small);color:var(--muted);line-height:1.45;margin-top:18px;padding-top:16px;border-top:2px solid var(--line)}
 
 /* 생성 이미지(images.mjs) 슬롯 — 칸을 채운다(object-fit:cover), 모서리는 둥글게 */
@@ -75,6 +87,10 @@ em{font-style:normal;color:var(--accent-ink);font-weight:700}
 .math .mup{font-style:normal}
 .math sub,.math sup{font-size:.9em;line-height:0}
 .math sub{vertical-align:sub} .math sup{vertical-align:super}
+
+/* $$...$$(핵심 공식, build.mjs md()) — 자기만의 문단으로 가운데 정렬하고 더 크게. span이라 <p> 안에도
+   그대로 끼울 수 있다(div였으면 <p> 안 중첩이 무효한 HTML이 된다) — display:block으로 줄바꿈만 만든다. */
+.math-display{display:block;text-align:center;margin:.5em 0;font-size:1.6em}
 
 /* ── cover ─────────────────────────────────── */
 .s-cover .body{flex-direction:row;align-items:center;gap:72px}
@@ -178,7 +194,14 @@ em{font-style:normal;color:var(--accent-ink);font-weight:700}
 .s-quiz.revealed .hint{display:none}
 
 /* ── activity ──────────────────────────────── */
+/* visual(선택, 예: 실험 장치 사진)이 있으면 단계 목록 옆(.mid.withvis)에 넣는다. .top(제목·태그·타이머)은
+   폭을 그대로 두고 .mid(단계 목록 + 시각 자료)만 좁아지게 해서, 글자가 큰 제목·타이머가 좁은 칸에서
+   줄바꿈으로 넘치는 것을 막는다(실측: .top까지 같이 좁히면 967px로 본문(856px)을 넘겼다 — B1-CLIP). */
 .s-activity .top{display:flex;justify-content:space-between;align-items:flex-start;gap:48px}
+.s-activity .mid{display:flex;flex-direction:column;flex:1;min-height:0}
+.s-activity .mid.withvis{flex-direction:row;gap:56px;align-items:stretch}
+.s-activity .mid.withvis ol{flex:1.3;margin:0}
+.s-activity .r{flex:1;display:flex;flex-direction:column;min-height:0}
 .s-activity .timer{flex:none;text-align:right;cursor:pointer;user-select:none}
 .s-activity .timer .tv{font-size:132px;font-weight:800;letter-spacing:-.04em;font-variant-numeric:tabular-nums;line-height:1;color:var(--accent)}
 .s-activity .timer .tl{font-size:var(--fs-small);color:var(--muted);font-weight:600;margin-top:8px}
@@ -208,6 +231,10 @@ em{font-style:normal;color:var(--accent-ink);font-weight:700}
 .s-timeline .what{font-size:var(--fs-body);line-height:1.5;margin-top:12px;color:var(--ink-2)}
 
 /* ── summary ───────────────────────────────── */
+.s-summary .l{display:flex;flex-direction:column;flex:1;min-height:0}
+.s-summary.withvis .body{flex-direction:row;gap:80px;align-items:stretch}
+.s-summary.withvis .l{flex:1.2}
+.s-summary .r{flex:1;display:flex;flex-direction:column;min-height:0;justify-content:center}
 .s-summary .sum{list-style:none;counter-reset:k;margin:40px 0 28px;display:flex;flex-direction:column;justify-content:center;flex:1}
 .s-summary .sum li{counter-increment:k;display:grid;grid-template-columns:140px 1fr;align-items:baseline;padding:40px 0;border-top:2px solid var(--line);font-size:calc(var(--fs-lead) * 1.18);font-weight:700;line-height:1.38;letter-spacing:-.015em}
 .s-summary .sum li::before{content:counter(k,decimal-leading-zero);font-size:calc(var(--fs-lead) * 1.18);font-weight:800;color:var(--accent)}
@@ -218,6 +245,10 @@ em{font-style:normal;color:var(--accent-ink);font-weight:700}
 .s-exit{background:var(--ink)}
 .s-exit .chrome{color:rgba(255,255,255,.72)} .s-exit .chip{border-color:rgba(255,255,255,.35);color:#fff}
 .s-exit .body{justify-content:center}
+.s-exit .l{display:flex;flex-direction:column;justify-content:center;flex:1;min-height:0}
+.s-exit.withvis .body{flex-direction:row;gap:80px;justify-content:flex-start}
+.s-exit.withvis .l{flex:1.2}
+.s-exit .r{flex:1;display:flex;flex-direction:column;min-height:0;justify-content:center}
 .s-exit .kicker{color:#fff} .s-exit .kicker::before{background:var(--accent-mid)}
 .s-exit .q{font-size:calc(var(--fs-title) * 1.15);font-weight:800;color:#fff;line-height:1.3;letter-spacing:-.03em;max-width:1560px}
 .s-exit .h{font-size:var(--fs-body);color:rgba(255,255,255,.86);margin-top:40px;line-height:1.5}

@@ -14,6 +14,10 @@
         "text": "태양 고도와 기온의 관계, 계절에 따른 태양의 남중 고도 변화를 관찰하고 계절 변화의 원인을 지구의 자전축 기울기와 관련지어 설명할 수 있다.",
         "verified": false
       }
+    ],
+    "objectivesStudent": [
+      "태양 고도와 기온의 관계를 자료와 실험으로 설명할 수 있다.",
+      "지구본 모형 실험 결과로 계절이 생기는 까닭을 설명할 수 있다."
     ]
   },
   "objectives": [
@@ -40,6 +44,11 @@
       "id": "f4",
       "text": "실험 조건: 전등을 90°로 세웠을 때와 40°로 눕혔을 때를 비교한다.",
       "source": "수업 설계(실험 조건 설정값)"
+    },
+    {
+      "id": "f5",
+      "text": "지구와 태양 사이의 거리는 1월 초에 약 1억 4710만 km(147.1백만 km)로 가장 가깝고, 7월 초에 약 1억 5210만 km(152.1백만 km)로 가장 멀다.",
+      "source": "NASA Goddard Space Flight Center, Earth Fact Sheet (근일점 147.1 × 10⁶ km, 원일점 152.1 × 10⁶ km); 근일점·원일점 날짜(매년 1월 초·7월 초)는 한국천문연구원 역서"
     }
   ],
   "slides": [
@@ -47,8 +56,21 @@
       "type": "cover",
       "kicker": "과학 6-2 · 계절의 변화",
       "title": "계절은 왜 생길까?",
-      "subtitle": "태양 고도와 기울어진 자전축으로\n여름과 겨울의 차이를 설명해 봅시다.",
-      "visual": "<svg viewBox='0 0 640 640'><circle cx='170' cy='250' r='110' class='v-accent'/><g class='v-accent-s' stroke-width='10' stroke-linecap='round'><line x1='170' y1='100' x2='170' y2='70'/><line x1='170' y1='400' x2='170' y2='430'/><line x1='20' y1='250' x2='50' y2='250'/><line x1='290' y1='250' x2='320' y2='250'/><line x1='64' y1='144' x2='84' y2='164'/><line x1='256' y1='336' x2='276' y2='356'/><line x1='64' y1='356' x2='84' y2='336'/><line x1='256' y1='164' x2='276' y2='144'/></g><ellipse cx='330' cy='420' rx='290' ry='120' class='v-line' stroke-width='3' stroke-dasharray='10 12'/><g transform='translate(520 420) rotate(23.5)'><circle r='78' class='v-mid'/><path d='M-78 0 A78 78 0 0 0 78 0 Z' class='v-soft'/><line y1='-120' y2='120' class='v-ink-s' stroke-width='6' stroke-linecap='round'/><ellipse rx='78' ry='18' class='v-ink-s' stroke-width='3' opacity='.5'/></g><text x='590' y='300' class='v-label-a' text-anchor='end'>23.5°</text></svg>",
+      "subtitle": "같은 태양인데 여름은 덥고 겨울은 추운 까닭을\n자료와 실험으로 찾아봅시다.",
+      "visual": {
+        "tikz": {
+          "src": "\\draw[cfsoft, dashed, line width=1pt] (0,0) ellipse (3.4 and 2.1);\n\\fill[cfaccent] (0,0) circle (1.05);\n\\draw[cfaccent, line width=2pt] (1.3,0) -- (1.62,0);\n\\draw[cfaccent, line width=2pt] (0.919,0.919) -- (1.146,1.146);\n\\draw[cfaccent, line width=2pt] (0,1.3) -- (0,1.62);\n\\draw[cfaccent, line width=2pt] (-0.919,0.919) -- (-1.146,1.146);\n\\draw[cfaccent, line width=2pt] (-1.3,0) -- (-1.62,0);\n\\draw[cfaccent, line width=2pt] (-0.919,-0.919) -- (-1.146,-1.146);\n\\draw[cfaccent, line width=2pt] (0,-1.3) -- (0,-1.62);\n\\draw[cfaccent, line width=2pt] (0.919,-0.919) -- (1.146,-1.146);\n\\filldraw[fill=cfsoft, draw=cfink] (3.4,0) circle (0.85);\n\\draw[cfink] (3.4,0) ellipse [x radius=0.85, y radius=0.2, rotate=-23.5];\n\\draw[cfmuted, dashed] (3.4,0) -- (3.4,1.75);\n\\draw[cfink, line width=1.5pt] (2.782,-1.421) -- (4.018,1.421);\n\\draw[cfaccent, line width=1.5pt] (3.4,1.3) arc (90:66.5:1.3);",
+          "labels": [
+            {
+              "x": 3.9,
+              "y": 1.95,
+              "text": "23.5°",
+              "cls": "v-label-a",
+              "anchor": "middle"
+            }
+          ]
+        }
+      },
       "notes": "지난 시간에 하루 동안 태양 고도가 어떻게 변하는지 측정했죠. 오늘은 여름과 겨울이 왜 생기는지 그 까닭을 찾아봅니다. 그림 속 지구의 막대가 왜 기울어져 있는지 먼저 물어보고 시작합니다."
     },
     {
@@ -61,10 +83,30 @@
       "type": "hook",
       "kicker": "생각 열기",
       "question": "같은 태양인데, 여름은 덥고 겨울은 추운 까닭은?",
-      "lead": "태양과의 거리 때문이라고 생각하는 친구가 많아요. 정말 그럴까요?",
-      "visual": "<svg viewBox='0 0 760 560'><rect x='0' y='0' width='360' height='560' rx='28' class='v-soft'/><rect x='400' y='0' width='360' height='560' rx='28' class='v-paper2'/><circle cx='180' cy='110' r='58' class='v-accent'/><circle cx='640' cy='330' r='50' class='v-muted' opacity='.55'/><line x1='40' y1='440' x2='320' y2='440' class='v-ink-s' stroke-width='5'/><line x1='440' y1='440' x2='720' y2='440' class='v-ink-s' stroke-width='5'/><line x1='180' y1='170' x2='180' y2='430' class='v-accent-s' stroke-width='6' stroke-dasharray='14 12'/><line x1='600' y1='370' x2='470' y2='430' class='v-ink-s' stroke-width='6' stroke-dasharray='14 12' opacity='.5'/><path d='M180 440 m-70 0 a70 70 0 0 1 70 -70' class='v-accent-s' stroke-width='4'/><path d='M580 440 m-70 0 a70 70 0 0 1 60 -28' class='v-ink-s' stroke-width='4' opacity='.6'/><text x='180' y='515' class='v-label' text-anchor='middle'>여름 낮</text><text x='580' y='515' class='v-label' text-anchor='middle'>겨울 낮</text></svg>",
+      "lead": "태양과의 거리 때문이라는 친구도, 태양 높이 때문이라는 친구도 있어요. 여러분 생각은 어떤가요?",
+      "visual": {
+        "tikz": {
+          "src": "\\fill[cfsoft, rounded corners=10pt] (0,0) rectangle (4.2,5);\n\\draw[cfink, line width=1.5pt] (0.3,1.25) -- (3.9,1.25);\n\\draw[cfaccent, dashed, line width=1.5pt] (0.75,1.25) -- (1.476,4.161);\n\\draw[cfaccent, line width=1.5pt] (1.6,1.25) arc (0:76:0.85);\n\\fill[cfaccent] (1.476,4.161) circle (0.46);\n\\fill[cfink] (0.66,1.25) rectangle (0.84,1.57);\n\\draw[cfsoft, rounded corners=10pt, line width=1pt] (4.7,0) rectangle (8.9,5);\n\\draw[cfink, line width=1.5pt] (5,1.25) -- (8.6,1.25);\n\\draw[cfink, dashed, line width=1.5pt] (5.45,1.25) -- (8.074,2.704);\n\\draw[cfink, line width=1.5pt] (6.3,1.25) arc (0:29:0.85);\n\\fill[cfmuted] (8.074,2.704) circle (0.46);\n\\fill[cfink] (5.36,1.25) rectangle (5.54,1.57);",
+          "labels": [
+            {
+              "x": 2.1,
+              "y": 0.5,
+              "text": "여름 낮",
+              "cls": "v-label",
+              "anchor": "middle"
+            },
+            {
+              "x": 6.8,
+              "y": 0.5,
+              "text": "겨울 낮",
+              "cls": "v-label",
+              "anchor": "middle"
+            }
+          ]
+        }
+      },
       "caption": "여름에는 태양이 높이 뜨고, 겨울에는 낮게 뜹니다.",
-      "notes": "손을 들어 예상을 말하게 합니다. 태양과의 거리라는 오개념이 나오면 칠판에 적어 두고, 오늘 실험으로 확인해 보자고 연결합니다. 정답은 아직 말하지 않습니다."
+      "notes": "손을 들어 예상을 말하게 합니다. 태양과의 거리라는 생각과 태양 높이라는 생각이 나오면 칠판에 둘 다 적어 두고, 곧 자료와 실험으로 가려 보자고 연결합니다. 정답은 아직 말하지 않습니다."
     },
     {
       "type": "vocab",
@@ -91,6 +133,106 @@
       "notes": "낱말을 하나씩 공개하며 몸짓으로 표현하게 합니다. 태양 고도는 팔을 들어 각도로, 자전축은 연필을 세워 돌리며, 공전은 교실 가운데 전등 둘레를 걸으며 보여 줍니다."
     },
     {
+      "type": "compare",
+      "kind": "rival",
+      "title": "여름이 더운 까닭, 두 가지 생각",
+      "left": {
+        "label": "생각 A: 태양과 가까워서",
+        "items": [
+          "여름엔 태양과 가까움",
+          "겨울엔 태양과 멂",
+          "거리가 기온을 정함"
+        ]
+      },
+      "right": {
+        "label": "생각 B: 태양이 높이 떠서",
+        "items": [
+          "여름엔 태양이 높이 뜸",
+          "겨울엔 태양이 낮게 뜸",
+          "고도가 기온을 정함"
+        ]
+      },
+      "note": "어느 생각이 맞는지 자료와 실험으로 가려 봐요.",
+      "reveal": true,
+      "notes": "생각 열기에서 나온 두 예상을 같은 모양으로 나란히 정리합니다. 손을 들어 어느 쪽인지 표시하게 한 뒤, 다음 화면의 자료로 생각 A부터 확인한다고 안내합니다. 아직 어느 쪽이 맞는지는 말하지 않습니다."
+    },
+    {
+      "type": "diagram",
+      "kicker": "자료로 확인",
+      "title": "7월 초에 지구는 태양에서 가장 멀다",
+      "visual": {
+        "bars": {
+          "unit": "백만 km",
+          "items": [
+            {
+              "label": "1월 초 (가장 가까움)",
+              "value": 147.1
+            },
+            {
+              "label": "7월 초 (가장 멂)",
+              "value": 152.1,
+              "hot": true
+            }
+          ]
+        }
+      },
+      "caption": "우리나라가 여름인 7월 초에 지구는 오히려 태양에서 가장 멀어요. 그래서 생각 A는 이 자료와 맞지 않아요.",
+      "evidence": {
+        "fact": "f5",
+        "refutes": "left"
+      },
+      "notes": "실제 관측 자료입니다. 1월 초에 약 1억 4710만 km로 가장 가깝고 7월 초에 약 1억 5210만 km로 가장 멉니다. 우리나라가 여름일 때 더 멀리 있으니 생각 A는 여름 더위를 설명하지 못한다고 기각합니다. 같은 7월에 남반구의 호주는 겨울이라는 점도 덧붙입니다. 생각 B가 맞는지는 다음 손전등 실험으로 확인한다고 연결합니다."
+    },
+    {
+      "type": "diagram",
+      "kicker": "탐구 1 · 실험",
+      "title": "손전등 각도를 바꾸며 빛이 닿는 넓이를 잰다",
+      "visual": {
+        "tikz": {
+          "src": "\\fill[cfsoft] (-3,-0.3) rectangle (3,0);\n\\draw[cfmuted, line width=0.6pt] (-2.7,-0.3) -- (-2.7,0);\n\\draw[cfmuted, line width=0.6pt] (-2.4,-0.3) -- (-2.4,0);\n\\draw[cfmuted, line width=0.6pt] (-2.1,-0.3) -- (-2.1,0);\n\\draw[cfmuted, line width=0.6pt] (-1.8,-0.3) -- (-1.8,0);\n\\draw[cfmuted, line width=0.6pt] (-1.5,-0.3) -- (-1.5,0);\n\\draw[cfmuted, line width=0.6pt] (-1.2,-0.3) -- (-1.2,0);\n\\draw[cfmuted, line width=0.6pt] (-0.9,-0.3) -- (-0.9,0);\n\\draw[cfmuted, line width=0.6pt] (-0.6,-0.3) -- (-0.6,0);\n\\draw[cfmuted, line width=0.6pt] (-0.3,-0.3) -- (-0.3,0);\n\\draw[cfmuted, line width=0.6pt] (0,-0.3) -- (0,0);\n\\draw[cfmuted, line width=0.6pt] (0.3,-0.3) -- (0.3,0);\n\\draw[cfmuted, line width=0.6pt] (0.6,-0.3) -- (0.6,0);\n\\draw[cfmuted, line width=0.6pt] (0.9,-0.3) -- (0.9,0);\n\\draw[cfmuted, line width=0.6pt] (1.2,-0.3) -- (1.2,0);\n\\draw[cfmuted, line width=0.6pt] (1.5,-0.3) -- (1.5,0);\n\\draw[cfmuted, line width=0.6pt] (1.8,-0.3) -- (1.8,0);\n\\draw[cfmuted, line width=0.6pt] (2.1,-0.3) -- (2.1,0);\n\\draw[cfmuted, line width=0.6pt] (2.4,-0.3) -- (2.4,0);\n\\draw[cfmuted, line width=0.6pt] (2.7,-0.3) -- (2.7,0);\n\\fill[cfink, rounded corners=2pt] (0.475,3) -- (0.475,3.55) -- (-0.475,3.55) -- (-0.475,3) -- cycle;\n\\fill[cfink, rounded corners=2pt] (0.3,3.5) -- (0.3,4.65) -- (-0.3,4.65) -- (-0.3,3.5) -- cycle;\n\\draw[cfink, dashed, line width=1pt] (0,3) -- (0,0);\n\\draw[cfink, line width=1pt] (0.3,0) -- (0.3,0.3) -- (0,0.3);\n\\fill[cfsoft] (5.2,-0.3) rectangle (11.2,0);\n\\draw[cfmuted, line width=0.6pt] (5.5,-0.3) -- (5.5,0);\n\\draw[cfmuted, line width=0.6pt] (5.8,-0.3) -- (5.8,0);\n\\draw[cfmuted, line width=0.6pt] (6.1,-0.3) -- (6.1,0);\n\\draw[cfmuted, line width=0.6pt] (6.4,-0.3) -- (6.4,0);\n\\draw[cfmuted, line width=0.6pt] (6.7,-0.3) -- (6.7,0);\n\\draw[cfmuted, line width=0.6pt] (7,-0.3) -- (7,0);\n\\draw[cfmuted, line width=0.6pt] (7.3,-0.3) -- (7.3,0);\n\\draw[cfmuted, line width=0.6pt] (7.6,-0.3) -- (7.6,0);\n\\draw[cfmuted, line width=0.6pt] (7.9,-0.3) -- (7.9,0);\n\\draw[cfmuted, line width=0.6pt] (8.2,-0.3) -- (8.2,0);\n\\draw[cfmuted, line width=0.6pt] (8.5,-0.3) -- (8.5,0);\n\\draw[cfmuted, line width=0.6pt] (8.8,-0.3) -- (8.8,0);\n\\draw[cfmuted, line width=0.6pt] (9.1,-0.3) -- (9.1,0);\n\\draw[cfmuted, line width=0.6pt] (9.4,-0.3) -- (9.4,0);\n\\draw[cfmuted, line width=0.6pt] (9.7,-0.3) -- (9.7,0);\n\\draw[cfmuted, line width=0.6pt] (10,-0.3) -- (10,0);\n\\draw[cfmuted, line width=0.6pt] (10.3,-0.3) -- (10.3,0);\n\\draw[cfmuted, line width=0.6pt] (10.6,-0.3) -- (10.6,0);\n\\draw[cfmuted, line width=0.6pt] (10.9,-0.3) -- (10.9,0);\n\\fill[cfink, rounded corners=2pt] (6.207,2.292) -- (5.786,2.646) -- (5.175,1.918) -- (5.597,1.564) -- cycle;\n\\fill[cfink, rounded corners=2pt] (5.712,2.48) -- (4.831,3.219) -- (4.445,2.759) -- (5.326,2.02) -- cycle;\n\\draw[cfink, dashed, line width=1pt] (5.902,1.928) -- (8.2,0);\n\\draw[cfaccent, line width=1.5pt] (6.3,0) arc (180:140:1.9);\n\\draw[cfsoft, dashed, line width=1pt] (3.9,-0.9) -- (3.9,4.6);",
+          "labels": [
+            {
+              "x": 0.35,
+              "y": 1.5,
+              "text": "같은 거리",
+              "cls": "v-label-s",
+              "anchor": "start"
+            },
+            {
+              "x": 0,
+              "y": -1,
+              "text": "손전등을 세웠을 때 (고도 90°)",
+              "cls": "v-label",
+              "anchor": "middle"
+            },
+            {
+              "x": 5.757,
+              "y": 0.769,
+              "text": "40°",
+              "cls": "v-label-a",
+              "anchor": "middle"
+            },
+            {
+              "x": 7.565,
+              "y": 1.577,
+              "text": "같은 거리",
+              "cls": "v-label-s",
+              "anchor": "middle"
+            },
+            {
+              "x": 8.2,
+              "y": -1,
+              "text": "손전등을 눕혔을 때 (고도 40°)",
+              "cls": "v-label",
+              "anchor": "middle"
+            }
+          ]
+        }
+      },
+      "caption": "손전등과 종이 사이 거리를 같게 두고, 모눈종이에 빛이 닿은 칸 수를 세어 비교해 보세요.",
+      "notes": "생각 B를 확인하는 실험입니다. 모둠별로 손전등과 모눈종이를 나눠 줍니다. 전등과 종이 사이 거리를 같게 유지해야 공정한 실험이 된다는 점을 먼저 짚어 줍니다. 90°와 40°는 예시이며 각도기로 직접 맞춥니다."
+    },
+    {
       "type": "concept",
       "kicker": "탐구 1",
       "title": "태양이 높을수록 좁은 곳에 빛이 모인다",
@@ -108,18 +250,44 @@
           "t": "여름에는 남중 고도가 높아요."
         }
       ],
-      "visual": "<svg viewBox='0 0 700 620'><line x1='30' y1='520' x2='670' y2='520' class='v-ink-s' stroke-width='6'/><polygon points='120,60 220,60 220,520 120,520' class='v-mid'/><polygon points='560,150 640,210 470,520 330,520' class='v-soft'/><g class='v-accent-s' stroke-width='5'><line x1='120' y1='60' x2='120' y2='520'/><line x1='220' y1='60' x2='220' y2='520'/></g><g class='v-ink-s' stroke-width='5' opacity='.55'><line x1='560' y1='150' x2='330' y2='520'/><line x1='640' y1='210' x2='470' y2='520'/></g><rect x='120' y='510' width='100' height='20' class='v-accent'/><rect x='330' y='510' width='140' height='20' class='v-muted'/><text x='170' y='585' class='v-label-a' text-anchor='middle'>좁다</text><text x='400' y='585' class='v-label' text-anchor='middle'>넓다</text><text x='170' y='40' class='v-label-s' text-anchor='middle'>높은 고도</text><text x='600' y='120' class='v-label-s' text-anchor='middle'>낮은 고도</text></svg>",
+      "visual": {
+        "tikz": {
+          "src": "\\draw[cfink, line width=1.5pt] (-0.3,0) -- (7.6,0);\n\\fill[cfsoft] (0.9,0) -- (1.931,0) -- (2.644,2.863) -- (1.674,3.105) -- cycle;\n\\draw[cfaccent, line width=1.5pt] (0.9,0) -- (1.674,3.105);\n\\draw[cfaccent, line width=1.5pt] (1.931,0) -- (2.644,2.863);\n\\fill[cfaccent] (0.9,-0.13) rectangle (1.931,0);\n\\fill[cfsoft] (4.3,0) -- (6.363,0) -- (7.584,0.677) -- (7.099,1.551) -- cycle;\n\\draw[cfmuted, line width=1.5pt] (4.3,0) -- (7.099,1.551);\n\\draw[cfmuted, line width=1.5pt] (6.363,0) -- (7.584,0.677);\n\\fill[cfmuted] (4.3,-0.13) rectangle (6.363,0);",
+          "labels": [
+            {
+              "x": 1.415,
+              "y": -0.75,
+              "text": "좁다",
+              "cls": "v-label-a",
+              "anchor": "middle"
+            },
+            {
+              "x": 2.159,
+              "y": 3.405,
+              "text": "높은 고도",
+              "cls": "v-label-s",
+              "anchor": "middle"
+            },
+            {
+              "x": 5.331,
+              "y": -0.75,
+              "text": "넓다",
+              "cls": "v-label",
+              "anchor": "middle"
+            },
+            {
+              "x": 7.341,
+              "y": 1.851,
+              "text": "낮은 고도",
+              "cls": "v-label-s",
+              "anchor": "middle"
+            }
+          ]
+        }
+      },
       "caption": "같은 폭의 햇빛이 땅에 닿는 넓이를 비교해 보세요.",
       "reveal": true,
-      "notes": "그림의 두 빛다발 폭이 같다는 점을 먼저 확인시킵니다. 그다음 땅에 닿는 막대 길이를 비교하게 합니다. 좁은 곳에 모이면 왜 더 따뜻한지는 돋보기로 햇빛을 모으는 경험과 연결합니다."
-    },
-    {
-      "type": "diagram",
-      "kicker": "탐구 1 · 실험",
-      "title": "전등을 기울이면 빛이 닿는 넓이가 달라진다",
-      "visual": "<svg viewBox='0 0 1600 560'><g><rect x='60' y='430' width='560' height='26' rx='6' class='v-paper3'/><rect x='250' y='40' width='120' height='70' rx='14' class='v-ink'/><polygon points='270,110 350,110 380,430 240,430' class='v-mid' opacity='.85'/><ellipse cx='310' cy='432' rx='74' ry='14' class='v-accent'/><text x='310' y='520' class='v-label' text-anchor='middle'>전등을 세웠을 때 (고도 90°)</text></g><g transform='translate(820 0)'><rect x='60' y='430' width='640' height='26' rx='6' class='v-paper3'/><g transform='rotate(-50 150 90)'><rect x='90' y='50' width='120' height='70' rx='14' class='v-ink'/></g><polygon points='205,150 262,98 610,430 300,430' class='v-soft'/><ellipse cx='455' cy='432' rx='160' ry='14' class='v-muted' opacity='.8'/><text x='380' y='520' class='v-label' text-anchor='middle'>전등을 눕혔을 때 (고도 40°)</text></g><line x1='780' y1='60' x2='780' y2='470' class='v-line' stroke-width='3' stroke-dasharray='8 10'/></svg>",
-      "caption": "모눈종이 위에서 빛이 닿은 칸 수를 세어 비교합니다. 칸 수가 적을수록 같은 넓이에 더 많은 빛이 닿습니다.",
-      "notes": "모둠별로 손전등과 모눈종이를 나눠 줍니다. 전등과 종이 사이 거리를 같게 유지해야 공정한 실험이 된다는 점을 먼저 짚어 줍니다. 90°와 40°는 예시이며 각도기로 직접 맞춥니다."
+      "notes": "방금 손전등 실험에서 센 칸 수를 떠올리게 합니다. 그림의 두 빛다발 폭이 같다는 점을 먼저 확인시키고, 땅에 닿는 막대 길이를 비교하게 합니다. 좁은 곳에 모이면 왜 더 따뜻한지는 돋보기로 햇빛을 모으는 경험과 연결합니다."
     },
     {
       "type": "bignum",
@@ -128,10 +296,37 @@
       "unit": "°",
       "label": "하짓날 서울의 태양 남중 고도",
       "caption": "동짓날에는 약 29°까지 낮아져요. 같은 서울인데 반년 사이에 태양 높이가 이렇게 달라집니다.",
-      "source": "남중 고도 = 90° − 위도 ± 23.5° (서울 위도 약 37.5°)",
+      "source": "서울(위도 약 37.5°)에서 계산한 값",
       "fact": "f2",
       "notes": "76도와 29도를 팔 각도로 흉내 내게 합니다. 여름에 그림자가 짧고 겨울에 그림자가 긴 경험과 연결하면 이해가 빠릅니다.",
-      "visual": "<svg viewBox='0 0 780 520'><line x1='40' y1='440' x2='600' y2='440' class='v-ink-s' stroke-width='6'/><path d='M60 440 A260 260 0 0 1 580 440' class='v-line' stroke-width='3' stroke-dasharray='10 12'/><line x1='320' y1='440' x2='383' y2='188' class='v-accent-s' stroke-width='7' stroke-linecap='round'/><line x1='320' y1='440' x2='547' y2='314' class='v-ink-s' stroke-width='6' stroke-linecap='round' opacity='.45'/><circle cx='383' cy='188' r='40' class='v-accent'/><circle cx='547' cy='314' r='32' class='v-muted' opacity='.6'/><path d='M430 440 A110 110 0 0 0 346 333' class='v-accent-s' stroke-width='5'/><path d='M470 440 A150 150 0 0 0 451 367' class='v-ink-s' stroke-width='4' opacity='.55'/><text x='383' y='120' class='v-label-a' text-anchor='middle'>하지 76°</text><text x='596' y='326' class='v-label' text-anchor='start'>동지 29°</text><rect x='300' y='440' width='40' height='16' class='v-ink'/><text x='320' y='500' class='v-label-s' text-anchor='middle'>서울</text></svg>"
+      "visual": {
+        "tikz": {
+          "src": "\\draw[cfsoft, dashed, line width=1pt] (3,0) arc (0:180:3);\n\\draw[cfink, line width=1.5pt] (-3.5,0) -- (3.5,0);\n\\draw[cfmuted, line width=1.5pt] (0,0) -- (2.624,1.454);\n\\draw[cfaccent, line width=2pt] (0,0) -- (0.726,2.911);\n\\draw[cfmuted, line width=1.5pt] (1.7,0) arc (0:29:1.7);\n\\draw[cfaccent, line width=1.5pt] (1.1,0) arc (0:76:1.1);\n\\fill[cfmuted] (2.624,1.454) circle (0.42);\n\\fill[cfaccent] (0.726,2.911) circle (0.42);\n\\fill[cfink] (-0.22,-0.2) rectangle (0.22,0);",
+          "labels": [
+            {
+              "x": 0.726,
+              "y": 3.611,
+              "text": "하지 76°",
+              "cls": "v-label-a",
+              "anchor": "middle"
+            },
+            {
+              "x": 3.174,
+              "y": 1.334,
+              "text": "동지 29°",
+              "cls": "v-label",
+              "anchor": "start"
+            },
+            {
+              "x": 0,
+              "y": -0.75,
+              "text": "서울",
+              "cls": "v-label-s",
+              "anchor": "middle"
+            }
+          ]
+        }
+      }
     },
     {
       "type": "quiz",
@@ -150,33 +345,8 @@
       "type": "chapter",
       "no": "02",
       "title": "왜 태양 높이가 달라질까?",
-      "sub": "기울어진 자전축과 공전을 모형으로 확인합니다.",
+      "sub": "지구본 모형으로 태양 높이가 달라지는 까닭을 찾아봅니다.",
       "notes": "탐구 1에서 태양 고도가 기온을 바꾼다는 것을 알았습니다. 이제 그 태양 고도가 계절마다 왜 달라지는지로 넘어간다고 안내합니다."
-    },
-    {
-      "type": "compare",
-      "title": "자전축이 기울어져야 계절이 생긴다",
-      "left": {
-        "label": "자전축이 곧게 서 있다면",
-        "items": [
-          "남중 고도가 늘 같음",
-          "기온 변화가 거의 없음",
-          "계절이 생기지 않음"
-        ],
-        "visual": "<svg viewBox='0 0 600 240'><ellipse cx='300' cy='130' rx='270' ry='80' class='v-line' stroke-width='3' stroke-dasharray='8 10'/><circle cx='300' cy='130' r='34' class='v-muted' opacity='.6'/><g transform='translate(60 130)'><circle r='34' class='v-paper3'/><line y1='-60' y2='60' class='v-ink-s' stroke-width='5'/></g><g transform='translate(540 130)'><circle r='34' class='v-paper3'/><line y1='-60' y2='60' class='v-ink-s' stroke-width='5'/></g></svg>"
-      },
-      "right": {
-        "label": "자전축이 23.5° 기울어져 있으면",
-        "items": [
-          "위치마다 남중 고도가 다름",
-          "높으면 여름, 낮으면 겨울",
-          "1년마다 계절이 되풀이"
-        ],
-        "visual": "<svg viewBox='0 0 600 240'><ellipse cx='300' cy='130' rx='270' ry='80' class='v-line' stroke-width='3' stroke-dasharray='8 10'/><circle cx='300' cy='130' r='34' class='v-accent'/><g transform='translate(60 130) rotate(23.5)'><circle r='34' class='v-mid'/><line y1='-60' y2='60' class='v-accent-s' stroke-width='5'/></g><g transform='translate(540 130) rotate(23.5)'><circle r='34' class='v-mid'/><line y1='-60' y2='60' class='v-accent-s' stroke-width='5'/></g></svg>"
-      },
-      "note": "기운 방향 그대로 공전하는 것이 핵심!",
-      "reveal": true,
-      "notes": "왼쪽을 먼저 보여 주고 이런 지구라면 계절이 있을지 예측하게 합니다. 그다음 오른쪽을 공개합니다. 자전축이 항상 같은 쪽을 가리킨다는 점을 지구본으로 직접 보여 줍니다."
     },
     {
       "type": "steps",
@@ -186,26 +356,82 @@
         {
           "h": "전등 켜기",
           "t": "전등을 태양으로 삼아요.",
-          "visual": "<svg viewBox='0 0 240 200'><rect x='60' y='150' width='120' height='18' rx='6' class='v-paper3'/><rect x='112' y='70' width='16' height='82' class='v-ink'/><path d='M70 70 L170 70 L150 20 L90 20 Z' class='v-ink'/><polygon points='80,72 160,72 200,150 40,150' class='v-mid' opacity='.55'/><circle cx='120' cy='74' r='12' class='v-accent'/></svg>"
+          "visual": {
+            "image": {
+              "id": "season-step1-lamp",
+              "brief": "어두운 교실 책상 위에서 초등학생 손이 갓 없이 둥근 전구가 드러난 낮은 스탠드의 스위치를 눌러 전구를 켜는 순간, 전등 옆에 받침대에 꽂힌 작은 지구본이 놓여 있음",
+              "state": "투명한 유리 전구가 막 켜져 밝게 빛나고, 자전축 막대가 아직 곧게 수직으로 선 지구본이 전구 옆에 놓여 있는 상태",
+              "role": "step",
+              "ratio": "4:3",
+              "style": "photo",
+              "continuity": "같은 검은 책상, 갓 없이 투명한 유리 전구가 드러난 같은 흰색 스탠드(둥근 흰 받침 위에 곧게 선 짧은 흰 원기둥 막대, 그 꼭대기에 위를 향한 소켓과 전구; 전구 중심이 지구본 적도와 같은 높이라서 전구 꼭대기가 지구본 꼭대기보다 확실히 낮음), 같은 지구본 한 개(글자 없는 매끈한 파란 지구본, 반원형 자오환 없이 곧은 은색 자전축 막대 하나로 둥글고 납작한 검은 받침대에 꽂혀 있음), 같은 초등학생 손과 초록색 소매",
+              "purpose": "apparatus",
+              "mustShow": [
+                "전구 중심과 지구본 적도가 같은 높이(전구 꼭대기가 지구본 꼭대기보다 낮음)"
+              ]
+            }
+          }
         },
         {
           "h": "지구본 기울이기",
           "t": "자전축을 한쪽으로 기울여요.",
-          "visual": "<svg viewBox='0 0 240 200'><rect x='80' y='170' width='80' height='14' rx='6' class='v-paper3'/><line x1='120' y1='170' x2='120' y2='150' class='v-ink-s' stroke-width='8'/><g transform='translate(120 92) rotate(23.5)'><circle r='58' class='v-mid'/><path d='M-58 0 A58 58 0 0 0 58 0 Z' class='v-soft'/><ellipse rx='58' ry='14' class='v-ink-s' stroke-width='3' opacity='.5'/><line y1='-80' y2='80' class='v-accent-s' stroke-width='7' stroke-linecap='round'/></g></svg>"
+          "visual": {
+            "image": {
+              "id": "season-step2-tilt",
+              "brief": "초등학생 두 손이 받침대에 꽂힌 지구본의 자전축을 한쪽으로 비스듬히 기울여 맞추는 장면, 옆에서 켜진 전구가 지구본을 비춤",
+              "state": "지구본의 자전축 막대가 한쪽으로 비스듬히 기울어진 상태, 켜진 전구 빛이 지구본 한쪽 면을 밝힘",
+              "role": "step",
+              "ratio": "4:3",
+              "style": "photo",
+              "continuity": "같은 검은 책상, 갓 없이 투명한 유리 전구가 드러난 같은 흰색 스탠드(둥근 흰 받침 위에 곧게 선 짧은 흰 원기둥 막대, 그 꼭대기에 위를 향한 소켓과 전구; 전구 중심이 지구본 적도와 같은 높이라서 전구 꼭대기가 지구본 꼭대기보다 확실히 낮음), 같은 지구본 한 개(글자 없는 매끈한 파란 지구본, 반원형 자오환 없이 곧은 은색 자전축 막대 하나로 둥글고 납작한 검은 받침대에 꽂혀 있음), 같은 초등학생 손과 초록색 소매",
+              "purpose": "apparatus",
+              "mustShow": [
+                "전구 중심과 지구본 적도가 같은 높이(전구 꼭대기가 지구본 꼭대기보다 낮음)"
+              ]
+            }
+          }
         },
         {
           "h": "네 곳으로 공전",
           "t": "전등 둘레 네 곳으로 옮겨요.",
-          "visual": "<svg viewBox='0 0 240 200'><ellipse cx='120' cy='100' rx='100' ry='62' class='v-line' stroke-width='3' stroke-dasharray='8 8'/><circle cx='120' cy='100' r='22' class='v-accent'/><g class='v-mid'><circle cx='20' cy='100' r='15'/><circle cx='220' cy='100' r='15'/><circle cx='120' cy='38' r='15'/><circle cx='120' cy='162' r='15'/></g><polygon points='186,40 212,50 190,66' class='v-ink'/></svg>"
+          "visual": {
+            "image": {
+              "id": "season-step3-orbit",
+              "brief": "책상 위 원 모양 경로의 정중앙에 갓 없이 전구가 드러난 스탠드가 지구본과 같은 높이에서 옆으로 빛을 비추고, 초등학생 손이 자전축이 기울어진 지구본을 받침대째 들고 그 원형 경로를 따라 다음 자리로 옮기는 장면, 위에서 비스듬히 내려다본 구도",
+              "state": "자전축이 같은 방향으로 기울어진 지구본이, 전구 중심과 지구본 중심이 같은 높이인 채로 전구 둘레 원형 경로 위를 옮겨지는 중",
+              "role": "step",
+              "ratio": "4:3",
+              "style": "photo",
+              "continuity": "같은 검은 책상, 갓 없이 투명한 유리 전구가 드러난 같은 흰색 스탠드(둥근 흰 받침 위에 곧게 선 짧은 흰 원기둥 막대, 그 꼭대기에 위를 향한 소켓과 전구; 전구 중심이 지구본 적도와 같은 높이라서 전구 꼭대기가 지구본 꼭대기보다 확실히 낮음), 같은 지구본 한 개(글자 없는 매끈한 파란 지구본, 반원형 자오환 없이 곧은 은색 자전축 막대 하나로 둥글고 납작한 검은 받침대에 꽂혀 있음), 같은 초등학생 손과 초록색 소매",
+              "purpose": "apparatus",
+              "mustShow": [
+                "전구 중심과 지구본 적도가 같은 높이(전구 꼭대기가 지구본 꼭대기보다 낮음)",
+                "같은 검은 책상"
+              ]
+            }
+          }
         },
         {
           "h": "고도 재기",
           "t": "우리나라 위치에서 재요.",
-          "visual": "<svg viewBox='0 0 240 200'><line x1='20' y1='170' x2='220' y2='170' class='v-ink-s' stroke-width='6'/><line x1='60' y1='170' x2='190' y2='60' class='v-accent-s' stroke-width='6' stroke-linecap='round'/><circle cx='196' cy='52' r='20' class='v-accent'/><path d='M130 170 A70 70 0 0 0 113 125' class='v-ink-s' stroke-width='5'/><rect x='50' y='160' width='20' height='20' class='v-ink'/></svg>"
+          "visual": {
+            "tikz": {
+              "src": "\\draw[cfink, line width=1.5pt] (-1.2,0) -- (3.507,0);\n\\filldraw[fill=cfsoft, draw=cfink] (0.657,0) arc (180:0:1.25) -- cycle;\n\\draw[cfmuted, line width=0.6pt] (3.02,0.196) -- (3.138,0.217);\n\\draw[cfmuted, line width=0.6pt] (2.969,0.386) -- (3.081,0.428);\n\\draw[cfmuted, line width=0.6pt] (2.799,0.515) -- (2.989,0.625);\n\\draw[cfmuted, line width=0.6pt] (2.772,0.726) -- (2.864,0.803);\n\\draw[cfmuted, line width=0.6pt] (2.633,0.866) -- (2.71,0.958);\n\\draw[cfmuted, line width=0.6pt] (2.422,0.892) -- (2.532,1.083);\n\\draw[cfmuted, line width=0.6pt] (2.293,1.062) -- (2.334,1.175);\n\\draw[cfmuted, line width=0.6pt] (2.103,1.113) -- (2.124,1.231);\n\\draw[cfmuted, line width=0.6pt] (1.907,1.03) -- (1.907,1.25);\n\\draw[cfmuted, line width=0.6pt] (1.711,1.113) -- (1.69,1.231);\n\\draw[cfmuted, line width=0.6pt] (1.52,1.062) -- (1.479,1.175);\n\\draw[cfmuted, line width=0.6pt] (1.392,0.892) -- (1.282,1.083);\n\\draw[cfmuted, line width=0.6pt] (1.18,0.866) -- (1.103,0.958);\n\\draw[cfmuted, line width=0.6pt] (1.041,0.726) -- (0.949,0.803);\n\\draw[cfmuted, line width=0.6pt] (1.015,0.515) -- (0.824,0.625);\n\\draw[cfmuted, line width=0.6pt] (0.845,0.386) -- (0.732,0.428);\n\\draw[cfmuted, line width=0.6pt] (0.794,0.196) -- (0.676,0.217);\n\\fill[cfmuted] (0,0) rectangle (1.907,0.13);\n\\draw[cfink, line width=2.5pt] (0,0) -- (0,1.6);\n\\draw[cfaccent, dashed, line width=1.5pt] (-0.827,2.294) -- (1.907,0);\n\\draw[cfaccent, line width=1.5pt] (1.157,0) arc (180:140:0.75);",
+              "labels": [
+                {
+                  "x": 1.532,
+                  "y": -0.62,
+                  "text": "고도",
+                  "cls": "v-label-a",
+                  "anchor": "middle"
+                }
+              ]
+            }
+          }
         }
       ],
       "reveal": true,
-      "notes": "지구본의 자전축 방향이 네 위치에서 모두 같아야 한다는 점을 반복해서 강조합니다. 태양 고도 측정기는 우리나라 위치에 붙인 채 옮깁니다."
+      "notes": "지구본의 자전축 방향이 네 위치에서 모두 같아야 한다는 점을 반복해서 강조합니다. 태양 고도 측정기는 우리나라 위치에 붙인 채 옮기고, 잴 때는 우리나라가 전등을 마주 보게 돌립니다. 각도기는 곧은 변을 그림자 선에 맞춰 세우고 중심을 그림자 끝에 둔 채, 그림자 끝에서 막대 끝을 올려다보는 각을 잽니다. 전구를 지구본 중심 높이에 가깝게 맞춘다 (사진은 대략적인 배치). 전구가 뜨거우니 손이나 지구본이 전구에 닿지 않게 합니다."
     },
     {
       "type": "activity",
@@ -220,7 +446,7 @@
         "두 결과를 비교해 한 문장으로 쓰기"
       ],
       "output": "활동지 02 기록표와 한 문장 결론",
-      "notes": "타이머를 켜고 시작합니다. 순회하면서 자전축 방향이 바뀌는 모둠을 먼저 도와줍니다. 끝나기 2분 전에 결론 문장을 쓰도록 알립니다."
+      "notes": "타이머를 켜고 시작합니다. 순회하면서 자전축 방향이 바뀌는 모둠을 먼저 도와줍니다. 끝나기 2분 전에 결론 문장을 쓰도록 알립니다. 켜 둔 전구는 뜨거우니 손을 대지 않게 하고, 어두운 교실에서는 자리 이동을 천천히 하게 합니다. 10분 안에 여덟 번을 재야 하므로 모둠별 장치(전구 스탠드·지구본·측정기)는 수업 전에 미리 설치해 두고, 활동 전에 자전축을 기울이는 방향을 전체 앞에서 먼저 시범으로 보여 줍니다."
     },
     {
       "type": "quiz",
@@ -233,7 +459,42 @@
       ],
       "answer": 3,
       "explain": "자전축이 기울지 않으면 공전 위치와 관계없이 남중 고도가 거의 같아 계절 변화가 생기지 않습니다.",
-      "notes": "모둠 실험 결과를 떠올리며 답하게 합니다. 3번을 고른 까닭을 한 모둠이 발표하게 합니다."
+      "notes": "모둠 실험에서 자전축을 세운 지구본의 결과를 떠올리며 답하게 합니다. 3번을 고른 까닭을 한 모둠이 발표하게 합니다."
+    },
+    {
+      "type": "compare",
+      "title": "자전축이 기울어져야 계절이 생긴다",
+      "left": {
+        "label": "자전축이 곧게 서 있다면",
+        "items": [
+          "남중 고도가 늘 같음",
+          "기온 변화가 거의 없음",
+          "계절이 생기지 않음"
+        ],
+        "visual": {
+          "tikz": {
+            "src": "\\draw[cfsoft, dashed, line width=1pt] (0,0) ellipse (3.6 and 1);\n\\fill[cfmuted] (0,0) circle (0.42);\n\\filldraw[fill=cfsoft, draw=cfink] (-3.6,0) circle (0.42);\n\\draw[cfink, line width=2pt] (-3.6,-0.85) -- (-3.6,0.85);\n\\filldraw[fill=cfsoft, draw=cfink] (3.6,0) circle (0.42);\n\\draw[cfink, line width=2pt] (3.6,-0.85) -- (3.6,0.85);",
+            "labels": []
+          }
+        }
+      },
+      "right": {
+        "label": "자전축이 23.5° 기울어져 있으면",
+        "items": [
+          "위치마다 남중 고도가 다름",
+          "높으면 여름, 낮으면 겨울",
+          "1년마다 계절이 되풀이"
+        ],
+        "visual": {
+          "tikz": {
+            "src": "\\draw[cfsoft, dashed, line width=1pt] (0,0) ellipse (3.6 and 1);\n\\fill[cfaccent] (0,0) circle (0.42);\n\\filldraw[fill=cfsoft, draw=cfink] (-3.6,0) circle (0.42);\n\\draw[cfaccent, line width=2pt] (-3.939,-0.78) -- (-3.261,0.78);\n\\filldraw[fill=cfsoft, draw=cfink] (3.6,0) circle (0.42);\n\\draw[cfaccent, line width=2pt] (3.261,-0.78) -- (3.939,0.78);",
+            "labels": []
+          }
+        }
+      },
+      "note": "기운 방향 그대로 공전하는 것이 핵심!",
+      "reveal": true,
+      "notes": "모둠 실험 결과를 두 칸에 맞춰 정리합니다. 왼쪽은 자전축을 세운 지구본, 오른쪽은 기울인 지구본의 결과입니다. 자전축이 네 위치에서 항상 같은 쪽을 가리킨다는 점을 지구본으로 다시 보여 줍니다."
     },
     {
       "type": "summary",
@@ -245,7 +506,7 @@
       ],
       "next": "계절에 따라 낮의 길이가 어떻게 달라지는지 알아봅니다.",
       "reveal": true,
-      "notes": "중심 질문으로 돌아가 칠판에 적어 둔 예상과 비교합니다. 거리 때문이라는 생각이 왜 틀렸는지 학생 입으로 말하게 합니다."
+      "notes": "중심 질문으로 돌아가 칠판에 적어 둔 두 생각과 비교합니다. 7월 초에 지구가 태양에서 가장 멀다는 자료로 거리 때문이라는 생각이 왜 틀렸는지 학생 입으로 말하게 합니다."
     },
     {
       "type": "exit",
@@ -256,16 +517,16 @@
   ],
   "worksheet": {
     "title": "계절은 왜 생길까?",
-    "subtitle": "태양 고도와 자전축으로 계절의 까닭을 설명해 봅시다.",
+    "subtitle": "여름은 덥고 겨울은 추운 까닭을 자료와 실험으로 찾아봅시다.",
     "sections": [
       {
         "title": "개념 정리",
-        "minutes": 5,
+        "minutes": 3,
         "items": [
           {
             "type": "concept",
             "obj": 1,
-            "text": "태양이 지표면과 이루는 각을 {{태양 고도}}라고 하고, 하루 중 태양이 가장 높이 떴을 때의 고도를 {{남중 고도}}라고 한다.\n태양 고도가 높으면 같은 양의 빛이 {{좁은}} 면적에 닿아 땅이 더 많이 데워진다."
+            "text": "태양이 지표면과 이루는 각을 {{태양 고도}}라고 하고, 하루 중 태양이 가장 높이 떴을 때의 고도를 {{남중 고도}}라고 한다."
           },
           {
             "type": "choice",
@@ -295,17 +556,65 @@
               }
             ]
           }
-        ]
+        ],
+        "lead": "손전등 실험(슬라이드 7)을 마치면, 다음 슬라이드로 넘어가기 전에 풀어 봅시다."
       },
       {
         "title": "모형 실험 기록",
-        "lead": "자전축을 기울인 지구본과 세운 지구본을 전등 둘레 네 위치로 옮기며 태양 고도를 재어 봅시다.",
+        "lead": "그림처럼 지구본을 전등 둘레 가~라로 옮기며, 우리나라가 전등을 마주 보게 돌린 뒤 태양 고도를 재어 봅시다.",
         "minutes": 10,
         "items": [
           {
+            "type": "figure",
+            "visual": {
+              "tikz": {
+                "src": "\\draw[cfsoft, dashed, line width=1pt] (0,0) ellipse (4.2 and 1.55);\n\\draw[cfink, line width=1.2pt, -{Stealth[scale=1.4]}] (-3.947,-0.53) arc [start angle=200, end angle=245, x radius=4.2, y radius=1.55];\n\\draw[cfink, line width=1.2pt, -{Stealth[scale=1.4]}] (1.436,-1.457) arc [start angle=290, end angle=335, x radius=4.2, y radius=1.55];\n\\draw[cfink, line width=1.2pt, -{Stealth[scale=1.4]}] (3.947,0.53) arc [start angle=20, end angle=65, x radius=4.2, y radius=1.55];\n\\draw[cfink, line width=1.2pt, -{Stealth[scale=1.4]}] (-1.436,1.457) arc [start angle=110, end angle=155, x radius=4.2, y radius=1.55];\n\\fill[cfink] (-0.28,-0.55) rectangle (0.28,-0.42);\n\\fill[cfink] (-0.06,-0.42) rectangle (0.06,-0.1);\n\\fill[cfaccent] (0,0.12) circle (0.3);\n\\filldraw[fill=cfsoft, draw=cfink] (-4.2,0) circle (0.36);\n\\draw[cfink, line width=1.5pt] (-4.471,-0.624) -- (-3.929,0.624);\n\\filldraw[fill=cfsoft, draw=cfink] (0,-1.55) circle (0.36);\n\\draw[cfink, line width=1.5pt] (-0.271,-2.174) -- (0.271,-0.926);\n\\filldraw[fill=cfsoft, draw=cfink] (4.2,0) circle (0.36);\n\\draw[cfink, line width=1.5pt] (3.929,-0.624) -- (4.471,0.624);\n\\filldraw[fill=cfsoft, draw=cfink] (0,1.55) circle (0.36);\n\\draw[cfink, line width=1.5pt] (-0.271,0.926) -- (0.271,2.174);",
+                "labels": [
+                  {
+                    "x": 0.45,
+                    "y": -0.2,
+                    "text": "전등",
+                    "cls": "v-label-s",
+                    "anchor": "start"
+                  },
+                  {
+                    "x": -5.15,
+                    "y": -0.1,
+                    "text": "가",
+                    "cls": "v-label-a",
+                    "anchor": "middle"
+                  },
+                  {
+                    "x": 0,
+                    "y": -2.7,
+                    "text": "나",
+                    "cls": "v-label-a",
+                    "anchor": "middle"
+                  },
+                  {
+                    "x": 5.15,
+                    "y": -0.1,
+                    "text": "다",
+                    "cls": "v-label-a",
+                    "anchor": "middle"
+                  },
+                  {
+                    "x": 0,
+                    "y": 2.5,
+                    "text": "라",
+                    "cls": "v-label-a",
+                    "anchor": "middle"
+                  }
+                ]
+              }
+            },
+            "caption": "위에서 비스듬히 본 모습. 지구본을 가 → 나 → 다 → 라 순서(화살표 방향)로 옮기고, 자전축은 네 곳에서 늘 같은 쪽으로 기울여 둡니다.",
+            "height": 45
+          },
+          {
             "type": "table",
             "obj": 2,
-            "q": "위치별로 잰 태양 고도를 쓰고, 그때의 계절을 적어 보세요.",
+            "q": "가~라 위치별로 잰 태양 고도(높다·중간·낮다)를 쓰고, 그때 우리나라의 계절을 적어 보세요.",
             "head": [
               "지구본 위치",
               "자전축을 기울였을 때 고도",
@@ -316,25 +625,25 @@
               [
                 "가",
                 "{{높다}}",
-                "{{네 곳 모두 같음}}",
+                "{{중간(네 곳 모두 같음)}}",
                 "{{여름}}"
               ],
               [
                 "나",
                 "{{중간}}",
-                "{{네 곳 모두 같음}}",
+                "{{중간(네 곳 모두 같음)}}",
                 "{{가을}}"
               ],
               [
                 "다",
                 "{{낮다}}",
-                "{{네 곳 모두 같음}}",
+                "{{중간(네 곳 모두 같음)}}",
                 "{{겨울}}"
               ],
               [
                 "라",
                 "{{중간}}",
-                "{{네 곳 모두 같음}}",
+                "{{중간(네 곳 모두 같음)}}",
                 "{{봄}}"
               ]
             ]
@@ -351,7 +660,7 @@
       },
       {
         "title": "확인 문제",
-        "minutes": 8,
+        "minutes": 7,
         "items": [
           {
             "type": "ox",
@@ -406,8 +715,64 @@
             "obj": 2,
             "q": "자전축이 기울어진 지구가 태양 둘레를 공전하는 모습을 그리고, 우리나라가 여름일 때의 위치에 ‘여름’이라고 써 보세요.",
             "height": 52,
-            "model": "자전축이 같은 방향으로 기울어진 지구를 네 위치에 그리고, 북반구가 태양 쪽으로 기울어진 위치에 ‘여름’을 표시하면 정답이다.",
-            "placeholder": "공전 궤도를 먼저 타원으로 그려 보세요"
+            "model": "자전축이 같은 방향으로 기울어진 지구를 궤도 위 네 곳에 그리고, 자전축의 북쪽 끝이 태양 쪽으로 기울어진 위치에 ‘여름’을 쓰면 정답이다(그림의 방향은 달라도 된다).",
+            "placeholder": "궤도 위에 지구를 그려 보세요",
+            "base": {
+              "tikz": {
+                "src": "\\draw[cfsoft, dashed, line width=1pt] (0,0) ellipse (4.2 and 1.55);\n\\fill[cfaccent] (0,0) circle (0.5);",
+                "labels": [
+                  {
+                    "x": 0.7,
+                    "y": -0.2,
+                    "text": "태양",
+                    "cls": "v-label-s",
+                    "anchor": "start"
+                  }
+                ]
+              }
+            },
+            "answer": {
+              "tikz": {
+                "src": "\\draw[cfsoft, dashed, line width=1pt] (0,0) ellipse (4.2 and 1.55);\n\\draw[cfink, line width=1.2pt, -{Stealth[scale=1.4]}] (-3.947,-0.53) arc [start angle=200, end angle=245, x radius=4.2, y radius=1.55];\n\\draw[cfink, line width=1.2pt, -{Stealth[scale=1.4]}] (1.436,-1.457) arc [start angle=290, end angle=335, x radius=4.2, y radius=1.55];\n\\draw[cfink, line width=1.2pt, -{Stealth[scale=1.4]}] (3.947,0.53) arc [start angle=20, end angle=65, x radius=4.2, y radius=1.55];\n\\draw[cfink, line width=1.2pt, -{Stealth[scale=1.4]}] (-1.436,1.457) arc [start angle=110, end angle=155, x radius=4.2, y radius=1.55];\n\\fill[cfaccent] (0,0) circle (0.5);\n\\filldraw[fill=cfsoft, draw=cfink] (-4.2,0) circle (0.36);\n\\draw[cfink, line width=1.5pt] (-4.471,-0.624) -- (-3.929,0.624);\n\\filldraw[fill=cfsoft, draw=cfink] (0,-1.55) circle (0.36);\n\\draw[cfink, line width=1.5pt] (-0.271,-2.174) -- (0.271,-0.926);\n\\filldraw[fill=cfsoft, draw=cfink] (4.2,0) circle (0.36);\n\\draw[cfink, line width=1.5pt] (3.929,-0.624) -- (4.471,0.624);\n\\filldraw[fill=cfsoft, draw=cfink] (0,1.55) circle (0.36);\n\\draw[cfink, line width=1.5pt] (-0.271,0.926) -- (0.271,2.174);",
+                "labels": [
+                  {
+                    "x": 0.7,
+                    "y": -0.2,
+                    "text": "태양",
+                    "cls": "v-label-s",
+                    "anchor": "start"
+                  },
+                  {
+                    "x": -5.45,
+                    "y": -0.1,
+                    "text": "여름",
+                    "cls": "v-label-a",
+                    "anchor": "middle"
+                  },
+                  {
+                    "x": 0,
+                    "y": -2.7,
+                    "text": "가을",
+                    "cls": "v-label-s",
+                    "anchor": "middle"
+                  },
+                  {
+                    "x": 5.45,
+                    "y": -0.1,
+                    "text": "겨울",
+                    "cls": "v-label-s",
+                    "anchor": "middle"
+                  },
+                  {
+                    "x": 0,
+                    "y": 2.5,
+                    "text": "봄",
+                    "cls": "v-label-s",
+                    "anchor": "middle"
+                  }
+                ]
+              }
+            }
           },
           {
             "type": "short",
@@ -416,10 +781,11 @@
             "lines": 3,
             "answer": "여름에는 태양의 남중 고도가 높아서 같은 넓이의 땅에 더 많은 빛이 닿아 기온이 높다. 이것은 태양과의 거리가 아니라 기울어진 자전축 때문에 생기는 차이이다."
           }
-        ]
+        ],
+        "lead": "⑤~⑦은 확인 문제 시간에, ⑧은 수업 끝 나가기 질문 시간에 써 봅시다."
       }
     ],
-    "tip": "헷갈리면 손전등 실험을 떠올려 보세요. 빛이 좁은 곳에 모일수록 더 따뜻해집니다."
+    "tip": "헷갈리면 손전등 실험에서 센 모눈 칸 수를 떠올려 보세요."
   },
   "plan": {
     "model": "모형 탐구 수업 (예상 → 실험 → 설명)",
@@ -435,84 +801,76 @@
     "flow": [
       {
         "stage": "도입",
-        "element": "동기 유발",
-        "minutes": 3,
+        "element": "동기 유발과 학습 목표 확인",
+        "minutes": 5,
         "teacher": [
+          "표지와 학습 목표·중심 질문을 안내한다",
           "여름 낮과 겨울 낮의 태양 높이 그림을 보여 주며 더위와 추위의 까닭을 묻는다"
         ],
         "student": [
+          "학습 목표를 함께 읽는다",
           "경험을 떠올려 예상을 말한다"
         ],
         "material": "슬라이드 1~3",
-        "note": "거리 때문이라는 오개념은 칠판에 적어 두고 정리 단계에서 다시 다룬다"
-      },
-      {
-        "stage": "도입",
-        "element": "학습 목표 확인",
-        "minutes": 2,
-        "teacher": [
-          "학습 목표와 중심 질문을 안내한다"
-        ],
-        "student": [
-          "학습 목표를 함께 읽는다"
-        ],
-        "material": "슬라이드 2"
+        "note": "거리 때문이라는 생각과 태양 높이라는 생각을 칠판에 모두 적어 두고, 이어지는 두 생각 비교에서 다룬다"
       },
       {
         "stage": "전개",
-        "element": "탐구 1: 태양 고도와 기온",
-        "minutes": 10,
+        "element": "탐구 1: 두 생각 비교와 태양 고도",
+        "minutes": 12,
         "teacher": [
-          "용어를 소개하고 손전등 실험 방법을 안내한다",
-          "빛이 닿는 칸 수를 비교하게 한다"
+          "두 생각(거리·태양 고도)을 정리하고, 지구–태양 거리 자료로 생각 A를 기각한다",
+          "손전등 실험을 안내하고 빛이 닿는 칸 수를 비교하게 한다"
         ],
         "student": [
+          "거리 자료를 보고 생각 A가 맞지 않는 까닭을 말한다",
           "전등을 세웠을 때와 눕혔을 때 빛이 닿는 칸 수를 센다",
           "확인 문제에 답한다"
         ],
-        "material": "슬라이드 4~8, 손전등, 모눈종이",
-        "note": "전등과 종이 사이 거리를 같게 유지하도록 지도한다"
+        "material": "슬라이드 4~10, 손전등, 모눈종이, 활동지 01(3분, 슬라이드 7 뒤)",
+        "note": "생각 B는 자료 단계에서 정답으로 선언하지 않고 실험으로 확인한다. 전등과 종이 사이 거리를 같게 유지하도록 지도한다"
       },
       {
         "stage": "전개",
         "element": "탐구 2: 자전축과 계절",
-        "minutes": 15,
+        "minutes": 12,
         "teacher": [
-          "자전축이 기울어진 경우와 세운 경우를 비교해 보인다",
-          "모둠 모형 실험을 안내하고 순회 지도한다"
+          "모둠 모형 실험(가~라 네 위치, 자전축 기울인 경우와 세운 경우)을 안내한다",
+          "순회하며 자전축 방향과 측정 방법을 지도한다"
         ],
         "student": [
           "지구본을 네 위치로 옮기며 태양 고도를 잰다",
           "활동지 기록표를 채우고 결론 문장을 쓴다"
         ],
-        "material": "슬라이드 9~13, 전등, 지구본, 활동지 02",
-        "note": "자전축 방향이 네 위치에서 같게 유지되는지 확인한다"
+        "material": "슬라이드 11~13, 전등, 지구본, 활동지 02(10분)",
+        "note": "자전축 방향이 네 위치에서 같게 유지되는지 확인한다. 켜 둔 전구는 뜨거우니 손을 대지 않게 한다."
       },
       {
         "stage": "전개",
         "element": "확인 문제",
-        "minutes": 3,
+        "minutes": 5,
         "teacher": [
-          "확인 문제를 내고 응답을 살핀다"
+          "확인 문제를 내고 응답을 살핀 뒤 활동지 03의 ⑤~⑦을 풀게 한다"
         ],
         "student": [
-          "손가락으로 답을 동시에 표시한다"
+          "손가락으로 답을 표시하고 활동지 03의 ⑤~⑦을 푼다"
         ],
-        "material": "슬라이드 13"
+        "material": "슬라이드 14, 활동지 03 ⑤~⑦"
       },
       {
         "stage": "정리",
         "element": "정리와 나가기 질문",
-        "minutes": 7,
+        "minutes": 6,
         "teacher": [
-          "중심 질문으로 돌아가 오개념을 바로잡는다",
+          "두 칸 비교로 모둠 실험 결과를 정리한다",
+          "중심 질문으로 돌아가 거리 오개념을 자료로 바로잡는다",
           "나가기 질문을 안내한다"
         ],
         "student": [
           "오늘 배운 낱말로 계절의 까닭을 설명한다",
           "활동지 나가기 질문을 쓴다"
         ],
-        "material": "슬라이드 14~15, 활동지 03",
+        "material": "슬라이드 15~17, 활동지 03 ⑧(나가기 질문, 2분)",
         "note": "나가기 질문은 걷어서 다음 차시 도입에 활용한다"
       }
     ],
@@ -539,7 +897,7 @@
     "questions": [
       {
         "q": "지구가 태양에 가까울 때가 여름 아닌가요?",
-        "a": "실제로 북반구가 여름일 때 지구는 태양에서 조금 더 멀리 있습니다. 거리가 아니라 태양 고도가 기온을 결정합니다."
+        "a": "북반구가 여름인 7월 초에 지구는 태양에서 가장 멉니다(약 1억 5210만 km, 1월 초에는 약 1억 4710만 km). 거리가 아니라 태양 고도가 기온을 결정합니다."
       },
       {
         "q": "남반구도 우리와 같은 계절인가요?",

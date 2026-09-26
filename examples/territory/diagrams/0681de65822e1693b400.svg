@@ -1,0 +1,12 @@
+<svg data-engine="system" data-diagram="tikz" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-72.00003814697266 -72.0042495727539 397.25347900390625 266.66046142578125">
+<g id="d0681de65822e1693b400-page1">
+<path d="M-71.800785 126.624999C-71.800785 17.035 17.0352-71.805 126.6252-71.805C236.2192-71.805 325.0542 17.035 325.0542 126.624999Z" fill="#fe0017" class="v-sky"></path>
+<path d="M-71.800785 126.624999C-71.800785 17.035 17.0352-71.805 126.6252-71.805C236.2192-71.805 325.0542 17.035 325.0542 126.624999" stroke="#fe0013" fill="none" stroke-width=".3985" stroke-miterlimit="10" stroke-dasharray="2.98883 2.98883" class="v-line"></path>
+<path d="M-71.800785 194.6562V126.624999H13.2383V194.6562Z" fill="#fe0016" class="v-sea"></path>
+<path d="M240.0152 194.6562V126.624999H325.0542V194.6562Z" fill="#fe0016" class="v-sea"></path>
+<path d="M13.2383 194.6562V126.624999L50.0902 58.5937H203.1642L240.0152 126.624999V194.6562Z" fill="#fe0015" class="v-land"></path>
+
+
+
+</g>
+<text x="126.62496185302734" y="1.8973312377929688" class="v-label" text-anchor="middle">영공</text><text x="-29.280529022216797" y="170.55866241455078" class="v-label" text-anchor="middle">영해</text><text x="126.62496185302734" y="115.2822036743164" class="v-label-a" text-anchor="middle">영토</text></svg>

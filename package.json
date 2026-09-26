@@ -8,6 +8,7 @@
     "gate": "node scripts/gate.mjs"
   },
   "dependencies": {
+    "node-tikzjax": "^1.0.5",
     "playwright-core": "1.63.0"
   }
 }

@@ -204,7 +204,7 @@ export function parseIntake(mdText) {
   if (filled.slidesCount && (filled.slidesCount[0] < 8 || filled.slidesCount[1] > 20)) warnings.push({ code: 'W-GATE', msg: `슬라이드 장수 ${filled.slidesCount[0]}~${filled.slidesCount[1]}장이 게이트 기준(8~20장)을 벗어납니다` });
   if (filled.worksheetQCount && filled.worksheetQCount[0] > filled.worksheetQCount[1]) warnings.push({ code: 'W-RANGE', msg: '활동지 문항 수의 최소값이 최대값보다 큽니다' });
   if (filled.worksheetQCount && (filled.worksheetQCount[0] < 5 || filled.worksheetQCount[1] > 14)) warnings.push({ code: 'W-GATE', msg: `활동지 문항 수 ${filled.worksheetQCount[0]}~${filled.worksheetQCount[1]}개가 게이트 기준(5~14개)을 벗어납니다` });
-  if (filled.imageCount != null && filled.slidesCount && filled.imageCount > filled.slidesCount[1]) warnings.push({ code: 'W-IMG', msg: `AI 이미지 사용 장수(${filled.imageCount})가 슬라이드 최대 장수(${filled.slidesCount[1]})보다 많습니다` });
+  if (filled.imageCount != null && filled.slidesCount && filled.imageCount > filled.slidesCount[1]) warnings.push({ code: 'W-IMG', msg: `AI 이미지 사용 상한(${filled.imageCount})이 슬라이드 최대 장수(${filled.slidesCount[1]})보다 많아 사실상 상한이 없는 것과 같습니다` });
   if (filled.hasEssay === 'no' && filled.worksheetTypes?.includes('short')) warnings.push({ code: 'W-ESSAY', msg: '서술형 문항을 넣지 말라고 했는데 활동지 문항 유형에 서술형이 체크되어 있습니다' });
   if (filled.mustExclude) {
     const nrm = s => String(s).replace(/\s+/g, '').toLowerCase();
@@ -384,10 +384,15 @@ export function checkReflection(intake, lesson, outDir) {
     push(`mustExclude[${i}]`, r.found ? 'violated' : 'ok', `"${m}" — ${r.found ? '자료에서 발견됨(제외 요청 위반)' : '자료에 없음(요청대로 제외됨)'}`, r.found ? '해당 내용을 빼거나 다른 표현으로 바꾸세요' : '');
   });
 
-  // 예상 오개념: 퀴즈 오답, compare, notes, summary 중 하나에서 발견
+  // 예상 오개념: 퀴즈 오답, compare, notes, summary 중 하나에서 발견.
+  // 교사는 오개념을 "…(라)고 생각한다/여긴다/믿는다" 식 믿음 문장으로 적는 경우가 많은데, lesson.json
+  // 쪽(quiz 선택지 등)에서는 그 오개념을 단정문(주장)으로 고쳐 쓴다(S5-CHOICE-BELIEF, intake.md 참고).
+  // 그래서 대조는 믿음 서술 꼬리를 뗀 "주장" 부분만으로 한다 — 안 떼면 표현 차이로 매번 missing이 난다.
+  const stripBeliefSuffix = s => String(s ?? '').replace(/\s*고\s*(?:생각한다|여긴다|믿는다)\.?\s*$/, '').trim();
   intake.misconceptions.forEach((m, i) => {
-    const where = ['quizHay', 'compareHay', 'notesHay', 'summaryHay'].find(k => fuzzyFound(m, hay[k]).found);
-    push(`misconceptions[${i}]`, where ? 'ok' : 'missing', where ? `${where}에서 확인` : `"${m}"을 퀴즈 오답·compare·notes·summary 어디에서도 찾지 못함`, where ? '' : '오개념을 quiz 오답 선택지나 hook/summary에서 바로잡도록 넣으세요');
+    const claim = stripBeliefSuffix(m) || m;
+    const where = ['quizHay', 'compareHay', 'notesHay', 'summaryHay'].find(k => fuzzyFound(claim, hay[k]).found);
+    push(`misconceptions[${i}]`, where ? 'ok' : 'missing', where ? `${where}에서 확인(믿음 서술 "…라고 생각한다" 등은 떼고 대조: "${claim}")` : `"${claim}"을 퀴즈 오답·compare·notes·summary 어디에서도 찾지 못함`, where ? '' : '오개념을 quiz 오답 선택지나 hook/summary에서 단정문으로 바로잡아 넣으세요');
   });
 
   // 활동 형태
@@ -415,9 +420,11 @@ export function checkReflection(intake, lesson, outDir) {
     push('slidesCount', n >= lo && n <= hi ? 'ok' : 'violated', `요청 ${lo}~${hi}장 / 실제 ${n}장`);
   } else push('slidesCount', 'n/a', '');
 
+  // imageCount는 상한(최대 몇 장까지)이지 반드시 채워야 할 개수가 아니다 — 비어 있으면(정책상 상한 없음)
+  // n/a로 두어 이미지를 많이 쓴 수업을 --check가 잘못 잡아내지 않는다. 값이 있으면 그 상한을 넘었을 때만 위반.
   if (intake.filled.imageCount != null) {
     const n = countImages(lesson);
-    push('imageCount', n >= intake.filled.imageCount ? 'ok' : 'violated', `요청 ${intake.filled.imageCount}장 / 실제 ${n}장`);
+    push('imageCount', n <= intake.filled.imageCount ? 'ok' : 'violated', `상한 ${intake.filled.imageCount}장 / 실제 ${n}장`);
   } else push('imageCount', 'n/a', '');
 
   // worksheetTypes: 요청한 유형이 실제로 쓰였는지

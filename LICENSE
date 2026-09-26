@@ -24,3 +24,6 @@ SOFTWARE.
 Third-party components keep their own licenses:
 - assets/fonts/Pretendard-*.ttf — SIL Open Font License 1.1 (assets/fonts/LICENSE-Pretendard-OFL.txt)
 - vendor/prompt-kit/ — MIT License (vendor/prompt-kit/LICENSE)
+- node_modules/node-tikzjax/ (npm dependency) — LPPL-1.3c, includes circuitikz (LPPL) and bundled BaKoMa fonts (BaKoMa Fonts Licence); see CREDITS.md
+- MiKTeX/TeX Live, dvisvgm — external programs invoked as subprocesses when installed on the user's machine, not bundled or redistributed; see CREDITS.md
+- KoPub World 글꼴은 포함·재배포하지 않음(설치된 글꼴을 local()로 참조만 함)

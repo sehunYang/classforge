@@ -1,0 +1,14 @@
+<svg data-engine="system" data-diagram="tikz" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-71.99999237060547 -72.0042495727539 395.7065124511719 227.1761016845703">
+<g id="d0c3246dfbb696ae9a8d9-page1">
+<path d="M-71.80074 109.6172H313.71516" stroke="#fe0013" fill="none" stroke-width=".3985" stroke-dasharray="2.98883 2.98883" class="v-line"></path>
+<path d="M-71.80074-26.449H313.71516" stroke="#fe0013" fill="none" stroke-width=".3985" stroke-miterlimit="10" stroke-dasharray="2.98883 2.98883" class="v-line"></path>
+<path d="M7.57031 154.9726V-71.805" stroke="#fe0013" fill="none" stroke-width=".3985" stroke-miterlimit="10" stroke-dasharray="2.98883 2.98883" class="v-line"></path>
+<path d="M234.34416 154.9726V-71.805" stroke="#fe0013" fill="none" stroke-width=".3985" stroke-miterlimit="10" stroke-dasharray="2.98883 2.98883" class="v-line"></path>
+<path d="M-71.80074 41.5859H313.71516" stroke="#fe0012" fill="none" stroke-width=".3985" stroke-miterlimit="10" class="v-ink-s"></path>
+<path d="M120.95716 154.9726V-71.805" stroke="#fe0012" fill="none" stroke-width=".3985" stroke-miterlimit="10" class="v-ink-s"></path>
+<path d="M129.46116 41.5859C129.46116 36.8867 125.65216 33.082 120.95716 33.082S112.45316 36.8867 112.45316 41.5859C112.45316 46.2812 116.26216 50.0898 120.95716 50.0898S129.46116 46.2812 129.46116 41.5859Z" fill="#fe0011" class="v-accent"></path>
+
+
+
+</g>
+<text x="313.7065200805664" y="28.82665252685547" class="v-label" text-anchor="end">위선</text><text x="133.70832061767578" y="-51.96113586425781" class="v-label" text-anchor="start">경선</text><text x="132.29035186767578" y="69.92888641357422" class="v-label-a" text-anchor="start">우리나라</text></svg>

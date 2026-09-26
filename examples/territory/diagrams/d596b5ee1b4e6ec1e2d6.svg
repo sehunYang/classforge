@@ -1,0 +1,16 @@
+<svg data-engine="system" data-diagram="tikz" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-72 -72.0042495727539 363.03924560546875 238.5120849609375">
+<g id="dd596b5ee1b4e6ec1e2d6-page1">
+<path d="M-72 154.3555V-59.848C-72-66.453-66.64844-71.805-60.043-71.805H86.125C92.727-71.805 98.082-66.453 98.082-59.848V154.3555C98.082 160.95703 92.727 166.308588 86.125 166.308588H-60.043C-66.64844 166.308588-72 160.95703-72 154.3555Z" fill="#fe0014" class="v-soft"></path>
+<path d="M120.758 154.3555V-59.848C120.758-66.453 126.109-71.805 132.715-71.805H278.883C285.488-71.805 290.84-66.453 290.84-59.848V154.3555C290.84 160.95703 285.488 166.308588 278.883 166.308588H132.715C126.109 166.308588 120.758 160.95703 120.758 154.3555Z" stroke="#fe0012" fill="none" stroke-width=".3985" stroke-miterlimit="10" class="v-ink-s"></path>
+<path d="M44.223 35.914C44.223 18.691 30.262 4.73 13.0391 4.73C-4.1797 4.73-18.1406 18.691-18.1406 35.914S-4.1797 67.0937 13.0391 67.0937C30.262 67.0937 44.223 53.137 44.223 35.914Z" fill="#fe0013" fill-opacity=".45" class="v-muted"></path>
+<path d="M132.098 92.6055H279.5" stroke="#fe0013" fill="none" stroke-width=".3985" stroke-miterlimit="10" stroke-dasharray="2.98883 2.98883" class="v-line"></path>
+<path d="M132.098 35.914H279.5" stroke="#fe0013" fill="none" stroke-width=".3985" stroke-miterlimit="10" stroke-dasharray="2.98883 2.98883" class="v-line"></path>
+<path d="M132.098-20.781H279.5" stroke="#fe0013" fill="none" stroke-width=".3985" stroke-miterlimit="10" stroke-dasharray="2.98883 2.98883" class="v-line"></path>
+<path d="M160.445 109.6172V-54.797" stroke="#fe0013" fill="none" stroke-width=".3985" stroke-miterlimit="10" stroke-dasharray="2.98883 2.98883" class="v-line"></path>
+<path d="M205.797 109.6172V-54.797" stroke="#fe0013" fill="none" stroke-width=".3985" stroke-miterlimit="10" stroke-dasharray="2.98883 2.98883" class="v-line"></path>
+<path d="M251.152 109.6172V-54.797" stroke="#fe0013" fill="none" stroke-width=".3985" stroke-miterlimit="10" stroke-dasharray="2.98883 2.98883" class="v-line"></path>
+<path d="M214.871 35.914C214.871 30.902 210.809 26.844 205.797 26.844C200.789 26.844 196.727 30.902 196.727 35.914C196.727 40.922 200.789 44.984 205.797 44.984C210.809 44.984 214.871 40.922 214.871 35.914Z" fill="#fe0011" class="v-accent"></path>
+
+
+</g>
+<text x="13.041893005371094" y="143.61992645263672" class="v-label" text-anchor="middle">어디쯤일까?</text><text x="205.78961181640625" y="143.61992645263672" class="v-label-a" text-anchor="middle">여기예요!</text></svg>

@@ -5,7 +5,9 @@
   --accent:#2952CC; --accent-ink:#1E3FA3;
   --accent-soft:color-mix(in srgb,var(--accent) 9%,#fff);
   --accent-mid:color-mix(in srgb,var(--accent) 28%,#fff);
-  --font:'CF Pretendard','Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  /* 'CF KoPub'은 meta.font 판단에 따라 fonts.py가 만들 때만 존재한다(local() 참조, 설치 PC 전용) —
+     없으면 브라우저가 그냥 다음 이름인 내장 'CF Pretendard'로 넘어간다. references/design.md "글꼴". */
+  --font:'CF KoPub','CF Pretendard','Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
   --fs:10.5pt; --fs-q:11pt; --fs-s:9pt; --fs-h:13pt;
   --pw:210mm; --ph:297mm; --mx:17mm; --mt:14mm; --mb:14mm;
 }
@@ -107,8 +109,12 @@ mark{background:linear-gradient(transparent 55%,var(--accent-mid) 55%);color:inh
 .v-ink{fill:var(--ink)} .v-ink-s{stroke:var(--ink);fill:none} .v-accent{fill:var(--accent)} .v-accent-s{stroke:var(--accent);fill:none}
 .v-soft{fill:var(--accent-soft)} .v-mid{fill:var(--accent-mid)} .v-paper{fill:#fff} .v-paper2{fill:var(--soft)} .v-paper3{fill:#E4E6EA}
 .v-line{stroke:var(--line-2);fill:none} .v-muted{fill:var(--muted)} .v-warn{fill:#B45309} .v-good{fill:#1A7F4B}
-.v-label{fill:var(--ink);font-family:var(--font);font-weight:700;font-size:34px} .v-label-s{fill:var(--muted);font-family:var(--font);font-weight:600;font-size:28px}
-.v-label-a{fill:var(--accent-ink);font-family:var(--font);font-weight:800;font-size:34px}
+/* --cf-label-scale: diagrams.mjs(TikZ 도식) 전용 — deck.css 쪽 설명 참고 */
+.v-label{fill:var(--ink);font-family:var(--font);font-weight:700;font-size:calc(34px / var(--cf-label-scale, 1))} .v-label-s{fill:var(--muted);font-family:var(--font);font-weight:600;font-size:calc(28px / var(--cf-label-scale, 1))}
+.v-label-a{fill:var(--accent-ink);font-family:var(--font);font-weight:800;font-size:calc(34px / var(--cf-label-scale, 1))}
+/* TikZ 도식만(deck.css 쪽 설명 참고) — 선 굵기도 화면 px 기준으로 맞춘다 */
+svg[data-diagram] .v-ink-s, svg[data-diagram] .v-line{stroke-width:calc(4px / var(--cf-label-scale, 1)) !important}
+svg[data-diagram] .v-accent-s{stroke-width:calc(5.5px / var(--cf-label-scale, 1)) !important}
 
 /* 수식 인라인 표기 (deck.css와 동일 규칙 — build.mjs의 md()가 변환).
    인쇄물은 8pt 하한이 있어(B6-TYPO) 화면보다 첨자를 줄이지 않고 위·아래 위치만 준다. */
@@ -116,6 +122,9 @@ mark{background:linear-gradient(transparent 55%,var(--accent-mid) 55%);color:inh
 .math .mup{font-style:normal}
 .math sub,.math sup{font-size:1em;line-height:0}
 .math sub{vertical-align:sub} .math sup{vertical-align:super}
+
+/* $$...$$(핵심 공식) — deck.css와 같은 규칙. 크게 만들기만 해서 B6-TYPO(8pt 하한)에 안 걸린다. */
+.math-display{display:block;text-align:center;margin:.5em 0;font-size:1.6em}
 
 /* body[data-profile="evidence"] — 슬라이드와 같은 절제된 제목 두께 */
 body[data-profile="evidence"] .ws-title,body[data-profile="evidence"] .lp-title h1{font-weight:700}
@@ -172,11 +181,17 @@ body[data-profile="evidence"] .ws-title,body[data-profile="evidence"] .lp-title 
   .page:last-child{break-after:auto;page-break-after:auto}
 }
 
-/* 그리기 칸의 바탕(좌표평면·백지도) */
-.draw.based{background-image:none;display:flex;align-items:center;justify-content:center;padding:2mm}
-.draw .base{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+/* 그리기 칸의 바탕(좌표평면·백지도) — .base가 자기 높이(it.height, build.mjs가 인라인으로 준다)를
+   갖고, .draw는 그 아래 정답지 model(채점 기준) 캡션까지 담을 수 있게 내용만큼 자연스럽게 늘어난다. */
+.draw.based{background-image:none;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2mm}
+.draw .base{width:100%;display:flex;align-items:center;justify-content:center}
 .draw .base svg{max-width:100%;max-height:100%;width:auto;height:100%}
-.key .draw.based .model{position:static;inset:auto;display:none}
+/* 정답 그림이 있을 때(.based)의 model은 그림을 덮는 큰 글씨가 아니라 그림 아래 붙는 채점 기준
+   캡션이다(.explain과 같은 강조 상자 스타일) — 그림이 없을 때(줄노트/백지 칸에 모범답안 글만
+   쓰는 경우, 위 .key .draw .model 규칙) 전체를 덮는 굵은 글씨와는 다른 자리·다른 크기를 쓴다.
+   "채점 기준" 표시는 build.mjs가 <b>로 붙인다(.explain의 <b>풀이</b>와 같은 방식). */
+.key .draw.based .model{position:static;inset:auto;display:block;width:100%;margin-top:1.5mm;font-size:var(--fs-s);font-weight:400;color:var(--ink-2);background:var(--accent-soft);padding:1.5mm 3mm;border-radius:1.5mm}
+.key .draw.based .model b{color:var(--accent-ink)}
 /* 쪽 끝에서 끊긴 단계 칸은 아래 테두리로 닫는다 */
 .proc td.stage.cut{border-bottom-color:var(--line-2)}
 
