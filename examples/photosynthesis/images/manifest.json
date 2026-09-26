@@ -2,7 +2,7 @@
   "images": {
     "leaf-cross-section-chloroplast": {
       "id": "leaf-cross-section-chloroplast",
-      "promptHash": "sha256:cd0fed74935f224f5cfd034e224be455ac286c852bf510d900b4e864c4683fab",
+      "promptHash": "sha256:d6f66402ef048be02599cb156a67cf9f1b389e1915c5dd81529354fabcada641",
       "file": "images/leaf-cross-section-chloroplast.png",
       "web": "images/leaf-cross-section-chloroplast.web.webp",
       "width": 1536,
@@ -19,7 +19,7 @@
     },
     "van-helmont-scene": {
       "id": "van-helmont-scene",
-      "promptHash": "sha256:1b6fd9b104b73e6ef9459870ed4c2372b21cfe3d09a4997168223589fb378871",
+      "promptHash": "sha256:0340b9f000cd46a6d1264784439cec768910dc508df8ae9d9e7b659c5f083f13",
       "file": "images/van-helmont-scene.png",
       "web": "images/van-helmont-scene.web.webp",
       "width": 1792,
@@ -36,7 +36,7 @@
     },
     "cover-plant-light": {
       "id": "cover-plant-light",
-      "promptHash": "sha256:9a835b62db1d6208a2c7cc32e35ebbdc72d369a8f971e09e85a15cc21b6691bc",
+      "promptHash": "sha256:8e443df2b4acae42fc997a284dc6d7e6bab38215c54801c2678cb03d8c620278",
       "file": "images/cover-plant-light.png",
       "web": "images/cover-plant-light.web.webp",
       "width": 1536,
@@ -53,7 +53,7 @@
     },
     "elodea-bubble-activity": {
       "id": "elodea-bubble-activity",
-      "promptHash": "sha256:2858fcca35b2d4ba4b44225e09ffa04ee1d3a380875da349d525a356459568d7",
+      "promptHash": "sha256:d74704103bec74ae25f123a7a33ed7c1dc6cf0204013082b1824cb0421252fd6",
       "file": "images/elodea-bubble-activity.png",
       "web": "images/elodea-bubble-activity.web.webp",
       "width": 1536,
@@ -70,7 +70,7 @@
     },
     "iodine-starch-leaf": {
       "id": "iodine-starch-leaf",
-      "promptHash": "sha256:fe87e66f161198524ca3fd6b9c4655d729526923287961b87a1cd54ece754f94",
+      "promptHash": "sha256:0bf3465db565da481a627d141c259ab26d6f588b79fab4758c791defd12b7811",
       "file": "images/iodine-starch-leaf.png",
       "web": "images/iodine-starch-leaf.web.webp",
       "width": 1792,

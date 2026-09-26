@@ -139,7 +139,7 @@
 | 1 | `Scene:` | 누가·무엇이·어디서·무엇을. 60~120어. 학년에 맞는 소재(실제 인물 대신 가상의 학생·인물, 실존 브랜드·캐릭터 금지) |
 | 2 | `Camera:` | 시점·거리·렌즈 character. `references/photo-vocab.md` §1·§5 어휘 |
 | 3 | `Lighting:` | 방향·soft/hard·그림자. `photo-vocab.md` §2 |
-| 4 | `Color grading:` | 팔레트 + 색온도 + **HEX 3~5개**(교과 강조색 계열 권장 — `lib.mjs`의 `ACCENTS`) |
+| 4 | `Color grading:` | 팔레트 + 색온도 + **HEX 3~5개**(장면에 맞는 색. 교실 안전 문구가 고정 팔레트 `#3B1E54 #7A5C9E #FF6F61 #F8F6FA`를 보조 힌트로 자동으로 붙인다 — `lib.mjs`의 `PALETTE`) |
 | 5 | `Texture/Medium:` | 매체·질감. `photo-vocab.md` §6 |
 | — | 트레일링 | 끝에 `AR <ratio>` 토큰만(예: `AR 16:9`) |
 
@@ -163,7 +163,7 @@ node vendor/prompt-kit/skills/image-prompt/scripts/check_prompt.mjs images/<id>.
 Scene: 교실 창가 책상, 세모기둥 유리 프리즘 위로 아침 햇살이 비스듬히 들어와 통과하면서 뒤편 흰 벽에 빨강에서 보라까지 이어지는 무지개 빛띠가 넓게 펼쳐진다. 앞쪽에는 초등학생 한 명이 등을 보인 채 몸을 기울여 빛띠를 관찰하는 실루엣만 살짝 걸쳐 있다.
 Camera: 아이레벨, 프리즘에서 약 50cm 거리의 3/4 앵글, natural perspective, 빛띠와 프리즘이 모두 선명하게 보이는 deep focus.
 Lighting: 창을 통한 낮은 각도의 자연광, warm morning light, 빛줄기 자체가 은은하게 보이는 옅은 광선(god ray) 느낌.
-Color grading: 따뜻한 아침 톤, warm 3200K-feel, 무지개 빛띠는 선명하게, 배경은 차분하게. 팔레트 #F7F4EC #0B7A6A #2952CC #FBD34D.
+Color grading: 따뜻한 아침 톤, warm 3200K-feel, 무지개 빛띠는 선명하게, 배경은 차분하게. 팔레트 #F8F6FA #3B1E54 #7A5C9E #FF6F61.
 Texture/Medium: 자연광 사진 느낌, matte, subtle film grain, 과장 없는 사실적 질감.
 AR 16:9
 ```
@@ -176,7 +176,7 @@ AR 16:9
 Scene: 화면을 위아래로 나눈 대비 구도. 위쪽은 낮은 기와지붕과 골목이 이어진 옛 마을, 아래쪽은 같은 위치에 들어선 유리 고층 빌딩 스카이라인 — 지평선 위치와 원경 산 능선을 똑같이 맞춰 같은 장소임을 알 수 있게 한다.
 Camera: 정면 아이레벨, 넓은 파노라마 구도, 두 장면 모두 화면 폭을 가득 채움.
 Lighting: 위쪽은 부드러운 오후 자연광과 따뜻한 그림자, 아래쪽은 유리 외벽에 반사되는 차분한 하늘빛.
-Color grading: 위쪽 세피아 계열 warm tone, 아래쪽 쿨톤 도시 팔레트로 대비. 팔레트 #B4480E #F7F4EC #2952CC #4B5563.
+Color grading: 위쪽 세피아 계열 warm tone, 아래쪽 쿨톤 도시 팔레트로 대비. 팔레트 #3B1E54 #F8F6FA #7A5C9E #1C1E24.
 Texture/Medium: 평면화된 편집 일러스트, 옅은 그레인, 인쇄 매체 톤.
 AR 4:3
 ```
@@ -185,7 +185,7 @@ AR 4:3
 한 수업 안의 이미지 여러 장이 서로 다른 스타일로 보이지 않도록, lesson.json 최상위 `images`에 `style`을 쓰면 `images.mjs`가 이를 모든 프롬프트 끝(교실 안전 문구 바로 앞)에 자동으로 붙인다 — 작성자가 프롬프트마다 팔레트·조명을 반복해 쓸 필요가 없다.
 ```json
 "images": {
-  "style": { "palette": "#F7F4EC #0B7A6A #2952CC", "lighting": "soft daylight, natural window light", "medium": "clean educational photo, neutral lab bench" },
+  "style": { "palette": "#F8F6FA #3B1E54 #7A5C9E #FF6F61", "lighting": "soft daylight, natural window light", "medium": "clean educational photo, neutral lab bench" },
   "subject": "같은 초록 콩 모종 하나, 같은 학생 손, 같은 투명 플라스틱 컵"   // (선택) 레슨 전체 연속성 — 실험 절차(steps)처럼 같은 소재가 이어지는 수업에 쓴다
 }
 ```

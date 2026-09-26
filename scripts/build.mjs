@@ -3,7 +3,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { SKILL, loadLesson, launch, fileUrl } from './lib.mjs';
+import { SKILL, PALETTE, loadLesson, launch, fileUrl } from './lib.mjs';
+import { parseIntake } from './intake.mjs';
 import { declarative } from './visuals.mjs';
 import { prepareDiagrams, lookupDiagramSync, prepareFormulas, lookupFormulaSync, findTexBin } from './diagrams.mjs';
 
@@ -11,8 +12,18 @@ const args = process.argv.slice(2);
 const lessonPath = args.find(a => !a.startsWith('--'));
 if (!lessonPath) { console.error('사용: node build.mjs <lesson.json> [--no-pdf] [--no-shots]'); process.exit(2); }
 const ctx = loadLesson(lessonPath);
-const { lesson: L, out, level, accent, rules } = ctx;
+const { lesson: L, out, level, rules } = ctx;
 const M = L.meta || {};
+// 색은 모든 교과가 같은 고정 팔레트(lib.mjs PALETTE, templates/*.css :root)다 — 예전 meta.accent·설계서의
+// 강조색(style.accentColor)이 남아 있으면 조용히 무시하지 말고 경고 한 줄로 알린다(design.md "팔레트").
+{
+  const ignored = [];
+  if (M.accent) ignored.push(`meta.accent(${M.accent})`);
+  const formPath = M.intake && path.resolve(ctx.dir, M.intake);
+  const formAccent = formPath && fs.existsSync(formPath) && parseIntake(fs.readFileSync(formPath, 'utf8')).style.accentColor;
+  if (formAccent) ignored.push(`설계서 강조색(${formAccent})`);
+  if (ignored.length) console.warn(`경고: ${ignored.join('·')}은 무시합니다 — 모든 교과가 같은 고정 팔레트를 씁니다(references/design.md "팔레트").`);
+}
 fs.mkdirSync(path.join(out, 'shots'), { recursive: true });
 
 // 학습 목표 — 지도안(교사용)은 항상 L.objectives 원문 그대로(S7이 이 필드로 반영을 대조한다).
@@ -85,7 +96,7 @@ function mathExpr(expr) {
 // (lookupFormulaSync 쪽에서 캐시 키가 달라 inline과 안 섞인다).
 const mathOne = (expr, display = false) => lookupFormulaSync(expr, ctx.dir, display) || `<span class="math">${mathExpr(esc(expr))}</span>`;
 
-// **굵게**, ==형광펜==, *강조색*, $수식$, $$핵심 공식$$. $...$/$$...$$ 내용은 esc()에 걸리기 전에 미리
+// **굵게**, ==형광펜==, *핵심 낱말*, $수식$, $$핵심 공식$$. $...$/$$...$$ 내용은 esc()에 걸리기 전에 미리
 // 빼 두었다가(원문 그대로 LaTeX에 넘기기 위해) 나머지만 이스케이프·마크업 처리한 뒤 되돌려 끼운다.
 // $$...$$는 $...$보다 먼저 뽑아야 한다 — 안 그러면 홑$ 정규식이 여는/닫는 $$ 중 한 글자씩만 델리미터로
 // 먹어(예: "$$E=mc^2$$" → 앞뒤에 낱개 $가 하나씩 남는 식으로) 어긋난다.
@@ -234,7 +245,7 @@ const R = {
       ${s.next ? `<div class="next"><b>다음 시간</b><span>${md(s.next)}</span></div>` : ''}</div>${s.visual ? `<div class="r">${visual(s.visual, 'visual grow', { width: 735, height: 856 })}</div>` : ''}</div>`,
   exit: s => `<div class="body"><div class="l"><div class="kicker">${md(s.kicker || '나가기 전에')}</div><h2 class="q">${md(s.question)}</h2>
       ${s.hint ? `<p class="h">${md(s.hint)}</p>` : ''}</div>${s.visual ? `<div class="r">${visual(s.visual, 'visual grow', { width: 735, height: 856 })}</div>` : ''}</div>
-      ${!s.visual ? `<svg class="deco" data-deco aria-hidden="true" viewBox="0 0 420 160"><path class="d1" d="M10 120 C 80 20, 150 20, 190 90 S 300 150, 410 40"/><circle cx="410" cy="40" r="14" fill="var(--accent-mid)"/></svg>` : ''}`,
+      ${!s.visual ? `<svg class="deco" data-deco aria-hidden="true" viewBox="0 0 420 160"><path class="d1" d="M10 120 C 80 20, 150 20, 190 90 S 300 150, 410 40"/><circle cx="410" cy="40" r="14" class="d2"/></svg>` : ''}`,
 };
 
 function renderDeck(fontCss) {
@@ -256,7 +267,7 @@ function renderDeck(fontCss) {
   }).join('\n');
   return `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(M.title)} — 수업 슬라이드</title>
-<style>${fontCss}</style><style>${tpl('deck.css')}</style><style>:root{--accent:${accent};--accent-ink:color-mix(in srgb,${accent} 82%,#000)}</style>
+<style>${fontCss}</style><style>${tpl('deck.css')}</style>
 </head><body data-level="${level}" data-profile="${esc(M.profile || 'default')}" data-min-small="${rules.minSmall}" data-min-body="${rules.minBody}"><div id="viewport"><div id="stage">
 ${body}
 </div></div><div id="notes"></div><div id="help">→/Space 다음 · ← 이전 · F 전체화면 · N 노트 · T 타이머</div>
@@ -282,7 +293,7 @@ function renderWorksheet(fontCss, key) {
       // x1=0%/x2=100%(칸 경계)는 첫 그림일 뿐이다 — 실제 점(.dot)은 테두리·안쪽 여백만큼 칸
       // 안쪽에 있어 이 좌표로는 선이 점을 못 찾고 칸 가장자리에서 끝난다(정답지 버그 신고).
       // paginate.js가 레이아웃이 끝난 뒤 data-a/data-b로 실제 .dot 중심을 찾아 다시 그린다.
-      const lines = key ? (it.answer || []).map(([a, b]) => `<line data-a="${a}" data-b="${b}" x1="0" y1="${(a - .5) / n * 100}%" x2="100%" y2="${(b - .5) / n * 100}%" stroke="${accent}" stroke-width="2.2"/>`).join('') : '';
+      const lines = key ? (it.answer || []).map(([a, b]) => `<line data-a="${a}" data-b="${b}" x1="0" y1="${(a - .5) / n * 100}%" x2="100%" y2="${(b - .5) / n * 100}%" stroke="${PALETTE.primary}" stroke-width="2.2"/>`).join('') : '';
       const cells = Array.from({ length: n }, (_, k) => `<div class="it l" data-row="${k + 1}" style="grid-row:${k + 1}">${it.left[k] ? `<span>${md(it.left[k])}</span><i class="dot"></i>` : ''}</div><div class="it r" data-row="${k + 1}" style="grid-row:${k + 1}">${it.right[k] ? `<i class="dot"></i><span>${md(it.right[k])}</span>` : ''}</div>`).join('');
       return Q(it, `<div class="match">${cells}<svg preserveAspectRatio="none" style="grid-row:1 / ${n + 1}">${lines}</svg></div>`);
     },
@@ -343,7 +354,7 @@ function renderWorksheet(fontCss, key) {
     ${W.tip ? `<p class="tip">${md(W.tip)}</p>` : ''}</div>`;
   const foot = `${M.title}${key ? ' · 정답과 풀이' : ''}`;
   return `<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>${esc(M.title)} — ${key ? '정답지' : '활동지'}</title>
-<style>${fontCss}</style><style>${tpl('print.css')}</style><style>@page{size:210mm 297mm;margin:0}:root{--accent:${accent};--accent-ink:color-mix(in srgb,${accent} 82%,#000)}</style>
+<style>${fontCss}</style><style>${tpl('print.css')}</style><style>@page{size:210mm 297mm;margin:0}</style>
 </head><body data-level="${level}" data-profile="${esc(M.profile || 'default')}" class="${key ? 'key' : ''}" data-foot="${esc(foot)}"><div id="flow">${head}\n${secs}\n${self}</div>
 <script>${tpl('paginate.js')}</script></body></html>`;
 }
@@ -351,7 +362,7 @@ function renderWorksheet(fontCss, key) {
 // ── 교수·학습 과정안 ────────────────────────────────────
 function renderPlan(fontCss) {
   const P = L.plan || {};
-  const std = (M.standards || []).map(s => `${s.code ? `<b>${esc(s.code)}</b> ` : ''}${md(s.text)}${s.verified === false ? ' <span style="color:#B45309">(성취기준 원문 확인 필요)</span>' : ''}`).join('<br>');
+  const std = (M.standards || []).map(s => `${s.code ? `<b>${esc(s.code)}</b> ` : ''}${md(s.text)}${s.verified === false ? ' <span class="warn">(성취기준 원문 확인 필요)</span>' : ''}`).join('<br>');
   const li = a => (a || []).length ? `<ul>${a.map(t => `<li>${md(t)}</li>`).join('')}</ul>` : '';
   const flow = P.flow || [];
   const rows = flow.map((r, i) => {
@@ -369,7 +380,7 @@ function renderPlan(fontCss) {
     <table class="info"><colgroup><col style="width:22mm"><col style="width:52mm"><col style="width:20mm"><col style="width:52mm"><col style="width:20mm"><col></colgroup><tr><th>교과</th><td>${esc(M.subject)}</td><th>대상</th><td>${esc(M.grade)}</td><th>차시</th><td>${esc(M.lesson || '')} (${esc(M.minutes || '')}분)</td></tr>
     <tr><th>단원</th><td colspan="5">${md(M.unit || '')}</td></tr>
     <tr><th>학습 주제</th><td colspan="5"><b>${md(M.title)}</b></td></tr>
-    <tr><th>성취기준</th><td colspan="5">${std || `<span style="color:#B45309">${T.stdPlaceholder}</span>`}</td></tr>
+    <tr><th>성취기준</th><td colspan="5">${std || `<span class="warn">${T.stdPlaceholder}</span>`}</td></tr>
     <tr><th>학습 목표</th><td colspan="5"><ol>${(L.objectives || []).map(o => `<li>${md(o)}</li>`).join('')}</ol></td></tr>
     <tr><th>수업 모형</th><td colspan="3">${md(P.model || '')}</td><th>준비물</th><td>${md((P.materials || []).join(', '))}</td></tr></table></div>`);
   blocks.push(`<div class="blk" data-split="rows" style="padding-top:0"><table class="proc"><colgroup><col style="width:16mm"><col style="width:30mm"><col><col style="width:12mm"><col style="width:62mm"></colgroup>
@@ -379,7 +390,7 @@ function renderPlan(fontCss) {
   if (P.questions?.length) blocks.push(`<div class="blk"><div class="h2">예상 질문과 답</div><div class="qa">${P.questions.map(q => `<div><b>Q.</b> ${md(q.q)}<br><b>A.</b> ${md(q.a)}</div>`).join('')}</div></div>`);
   if (P.checkpoint) blocks.push(`<div class="blk"><div class="h2">다음으로 넘어가도 되는 기준</div><div class="check">${md(P.checkpoint)}</div></div>`);
   return `<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>${esc(M.title)} — 교수·학습 과정안</title>
-<style>${fontCss}</style><style>${tpl('print.css')}</style><style>@page{size:297mm 210mm;margin:0}:root{--accent:${accent};--accent-ink:color-mix(in srgb,${accent} 82%,#000)}</style>
+<style>${fontCss}</style><style>${tpl('print.css')}</style><style>@page{size:297mm 210mm;margin:0}</style>
 </head><body class="landscape" data-level="${level}" data-profile="${esc(M.profile || 'default')}" data-foot="${esc(M.title + ' · 교수·학습 과정안')}"><div id="flow">${blocks.join('\n')}</div>
 <script>${tpl('paginate.js')}</script></body></html>`;
 }
@@ -444,7 +455,7 @@ if (!args.includes('--no-pdf') || !args.includes('--no-shots')) {
     // 한눈에 보기(컨택트 시트)
     if (!args.includes('--no-shots')) {
       const imgs = fs.readdirSync(shotsDir).filter(f => f.startsWith('slide-')).sort();
-      const sheet = `<html><body style="margin:0;background:#2a2b30;font-family:sans-serif"><div style="display:grid;grid-template-columns:repeat(4,480px);gap:16px;padding:16px">${imgs.map(f => `<div><img src="${f}" style="width:480px;display:block"><div style="color:#ccc;font-size:14px;margin-top:4px">${f}</div></div>`).join('')}</div></body></html>`;
+      const sheet = `<html><body style="margin:0;background:#2A2233;font-family:sans-serif"><div style="display:grid;grid-template-columns:repeat(4,480px);gap:16px;padding:16px">${imgs.map(f => `<div><img src="${f}" style="width:480px;display:block"><div style="color:#D6D0DE;font-size:14px;margin-top:4px">${f}</div></div>`).join('')}</div></body></html>`;
       fs.writeFileSync(path.join(shotsDir, 'overview.html'), sheet);
       const p = await browser.newPage({ viewport: { width: 2000, height: 800 } });
       await p.goto(fileUrl(path.join(shotsDir, 'overview.html')));

@@ -7,14 +7,14 @@ import os from 'node:os';
 import crypto from 'node:crypto';
 import { loadLesson, launch, fileUrl, plain, SLIDE_TYPES, ITEM_TYPES } from './lib.mjs';
 import { parseIntake, checkReflection } from './intake.mjs';
-import { collect as collectImageRequests, stepChainPrevStates, ensureClassroomClause, runCheckPrompt, sha256, normalizePromptText } from './images.mjs';
+import { collect as collectImageRequests, stepChainPrevStates, ensureClassroomClause, samePromptExceptPalette, runCheckPrompt, sha256, normalizePromptText } from './images.mjs';
 import { compileCurve } from './visuals.mjs';
 import { toTikzSpec } from './diagrams.mjs';
 
 const lessonPath = process.argv[2];
 if (!lessonPath) { console.error('사용: node gate.mjs <lesson.json>'); process.exit(2); }
 const ctx = loadLesson(lessonPath);
-const { lesson: L, out, rules, level, accent } = ctx;
+const { lesson: L, out, rules, level } = ctx;
 const M = L.meta || {};
 // R1(도메인 검토) 신선함을 mtime이 아니라 내용 해시로 판정하는 데 쓴다(N4) — 파일을 읽어 sha256 hex를
 // 낸다, 읽기 실패(없는 파일)는 null.
@@ -1136,13 +1136,19 @@ await gate('I1', '이미지', async (err, warn) => {
     else if (fs.existsSync(txtFile)) text = normalizePromptText(fs.readFileSync(txtFile, 'utf8'));
     if (!text) { err('I1-NOPROMPT', `이미지 "${req.id}"에 프롬프트가 없음(images/${req.id}.brief.md 작성 필요)`, '먼저 node scripts/images.mjs <lesson.json> --compile-only를 실행하세요'); continue; }
 
-    const finalText = ensureClassroomClause(text, req, accent, L.images, prevStates.get(req.id));
+    const finalText = ensureClassroomClause(text, req, L.images, prevStates.get(req.id));
     const check = await runCheckPrompt(finalText);
     if (!check.ok) { err('I1-PROMPT', `이미지 "${req.id}" 프롬프트 검증 실패: ${check.errors.map(e => e.msg).join('; ')}`, check.errors[0]?.hint); continue; }
 
     const entry = manifest.images?.[req.id];
     if (!entry) { err('I1-MISSING', `이미지 "${req.id}"가 manifest에 없음`, '먼저 node scripts/images.mjs <lesson.json>을 실행하세요'); continue; }
-    if (entry.promptHash !== sha256(finalText)) err('I1-STALE', `이미지 "${req.id}" 캐시가 최신 프롬프트와 다름`, '먼저 node scripts/images.mjs <lesson.json>을 실행하세요');
+    // 교과 강조색 시절 팔레트 힌트로 만든 이미지는(나머지 프롬프트가 같고 캐시 해시가 그 옛 프롬프트와 정확히
+    // 맞으면) 낡은 것으로 보지 않는다 — 색 힌트만 바뀐 것이라 다시 만들 필요가 없다(images.mjs가 다음 실행 때
+    // promptHash를 새 프롬프트로 옮긴다).
+    if (entry.promptHash !== sha256(finalText)) {
+      if (entry.promptHash === sha256(text) && samePromptExceptPalette(text, finalText)) warn('I1-PALETTE', `이미지 "${req.id}"는 예전 팔레트 힌트로 만든 것(나머지 프롬프트는 같음) — 그대로 쓴다`, `새 팔레트로 다시 만들려면 node scripts/images.mjs <lesson.json> --only ${req.id}`);
+      else err('I1-STALE', `이미지 "${req.id}" 캐시가 최신 프롬프트와 다름`, '먼저 node scripts/images.mjs <lesson.json>을 실행하세요');
+    }
     const cachedRoute = entry.route || 'subscription';
     if (cachedRoute !== expectRoute) err('I1-ROUTE', `이미지 "${req.id}" 캐시 경로(${cachedRoute})가 현재 설정(${expectRoute})과 다름`, '먼저 node scripts/images.mjs <lesson.json>을 실행하세요');
     else if (expectRoute === 'api' && entry.model !== forcedModel) err('I1-MODEL', `이미지 "${req.id}" 캐시 모델(${entry.model})이 images.model(${forcedModel})과 다름`);
@@ -1554,7 +1560,7 @@ if (missing.length) {
         (m.labelOwn || []).forEach(c => err('B2-LABELOWN', `${m.n}번 그래프의 직선·곡선 라벨이 자기 선에서 너무 멀거나 다른 선에 더 가까움: ${c}${tag}`, '라벨이 자기 선 가까이 있는지 확인하세요(visuals.mjs의 putSeries 점검) — 자리가 정 없으면 exit 라벨(틀 밖)이나 범례를 씁니다'));
         (m.occlude || []).forEach(c => err('B2-OCCLUDE', `${m.n}번 삽화: ${c}${tag}`, '그 도형을 라벨보다 먼저(DOM에서 더 위, 즉 더 아래에 그려지게) 옮기거나 라벨을 도형 밖으로 옮기세요'));
         (m.textOverlap || []).forEach(c => err('B2-TEXTOVERLAP', `${m.n}번 삽화의 라벨끼리 겹치거나 거의 붙음: ${c}${tag}`, '두 라벨 중 하나를 옮기거나(pos 조정), viewBox를 넓혀 자리를 만드세요'));
-        m.invisible.forEach(c => err('B2-STROKE', `${m.n}번 삽화의 선이 보이지 않음: ${c}${tag}`, '선에는 v-accent-s, v-ink-s, v-line만 쓰세요(v-mid·v-soft·v-muted는 채움 전용)'));
+        m.invisible.forEach(c => err('B2-STROKE', `${m.n}번 삽화의 선이 보이지 않음: ${c}${tag}`, '선에는 v-accent-s, v-primary-s, v-secondary-s, v-ink-s, v-line만 쓰세요(v-mid·v-soft·v-muted는 채움 전용)'));
       });
     };
     const checkB5 = (per, err, warn, tag = '') => {
@@ -1571,7 +1577,7 @@ if (missing.length) {
     await gate('B2', '글자 크기 하한', (err, warn) => checkB2(per, err, warn));
     await gate('B3', '명암 대비', err => {
       per.forEach(m => m.lowContrast.forEach(c => err('B3-CONTRAST', `${m.n}번 슬라이드: ${c}`, '본문 4.5:1, 큰 글자 3:1 이상')));
-      per.forEach(m => m.svgContrast.forEach(c => err('B3-SVG', `${m.n}번 삽화 글자가 아래 도형과 구분되지 않음: ${c}`, '글자 아래 도형은 연한 채움(v-soft·v-mid·v-paper2·v-paper3)만, 진한 채움(v-accent·v-ink) 위에는 글자를 두지 마세요')));
+      per.forEach(m => m.svgContrast.forEach(c => err('B3-SVG', `${m.n}번 삽화 글자가 아래 도형과 구분되지 않음: ${c}`, '글자 아래 도형은 연한 채움(v-soft·v-mid·v-paper2·v-paper3)만, 진한 채움(v-accent·v-primary·v-secondary·v-ink) 위에는 글자를 두지 마세요')));
     });
     await gate('B4', '글꼴 탑재', async (err, warn) => {
       // fontMode/kopubUsed는 위(per 직후)에서 이미 읽어 뒀다 — B9도 같은 값을 쓴다.

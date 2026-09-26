@@ -96,15 +96,16 @@ function runTexToSvg(texDoc, dvisvgmArgs, bin) {
 // 맞바꾼다. fill과 stroke는 서로 다른 클래스(채움 전용 vs '-s' 선 전용, design.md 관례)로 대응하므로
 // 한 도형에 같은 산티넬을 채움+선 둘 다로 쓰지 않는다(예: 채움+테두리 상자는 fill=cfsoft, draw=cfink처럼
 // 서로 다른 색을 준다 — diagrams.mjs가 만드는 헬퍼는 이 규칙을 지킨다).
-// cfland·cfsea·cfsky: 지도 전용(design.md "SVG 삽화 작성법" 표의 v-land/v-sea/v-sky) — 교과 강조색과
-// 무관하게 지도는 늘 이 색을 쓴다. deck.css/print.css에 이미 정의돼 있던 CSS 클래스인데
+// cfland·cfsea·cfsky: 지도 전용(design.md "SVG 삽화 작성법" 표의 v-land/v-sea/v-sky) — 고정 팔레트와
+// 무관하게 지도는 늘 이 색을 쓴다. cfprimary: 팔레트의 primary(주요 틀·강조 라벨 글자) — cfaccent(코럴)는
+// 채움·선 전용이라 글자에 쓰면 종이 위 대비가 2.5:1밖에 안 된다(design.md "팔레트"). deck.css/print.css에 이미 정의돼 있던 CSS 클래스인데
 // SENTINEL/CLASS_FOR에는 빠져 있어서(territory 마이그레이션에서 발견) TikZ에서 cfland 등을 색 이름으로
 // 써도 실제로는 아무 테마 클래스로도 안 바뀌었다 — 이제 다른 산티넬과 같은 방식으로 연결한다.
 // export하는 이유: scripts/test-diagrams.mjs가 (컴파일 없이 빠르게) "산티넬 이름이 실제로 테마
 // 클래스에 연결돼 있나"를 직접 확인한다 — SENTINEL에는 있는데 CLASS_FOR 짝이 없는 사고(이번에 cfland
 // 등에서 실제로 있었다: CSS 클래스는 deck.css/print.css에 이미 있었는데 여기 연결이 빠져 있었다)를
 // LaTeX을 안 돌리고도 잡는다.
-export const SENTINEL = { cfaccent: '#fe0011', cfink: '#fe0012', cfmuted: '#fe0013', cfsoft: '#fe0014', cfland: '#fe0015', cfsea: '#fe0016', cfsky: '#fe0017' };
+export const SENTINEL = { cfaccent: '#fe0011', cfink: '#fe0012', cfmuted: '#fe0013', cfsoft: '#fe0014', cfland: '#fe0015', cfsea: '#fe0016', cfsky: '#fe0017', cfprimary: '#fe0018' };
 export const CLASS_FOR = {
   '#fe0011': { fill: 'v-accent', stroke: 'v-accent-s' },
   '#fe0012': { fill: 'v-ink', stroke: 'v-ink-s' },
@@ -115,6 +116,7 @@ export const CLASS_FOR = {
   '#fe0015': { fill: 'v-land', stroke: 'v-land-s' },
   '#fe0016': { fill: 'v-sea', stroke: 'v-sea-s' },
   '#fe0017': { fill: 'v-sky', stroke: 'v-line' },   // v-sky는 선 짝이 없다(하늘은 보통 테두리를 안 그린다)
+  '#fe0018': { fill: 'v-primary', stroke: 'v-primary-s' },
 };
 // 라벨 자리 표시 전용 마커 색(테마 클래스 없음) — 좌표만 읽고 지운다. 라벨마다 서로 다른 색을 쓴다:
 // dvi2svg는 같은 색·스타일이 연달아 나오면 하나의 <g fill=…>로 묶어버리는데(우리 실제 도형에는 문제
@@ -143,7 +145,8 @@ function arcLabel(arc, text, cls, off = 0.4, tex) {
 // 한글 라벨은 우리가 겹쳐 그리지만(오버레이), 수식·라틴 기호 라벨은 TikZ가 직접 \node로 조판한다
 // (design.md "정밀 도식은 TikZ로" 참고) — tex 필드가 있으면 buildTexSource/buildFullTexDocument가
 // 마커 대신 \node를 만든다. cls는 그 글자색을 고를 색 산티넬로 대응된다(아래).
-const LABEL_TEX_COLOR = { 'v-label': 'cfink', 'v-label-a': 'cfaccent', 'v-label-s': 'cfmuted' };
+// v-label-a(강조 라벨)는 cfaccent(코럴)가 아니라 cfprimary로 조판한다 — 코럴 글자는 종이 위에서 읽히지 않는다.
+const LABEL_TEX_COLOR = { 'v-label': 'cfink', 'v-label-a': 'cfprimary', 'v-label-s': 'cfmuted' };
 const texLabel = (x, y, tex, unicodeText, cls, anchor) => ({ x: num(x), y: num(y), text: unicodeText, cls: cls || 'v-label', anchor: anchor || 'middle', tex });
 
 // geometry() 등에서 저작자가 준 라벨 글자가 "글자 하나(+아래첨자+프라임)" 모양의 순수 기호면 자동으로
@@ -199,7 +202,7 @@ function refraction(o) {
   src.push(arcTex('cfaccent', incArc));
   labels.push(arcLabel(incArc, 'θᵢ', 'v-label-a', 0.4, '\\theta_i'));
   // 반사광: 원점→(sgn·sinθi, cosθi)·L(입사광과 수평 부호 같음, 수직만 반전). 전반사면 유일한 출력광이라
-  // showReflected와 무관하게 항상 그리고, 실선·강조색으로(부분 반사와 시각적으로 구별한다).
+  // showReflected와 무관하게 항상 그리고, 실선·코럴(cfaccent)로(부분 반사와 시각적으로 구별한다).
   const fDir = [sgn * Math.sin(rad(incidentDeg)), Math.cos(rad(incidentDeg))];
   if (showReflected || tir) {
     const fLen = tir ? 0.85 : 0.7, reflCls = tir ? 'cfaccent' : 'cfmuted';
@@ -673,7 +676,7 @@ function buildFullTexDocument(spec) {
 // 렌더링 방식(색 산티넬 후처리, 라벨 배치, 선 굵기 CSS 등)을 바꿀 때마다 올린다 — 캐시 키에 섞여
 // 들어가므로 값을 올리면 예전 규칙으로 그려 둔 <lesson>/diagrams/*.svg가 전부 새로 컴파일된다.
 // lesson.json이 안 바뀌어도 diagrams.mjs 자체가 바뀌면 캐시를 무효화해야 하는 경우에 쓴다.
-const RENDER_VERSION = 13;   // v3: circuit \draw에 [cfink] 추가(소자·전지 선 굵기를 배선과 통일) / v4: 전지 라벨 여백 확대(concept 슬라이드처럼 작은 칸에서도 안 겹치게), data-engine 속성 추가 / v5: 기본 tikzLibraries(DEFAULT_TIKZ_LIBS) 항상 로드 — 전처리(preamble)가 바뀌므로 캐시 무효화 / v6: circuit에 photocell·rheostat·electrode 추가, 극성 검증·배선 연결 자가진단 / v7: galvanometer 추가, 계기 라벨-종류 모순 검증 / v8: 지도 산티넬(cfland·cfsea·cfsky) 추가, fill-opacity 누수 자동 복구(\pgfsetfillopacity{1}) / v9: photocell 음극·양극 라벨을 관 밑에서 더 떨어뜨리고 서로도 더 벌림(branchGap은 안 건드림) / v10: photocell 라벨 배치 다시 설계(가로로 밀기) — 실측(getBoundingClientRect) 결과 여전히 B2-CROSS 발생 / v11: photocell 라벨 재설계 — 음극·양극은 가로 이동 없이 자기 전극 x 그대로 관 밑(r+0.5)에, "광전관"은 그보다 더 밑, "빛"은 화살표 옆으로 작게(0.32)만 — 실제 렌더 실측(Playwright getBoundingClientRect)으로 여백을 다시 산출해 검증(series·parallel 둘 다 확인) / v12: cell.variable:true — 전지 기호 위에 대각선 화살표를 얹어 "가변 전원" 표시(drawCellSymbol 공통화) / v13: photocell "광전관" 이름표가 series처럼 H가 작은 배치에서 전지 배선 너머로 밀려난 실사고(fresh reviewer) — "관 자체 위(양극 쪽)"로 옮겨 봤더니 이번엔 parallel에서 바로 위 가지의 기본 라벨 자리와 겹쳐(B2-TEXTOVERLAP) 되돌림. 최종: 이름표는 그대로 "관 밑, 음극·양극보다 한 줄 더"(mid, H-r-0.5-0.9) 유지하되 drawCircuitElement의 범용 outerLabel 경로 대신 photocellSymbol이 직접 배치(skipOuterLabel)하고, circuitSeries가 photocell이 있을 때만 H를 1.9→2.9로 높여 그 두 줄이 전지 배선(y=0) 안쪽에 들어가게 함; 음극·양극은 r+0.3까지 좁혀봤지만 실측(gate.mjs)에서 B2-CROSS 재발해 r+0.5로 유지
+const RENDER_VERSION = 14;   // v14: 고정 팔레트 — cfprimary 산티넬 추가, 수식 강조 라벨(v-label-a)을 cfaccent(코럴) 대신 cfprimary로 조판 / v3: circuit \draw에 [cfink] 추가(소자·전지 선 굵기를 배선과 통일) / v4: 전지 라벨 여백 확대(concept 슬라이드처럼 작은 칸에서도 안 겹치게), data-engine 속성 추가 / v5: 기본 tikzLibraries(DEFAULT_TIKZ_LIBS) 항상 로드 — 전처리(preamble)가 바뀌므로 캐시 무효화 / v6: circuit에 photocell·rheostat·electrode 추가, 극성 검증·배선 연결 자가진단 / v7: galvanometer 추가, 계기 라벨-종류 모순 검증 / v8: 지도 산티넬(cfland·cfsea·cfsky) 추가, fill-opacity 누수 자동 복구(\pgfsetfillopacity{1}) / v9: photocell 음극·양극 라벨을 관 밑에서 더 떨어뜨리고 서로도 더 벌림(branchGap은 안 건드림) / v10: photocell 라벨 배치 다시 설계(가로로 밀기) — 실측(getBoundingClientRect) 결과 여전히 B2-CROSS 발생 / v11: photocell 라벨 재설계 — 음극·양극은 가로 이동 없이 자기 전극 x 그대로 관 밑(r+0.5)에, "광전관"은 그보다 더 밑, "빛"은 화살표 옆으로 작게(0.32)만 — 실제 렌더 실측(Playwright getBoundingClientRect)으로 여백을 다시 산출해 검증(series·parallel 둘 다 확인) / v12: cell.variable:true — 전지 기호 위에 대각선 화살표를 얹어 "가변 전원" 표시(drawCellSymbol 공통화) / v13: photocell "광전관" 이름표가 series처럼 H가 작은 배치에서 전지 배선 너머로 밀려난 실사고(fresh reviewer) — "관 자체 위(양극 쪽)"로 옮겨 봤더니 이번엔 parallel에서 바로 위 가지의 기본 라벨 자리와 겹쳐(B2-TEXTOVERLAP) 되돌림. 최종: 이름표는 그대로 "관 밑, 음극·양극보다 한 줄 더"(mid, H-r-0.5-0.9) 유지하되 drawCircuitElement의 범용 outerLabel 경로 대신 photocellSymbol이 직접 배치(skipOuterLabel)하고, circuitSeries가 photocell이 있을 때만 H를 1.9→2.9로 높여 그 두 줄이 전지 배선(y=0) 안쪽에 들어가게 함; 음극·양극은 r+0.3까지 좁혀봤지만 실측(gate.mjs)에서 B2-CROSS 재발해 r+0.5로 유지
 export function diagramHash(spec) {
   return crypto.createHash('sha256').update(JSON.stringify({ v: RENDER_VERSION, src: spec.src, labels: spec.labels, packages: spec.packages, tikzLibraries: spec.tikzLibraries, kind: spec.kind })).digest('hex').slice(0, 20);
 }

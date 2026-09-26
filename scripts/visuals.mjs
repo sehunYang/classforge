@@ -488,11 +488,11 @@ export function plot(p) {
     for (let x = Math.ceil(x0 / step) * step; x <= x1 + 1e-9; x += step) out.push(`<line x1='${r2(sx(x))}' y1='${r2(sy(y0))}' x2='${r2(sx(x))}' y2='${r2(sy(y1))}' class='v-line' stroke-width='1.5' opacity='.55'/>`);
     for (let y = Math.ceil(y0 / yStep) * yStep; y <= y1 + 1e-9; y += yStep) out.push(`<line x1='${r2(sx(x0))}' y1='${r2(sy(y))}' x2='${r2(sx(x1))}' y2='${r2(sy(y))}' class='v-line' stroke-width='1.5' opacity='.55'/>`);
   }
-  // 축과 화살표
+  // 축과 화살표 — 주요 그래프 축은 primary(design.md "팔레트")
   const ax = Math.min(Math.max(0, y0), y1), ay = Math.min(Math.max(0, x0), x1);
-  out.push(`<line x1='${r2(sx(x0))}' y1='${r2(sy(ax))}' x2='${r2(sx(x1) + 18)}' y2='${r2(sy(ax))}' class='v-ink-s' stroke-width='4'/>`);
-  out.push(`<line x1='${r2(sx(ay))}' y1='${r2(sy(y0))}' x2='${r2(sx(ay))}' y2='${r2(sy(y1) - 18)}' class='v-ink-s' stroke-width='4'/>`);
-  out.push(`<path d='M${r2(sx(x1) + 30)} ${r2(sy(ax))} l-16 -9 v18 z' class='v-ink'/><path d='M${r2(sx(ay))} ${r2(sy(y1) - 30)} l-9 16 h18 z' class='v-ink'/>`);
+  out.push(`<line x1='${r2(sx(x0))}' y1='${r2(sy(ax))}' x2='${r2(sx(x1) + 18)}' y2='${r2(sy(ax))}' class='v-primary-s' stroke-width='4'/>`);
+  out.push(`<line x1='${r2(sx(ay))}' y1='${r2(sy(y0))}' x2='${r2(sx(ay))}' y2='${r2(sy(y1) - 18)}' class='v-primary-s' stroke-width='4'/>`);
+  out.push(`<path d='M${r2(sx(x1) + 30)} ${r2(sy(ax))} l-16 -9 v18 z' class='v-primary'/><path d='M${r2(sx(ay))} ${r2(sy(y1) - 30)} l-9 16 h18 z' class='v-primary'/>`);
   obstacles.push({ x1: sx(x0), y1: sy(ax), x2: sx(x1) + 30, y2: sy(ax) }, { x1: sx(ay), y1: sy(y0), x2: sx(ay), y2: sy(y1) - 30 });
 
   // 그래프 영역 밖으로 나가는 선은 잘라 낸다
@@ -785,10 +785,10 @@ export function bars(b) {
   const y = v => padT + (hi - v) / span * plotH;
   const bw = (W - padL * 2) / items.length;
   const out = [`<svg viewBox='0 0 ${W} ${H}' data-bars>`];
-  out.push(`<line x1='${padL}' y1='${r2(y(0))}' x2='${W - padL}' y2='${r2(y(0))}' class='v-ink-s' stroke-width='4'/>`);
+  out.push(`<line x1='${padL}' y1='${r2(y(0))}' x2='${W - padL}' y2='${r2(y(0))}' class='v-primary-s' stroke-width='4'/>`);
   items.forEach((it, i) => {
     const x = padL + i * bw + bw * 0.18, w = bw * 0.64, top = y(Math.max(0, it.value)), bot = y(Math.min(0, it.value));
-    out.push(`<rect x='${r2(x)}' y='${r2(top)}' width='${r2(w)}' height='${r2(Math.max(2, bot - top))}' rx='6' class='${it.hot ? 'v-accent' : 'v-mid'}'/>`);
+    out.push(`<rect x='${r2(x)}' y='${r2(top)}' width='${r2(w)}' height='${r2(Math.max(2, bot - top))}' rx='6' class='${it.hot ? 'v-accent' : 'v-secondary'}'/>`);   // 강조 막대 코럴, 나머지 secondary
     const vy = it.value >= 0 ? top - 16 : bot + 38;
     out.push(`<text x='${r2(x + w / 2)}' y='${r2(vy)}' class='${it.hot ? 'v-label-a' : 'v-label'}' text-anchor='middle'>${esc(it.value)}${esc(b.unit || '')}</text>`);
     // 항목 이름: 양수 막대는 기준선 아래, 음수 막대는 기준선 위

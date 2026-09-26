@@ -1,10 +1,15 @@
 /* classforge print — A4 활동지 · 정답지 · 교수학습 과정안 공용
    화면에서는 종이를 나란히 보여 주고, 인쇄/PDF에서는 .page 하나가 정확히 한 쪽이 된다. */
 :root{
-  --ink:#16181D; --ink-2:#343A46; --muted:#5A616E; --line:#C9CCD3; --line-2:#8E94A0; --soft:#F2F3F5;
-  --accent:#2952CC; --accent-ink:#1E3FA3;
-  --accent-soft:color-mix(in srgb,var(--accent) 9%,#fff);
-  --accent-mid:color-mix(in srgb,var(--accent) 28%,#fff);
+  /* 고정 팔레트 — deck.css :root와 같은 역할·값(references/design.md "팔레트"). 인쇄물은 흰 종이 그대로이고
+     #F8F6FA(--soft)는 표 머리·판 같은 연한 바탕에만 쓴다. 코럴(--accent)은 채움·표시 전용, 글자색 금지. */
+  --ink:#191520; --ink-2:#211B27; --data:#1C1E24; --muted:#5E566B; --line:#D6D0DE; --line-2:#8F86A0;
+  --soft:#F8F6FA; --paper-2:#EFEBF4; --paper-3:#E4DEEB;
+  --primary:#3B1E54; --secondary:#7A5C9E; --accent:#FF6F61; --on-accent:#191520; --warn:#B45309;
+  --sec-soft:color-mix(in srgb,var(--secondary) 12%,#fff);
+  --sec-mid:color-mix(in srgb,var(--secondary) 32%,#fff);
+  --accent-soft:color-mix(in srgb,var(--accent) 12%,#fff);
+  --accent-mid:color-mix(in srgb,var(--accent) 40%,#fff);
   /* 'CF KoPub'은 meta.font 판단에 따라 fonts.py가 만들 때만 존재한다(local() 참조, 설치 PC 전용) —
      없으면 브라우저가 그냥 다음 이름인 내장 'CF Pretendard'로 넘어간다. references/design.md "글꼴". */
   --font:'CF KoPub','CF Pretendard','Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
@@ -16,10 +21,11 @@ body[data-level="high"]{--fs:10pt;--fs-q:10.5pt;--fs-s:8.5pt;--fs-h:12.5pt}
 body.landscape{--pw:297mm;--ph:210mm;--mx:14mm;--mt:12mm;--mb:12mm;--fs:9.5pt;--fs-s:8.5pt}
 
 *{box-sizing:border-box;margin:0;padding:0}
-html{background:#D9DBE0}
+html{background:#DDD8E3}
 body{font-family:var(--font);color:var(--ink);font-size:var(--fs);line-height:1.6;-webkit-font-smoothing:antialiased;
   word-break:keep-all;overflow-wrap:break-word;line-break:strict;padding:10mm 0}
-strong{font-weight:800} em{font-style:normal;font-weight:700;color:var(--accent-ink)}
+strong{font-weight:800} em{font-style:normal;font-weight:800;color:var(--primary)}
+.warn{color:var(--warn)}
 mark{background:linear-gradient(transparent 55%,var(--accent-mid) 55%);color:inherit}
 #flow{display:none}
 
@@ -27,29 +33,29 @@ mark{background:linear-gradient(transparent 55%,var(--accent-mid) 55%);color:inh
 .pg-inner{position:absolute;left:var(--mx);right:var(--mx);top:var(--mt);bottom:calc(var(--mb) + 8mm);overflow:hidden}
 .pg-foot{position:absolute;left:var(--mx);right:var(--mx);bottom:var(--mb);display:flex;justify-content:space-between;
   font-size:var(--fs-s);color:var(--muted);border-top:.3mm solid var(--line);padding-top:2mm;font-variant-numeric:tabular-nums}
-.pg-band{position:absolute;left:0;top:0;width:100%;height:3.2mm;background:var(--accent)}
+.pg-band{position:absolute;left:0;top:0;width:100%;height:3.2mm;background:var(--primary)}
 
 /* ── 활동지 머리 ───────────────────────────── */
-.ws-head{display:grid;grid-template-columns:1fr auto;gap:6mm;align-items:end;padding-bottom:4mm;border-bottom:.8mm solid var(--ink)}
-.ws-kicker{font-size:var(--fs-s);font-weight:700;color:var(--accent-ink);display:flex;flex-wrap:wrap;gap:1mm 2.5mm;align-items:center;margin-bottom:1.5mm}
+.ws-head{display:grid;grid-template-columns:1fr auto;gap:6mm;align-items:end;padding-bottom:4mm;border-bottom:.8mm solid var(--primary)}
+.ws-kicker{font-size:var(--fs-s);font-weight:700;color:var(--secondary);display:flex;flex-wrap:wrap;gap:1mm 2.5mm;align-items:center;margin-bottom:1.5mm}
 .ws-kicker i{display:inline-block;width:6mm;height:1.2mm;background:var(--accent);border-radius:1mm}
-.ws-title{font-size:19pt;font-weight:800;line-height:1.25;letter-spacing:-.02em}
+.ws-title{font-size:19pt;font-weight:800;line-height:1.25;letter-spacing:-.02em;color:var(--primary)}
 .ws-sub{font-size:var(--fs);color:var(--ink-2);margin-top:1mm}
 .ws-id{display:grid;grid-template-columns:repeat(4,auto);border:.3mm solid var(--line-2);font-size:var(--fs-s)}
 .ws-id span{padding:1.6mm 2.4mm;border-right:.3mm solid var(--line-2);color:var(--muted);white-space:nowrap}
 .ws-id span:last-child{border-right:none;min-width:30mm}
 .ws-id b{display:inline-block;min-width:7mm}
-.ws-goal{margin-top:4mm;background:var(--accent-soft);border-radius:2mm;padding:3mm 4mm;display:grid;grid-template-columns:auto 1fr;gap:1mm 4mm}
-.ws-goal .lb{font-weight:800;color:var(--accent-ink);font-size:var(--fs-s);padding-top:.5mm}
+.ws-goal{margin-top:4mm;background:var(--sec-soft);border-radius:2mm;padding:3mm 4mm;display:grid;grid-template-columns:auto 1fr;gap:1mm 4mm}
+.ws-goal .lb{font-weight:800;color:var(--primary);font-size:var(--fs-s);padding-top:.5mm}
 .ws-goal ol{list-style:none;counter-reset:g}
 .ws-goal li{counter-increment:g;font-weight:600}
-.ws-goal li::before{content:counter(g)". ";color:var(--accent-ink);font-weight:800}
+.ws-goal li::before{content:counter(g)". ";color:var(--primary);font-weight:800}
 
 /* ── 섹션과 문항 ───────────────────────────── */
 .blk{padding-top:5mm}
 .sec{display:flex;align-items:center;gap:3mm;margin-bottom:1mm}
-.sec .n{background:var(--ink);color:#fff;font-weight:800;font-size:var(--fs-s);padding:.6mm 2.4mm;border-radius:1mm;font-variant-numeric:tabular-nums}
-.sec .t{font-size:var(--fs-h);font-weight:800;letter-spacing:-.01em}
+.sec .n{background:var(--primary);color:#fff;font-weight:800;font-size:var(--fs-s);padding:.6mm 2.4mm;border-radius:1mm;font-variant-numeric:tabular-nums}
+.sec .t{font-size:var(--fs-h);font-weight:800;letter-spacing:-.01em;color:var(--primary)}
 .sec .m{margin-left:auto;font-size:var(--fs-s);color:var(--muted)}
 .sec-lead{color:var(--ink-2);font-size:var(--fs);margin-bottom:1mm}
 .q{display:grid;grid-template-columns:7mm 1fr;gap:0 1.5mm;margin-top:3.2mm}
@@ -88,13 +94,13 @@ mark{background:linear-gradient(transparent 55%,var(--accent-mid) 55%);color:inh
 .match svg{grid-column:2;width:100%;height:100%;overflow:visible}
 .match .dot{width:2.6mm;height:2.6mm;border-radius:50%;background:var(--ink);flex:none}
 /* 표 */
-.tbl{width:100%;border-collapse:collapse;margin-top:2.5mm;font-size:var(--fs)}
+.tbl{width:100%;border-collapse:collapse;margin-top:2.5mm;font-size:var(--fs);color:var(--data)}
 .tbl th{background:var(--soft);font-weight:800;border:.3mm solid var(--line-2);padding:2mm;text-align:center}
 .tbl td{border:.3mm solid var(--line-2);padding:2mm 2.5mm;height:11mm;vertical-align:middle}
 .tbl td.c{text-align:center}
 /* 그리기/자유 서술 상자 */
 .draw{margin-top:2.5mm;border:.35mm solid var(--line-2);border-radius:2mm;position:relative;
-  background-image:linear-gradient(var(--soft) .25mm,transparent .25mm),linear-gradient(90deg,var(--soft) .25mm,transparent .25mm);background-size:5mm 5mm}
+  background-image:linear-gradient(var(--paper-2) .25mm,transparent .25mm),linear-gradient(90deg,var(--paper-2) .25mm,transparent .25mm);background-size:5mm 5mm}
 .draw .ph{position:absolute;right:2.5mm;bottom:1.5mm;font-size:var(--fs-s);color:var(--muted)}
 /* 자료(그림) — svg/plot/bars는 draw .base와 같은 방식으로 높이 고정 칸 안에 넣는다.
    (칸 없이 svg{width:100%;height:auto}만 쓰면 세로로 긴 그래프가 페이지 폭 전체로 늘어나며
@@ -102,18 +108,19 @@ mark{background:linear-gradient(transparent 55%,var(--accent-mid) 55%);color:inh
 .fig{margin-top:2.5mm;display:flex;flex-direction:column;align-items:center}
 .fig-media{width:100%;display:flex;align-items:center;justify-content:center}
 .fig-media svg{max-width:100%;max-height:100%;width:auto;height:100%}
-.fig .cap{font-size:var(--fs-s);color:var(--muted);margin-top:1mm}
+.fig .cap{font-size:var(--fs-s);color:var(--data);margin-top:1mm}
 /* 생성 이미지(images.mjs)를 쓴 자료 — 칸을 채운다(object-fit:cover), 모서리는 둥글게 */
 .fig-img{width:100%;height:60mm;overflow:hidden;border-radius:2mm}
 .fig-img.img-fill img{width:100%;height:100%;object-fit:cover;display:block}
 .v-ink{fill:var(--ink)} .v-ink-s{stroke:var(--ink);fill:none} .v-accent{fill:var(--accent)} .v-accent-s{stroke:var(--accent);fill:none}
-.v-soft{fill:var(--accent-soft)} .v-mid{fill:var(--accent-mid)} .v-paper{fill:#fff} .v-paper2{fill:var(--soft)} .v-paper3{fill:#E4E6EA}
-.v-line{stroke:var(--line-2);fill:none} .v-muted{fill:var(--muted)} .v-warn{fill:#B45309} .v-good{fill:#1A7F4B}
+.v-primary{fill:var(--primary)} .v-primary-s{stroke:var(--primary);fill:none} .v-secondary{fill:var(--secondary)} .v-secondary-s{stroke:var(--secondary);fill:none}
+.v-soft{fill:var(--sec-soft)} .v-mid{fill:var(--sec-mid)} .v-paper{fill:#fff} .v-paper2{fill:var(--paper-2)} .v-paper3{fill:var(--paper-3)}
+.v-line{stroke:var(--line-2);fill:none} .v-muted{fill:var(--muted)} .v-warn{fill:var(--warn)} .v-good{fill:#1A7F4B}
 /* --cf-label-scale: diagrams.mjs(TikZ 도식) 전용 — deck.css 쪽 설명 참고 */
-.v-label{fill:var(--ink);font-family:var(--font);font-weight:700;font-size:calc(34px / var(--cf-label-scale, 1))} .v-label-s{fill:var(--muted);font-family:var(--font);font-weight:600;font-size:calc(28px / var(--cf-label-scale, 1))}
-.v-label-a{fill:var(--accent-ink);font-family:var(--font);font-weight:800;font-size:calc(34px / var(--cf-label-scale, 1))}
+.v-label{fill:var(--data);font-family:var(--font);font-weight:700;font-size:calc(34px / var(--cf-label-scale, 1))} .v-label-s{fill:var(--muted);font-family:var(--font);font-weight:600;font-size:calc(28px / var(--cf-label-scale, 1))}
+.v-label-a{fill:var(--primary);font-family:var(--font);font-weight:800;font-size:calc(34px / var(--cf-label-scale, 1))}
 /* TikZ 도식만(deck.css 쪽 설명 참고) — 선 굵기도 화면 px 기준으로 맞춘다 */
-svg[data-diagram] .v-ink-s, svg[data-diagram] .v-line{stroke-width:calc(4px / var(--cf-label-scale, 1)) !important}
+svg[data-diagram] .v-ink-s, svg[data-diagram] .v-primary-s, svg[data-diagram] .v-line{stroke-width:calc(4px / var(--cf-label-scale, 1)) !important}
 svg[data-diagram] .v-accent-s{stroke-width:calc(5.5px / var(--cf-label-scale, 1)) !important}
 
 /* 수식 인라인 표기 (deck.css와 동일 규칙 — build.mjs의 md()가 변환).
@@ -130,49 +137,49 @@ svg[data-diagram] .v-accent-s{stroke-width:calc(5.5px / var(--cf-label-scale, 1)
 body[data-profile="evidence"] .ws-title,body[data-profile="evidence"] .lp-title h1{font-weight:700}
 /* 자기 점검 */
 .self{width:100%;border-collapse:collapse;margin-top:2.5mm}
-.self th,.self td{border:.3mm solid var(--line-2);padding:2mm;font-size:var(--fs)}
+.self th,.self td{border:.3mm solid var(--line-2);padding:2mm;font-size:var(--fs);color:var(--data)}
 .self th{background:var(--soft);font-weight:800}
 .self td.c{text-align:center;width:17mm;color:var(--muted)}
 .tip{margin-top:3mm;font-size:var(--fs-s);color:var(--ink-2);border-left:1mm solid var(--accent);padding:1mm 0 1mm 3mm}
 
 /* ── 정답지 ────────────────────────────────── */
-.key .blank{color:var(--accent-ink);font-weight:800}
-.key .lines .ans{color:var(--accent-ink);font-size:var(--fs-q);font-weight:700;padding:1mm 0 0}
+.key .blank{color:var(--primary);font-weight:800}
+.key .lines .ans{color:var(--primary);font-size:var(--fs-q);font-weight:700;padding:1mm 0 0}
 .key .lines div:not(.ans){display:none}
 .key .ox .box.on{background:var(--accent);border-color:var(--accent)}
-.key .choices li.ok b{color:#fff;background:var(--accent);border-radius:50%;padding:0 1.1mm}
-.key .tbl td.fill{color:var(--accent-ink);font-weight:800}
+.key .choices li.ok b{color:var(--on-accent);background:var(--accent);border-radius:50%;padding:0 1.1mm}
+.key .tbl td.fill{color:var(--primary);font-weight:800}
 .explain{display:none}
 .key .explain{display:block;margin-top:1.5mm;font-size:var(--fs-s);color:var(--ink-2);background:var(--accent-soft);padding:1.5mm 3mm;border-radius:1.5mm}
-.key .explain b{color:var(--accent-ink)}
+.key .explain b{color:var(--primary)}
 .keystamp{display:none}
-.key .keystamp{display:inline-block;white-space:nowrap;flex-shrink:0;margin-left:3mm;font-size:10pt;font-weight:800;color:#fff;background:#C62828;padding:.5mm 3mm;border-radius:1mm;vertical-align:middle}
+.key .keystamp{display:inline-block;white-space:nowrap;flex-shrink:0;margin-left:3mm;font-size:10pt;font-weight:800;color:var(--on-accent);background:var(--accent);padding:.5mm 3mm;border-radius:1mm;vertical-align:middle}
 .key .draw{background-image:none}
-.key .draw .model{position:absolute;inset:3mm 4mm;color:var(--accent-ink);font-weight:600;font-size:var(--fs-q)}
+.key .draw .model{position:absolute;inset:3mm 4mm;color:var(--primary);font-weight:600;font-size:var(--fs-q)}
 .draw .model{display:none} .key .draw .model{display:block}
 
 /* ── 교수·학습 과정안 ───────────────────────── */
-.lp-title{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:.8mm solid var(--ink);padding-bottom:2.5mm}
-.lp-title h1{font-size:17pt;font-weight:800;letter-spacing:-.02em}
+.lp-title{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:.8mm solid var(--primary);padding-bottom:2.5mm}
+.lp-title h1{font-size:17pt;font-weight:800;letter-spacing:-.02em;color:var(--primary)}
 .lp-title .s{font-size:var(--fs-s);color:var(--muted)}
 .info{width:100%;border-collapse:collapse;margin-top:3mm}
 .info{table-layout:fixed} .info th{background:var(--soft);border:.3mm solid var(--line-2);padding:1.6mm 2mm;font-weight:800;text-align:center;white-space:nowrap}
-.info td{border:.3mm solid var(--line-2);padding:1.6mm 2.5mm}
+.info td{border:.3mm solid var(--line-2);padding:1.6mm 2.5mm;color:var(--data)}
 .info ol{padding-left:4.5mm}
 .proc{width:100%;border-collapse:collapse;margin-top:4mm;table-layout:fixed}
-.proc th{background:var(--ink);color:#fff;font-weight:800;padding:1.8mm;border:.3mm solid var(--ink);text-align:center}
-.proc td{border:.3mm solid var(--line-2);padding:1.8mm 2.2mm;vertical-align:top}
-.proc td.stage{text-align:center;font-weight:800;vertical-align:top;padding-top:3mm;background:var(--accent-soft);color:var(--accent-ink);border-top-color:transparent;border-bottom-color:transparent}
+.proc th{background:var(--primary);color:#fff;font-weight:800;padding:1.8mm;border:.3mm solid var(--primary);text-align:center}
+.proc td{border:.3mm solid var(--line-2);padding:1.8mm 2.2mm;vertical-align:top;color:var(--data)}
+.proc td.stage{text-align:center;font-weight:800;vertical-align:top;padding-top:3mm;background:var(--sec-soft);color:var(--primary);border-top-color:transparent;border-bottom-color:transparent}
 .proc td.stage.first{border-top-color:var(--line-2)} .proc td.stage.last{border-bottom-color:var(--line-2)}
 .proc td.min{text-align:center;vertical-align:middle;font-variant-numeric:tabular-nums}
-.proc .who{font-weight:800;font-size:var(--fs-s);color:var(--accent-ink);margin-right:1mm}
+.proc .who{font-weight:800;font-size:var(--fs-s);color:var(--secondary);margin-right:1mm}
 .proc ul{list-style:none} .proc li{padding-left:3mm;text-indent:-3mm} .proc li::before{content:"· "}
-.proc .mat{color:var(--ink-2)} .proc .mat .r{color:var(--accent-ink);font-weight:700}
-.h2{font-size:var(--fs-h);font-weight:800;margin-top:5mm;display:flex;align-items:center;gap:2mm}
+.proc .mat{color:var(--ink-2)} .proc .mat .r{color:var(--secondary);font-weight:700}
+.h2{font-size:var(--fs-h);font-weight:800;margin-top:5mm;display:flex;align-items:center;gap:2mm;color:var(--primary)}
 .h2::before{content:"";width:1.2mm;height:4.5mm;background:var(--accent);border-radius:.5mm}
 .qa{margin-top:2mm;display:grid;grid-template-columns:1fr 1fr;gap:2mm 6mm}
 .qa div{border-top:.3mm solid var(--line);padding-top:1.5mm}
-.qa b{color:var(--accent-ink)}
+.qa b{color:var(--primary)}
 .check{margin-top:2mm;padding:2.5mm 4mm;border:.4mm solid var(--accent);border-radius:2mm;font-weight:700}
 
 @media print{
@@ -191,7 +198,7 @@ body[data-profile="evidence"] .ws-title,body[data-profile="evidence"] .lp-title 
    쓰는 경우, 위 .key .draw .model 규칙) 전체를 덮는 굵은 글씨와는 다른 자리·다른 크기를 쓴다.
    "채점 기준" 표시는 build.mjs가 <b>로 붙인다(.explain의 <b>풀이</b>와 같은 방식). */
 .key .draw.based .model{position:static;inset:auto;display:block;width:100%;margin-top:1.5mm;font-size:var(--fs-s);font-weight:400;color:var(--ink-2);background:var(--accent-soft);padding:1.5mm 3mm;border-radius:1.5mm}
-.key .draw.based .model b{color:var(--accent-ink)}
+.key .draw.based .model b{color:var(--primary)}
 /* 쪽 끝에서 끊긴 단계 칸은 아래 테두리로 닫는다 */
 .proc td.stage.cut{border-bottom-color:var(--line-2)}
 

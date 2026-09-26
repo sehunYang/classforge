@@ -25,7 +25,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { spawn } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
-import { SKILL, loadLesson, launch } from './lib.mjs';
+import { SKILL, PALETTE, loadLesson, launch } from './lib.mjs';
 
 // ── 바뀌지 않는 상수 ────────────────────────────────────────
 const RATIOS = ['1:1', '16:9', '4:3', '3:4'];
@@ -47,11 +47,16 @@ const OPENAI_IMAGES_URL = 'https://api.openai.com/v1/images/generations';
 const CLASSROOM_MARK = 'CLASSROOM-SAFE-V1';
 const TIMEOUT_MS = 8 * 60 * 1000;
 
-// ── 색 도우미 (교과 강조색에서 보조 팔레트 파생) ───────────
-const hexToRgb = h => { const m = h.replace('#', ''); return [0, 2, 4].map(i => parseInt(m.slice(i, i + 2), 16)); };
-const rgbToHex = ([r, g, b]) => '#' + [r, g, b].map(v => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, '0')).join('').toUpperCase();
-const mix = (hex, target, t) => { const a = hexToRgb(hex), b = hexToRgb(target); return rgbToHex(a.map((v, i) => v + (b[i] - v) * t)); };
-const accentPalette = hex => [hex.toUpperCase(), mix(hex, '#FFFFFF', 0.35), mix(hex, '#FFFFFF', 0.7), '#FBFAF6'];
+// ── 보조 팔레트 힌트 (모든 교과 고정 팔레트 — lib.mjs PALETTE, references/design.md "팔레트") ──
+const IMAGE_PALETTE = [PALETTE.primary, PALETTE.secondary, PALETTE.accent, PALETTE.paper];
+// 두 프롬프트가 교실 안전 문구의 "보조 팔레트 힌트: …." 부분만 다른가 — 교과 강조색 시절 힌트로 만든 이미지를
+// 팔레트 교체만으로 다시 만들지(재과금) 않으려고 쓴다. 캐시 이미지가 정말 그 옛 프롬프트로 만들어졌는지는
+// 부르는 쪽이 manifest의 promptHash === sha256(옛 프롬프트)로 따로 확인한다(아래 compilePhase·gate.mjs I1).
+const PALETTE_HINT_RE = /보조 팔레트 힌트: [^.\n]*\./;
+function samePromptExceptPalette(a, b) {
+  const strip = t => String(t).replace(PALETTE_HINT_RE, '보조 팔레트 힌트: -.');
+  return a !== b && strip(a) === strip(b);
+}
 
 // ── lesson.json 전체에서 {image:{...}} 요청을 모은다(임의 깊이) ──
 function collect(node, out) {
@@ -190,8 +195,8 @@ function normalizePromptText(s) {
 }
 
 // ── 교실 안전 문구 + 프롬프트 검증 (순수 함수) ──────────────
-function classroomClause(req, accent) {
-  const pal = accentPalette(accent).join(' ');
+function classroomClause(req) {
+  const pal = IMAGE_PALETTE.join(' ');
   const noun = req.style === 'photo' ? '사진' : req.style === 'diagram-ish' ? '도해' : '삽화';
   return `Classroom constraints (${CLASSROOM_MARK}): 장면 안 모든 표면·간판·사물은 문자·숫자·기호 없이 매끈하게 두어 문자 없는 순수 ${noun} 장면이 되게 한다, clean brand-free copy-free finish; 등장인물은 실재 인물의 초상이 아닌 완전히 가상의 인물이며 저작권이 있는 캐릭터·브랜드와 무관한 독자적 디자인, 전 연령 교실 환경에 적합한 건전하고 단정한 표현. 보조 팔레트 힌트: ${pal}.`;
 }
@@ -234,7 +239,7 @@ function stateContinuityClause(req, prevState) {
 function stripMarked(body, mark) {
   return body.split('\n').filter(line => !line.includes(mark)).join('\n');
 }
-function ensureClassroomClause(text, req, accent, lessonImages, prevState) {
+function ensureClassroomClause(text, req, lessonImages, prevState) {
   let t = String(text).trim();
   const arMatch = t.match(/AR\s+(\d+\s*:\s*\d+)\s*$/i);
   const arToken = arMatch ? arMatch[1].replace(/\s+/g, '') : req.ratio;
@@ -249,7 +254,7 @@ function ensureClassroomClause(text, req, accent, lessonImages, prevState) {
   if (stateExtra) body = `${body}\n${stateExtra}`;
   const styleExtra = styleAndContinuityClause(req, lessonImages);
   if (styleExtra) body = `${body}\n${styleExtra}`;
-  body = `${body}\n${classroomClause(req, accent)}`;
+  body = `${body}\n${classroomClause(req)}`;
   return `${body}\nAR ${arToken}`.trim();
 }
 function runCheckPrompt(text) {
@@ -292,7 +297,7 @@ function pruneUnused(imagesDir, manifest, usedIds) {
   return pruned;
 }
 
-export { CLASSROOM_MARK, STYLE_MARK, STATE_MARK, PURPOSES, collect, stepChainPrevStates, computeGroups, findNearDuplicateBriefs, classroomClause, ensureClassroomClause, runCheckPrompt, sha256, normalizePromptText, parseProvenance };
+export { CLASSROOM_MARK, STYLE_MARK, STATE_MARK, PURPOSES, collect, stepChainPrevStates, computeGroups, findNearDuplicateBriefs, classroomClause, ensureClassroomClause, samePromptExceptPalette, runCheckPrompt, sha256, normalizePromptText, parseProvenance };
 
 // ── CLI 본체 (isMain일 때만 실행 — import만으로는 아무 것도 하지 않는다) ──
 async function main() {
@@ -313,7 +318,7 @@ async function main() {
   const ONLY_IDS = (() => { const v = opt('only', null); return v ? v.split(',').map(s => s.trim()).filter(Boolean) : null; })();
 
   const ctx = loadLesson(lessonPath);
-  const { lesson: L, dir, accent } = ctx;
+  const { lesson: L, dir } = ctx;
   const imagesDir = path.join(dir, 'images');
   fs.mkdirSync(imagesDir, { recursive: true });
   const manifestPath = path.join(imagesDir, 'manifest.json');
@@ -371,7 +376,6 @@ async function main() {
   // ── 2. 브리프 파일 ───────────────────────────────────────
   function writeBrief(req) {
     const size = RATIO_SIZE_SUBSCRIPTION[req.ratio];
-    const pal = accentPalette(accent);
     const md = `# 이미지 브리프 — ${req.id}\n\n` +
       `- role: ${req.role}\n- ratio: ${req.ratio} → 기본(subscription) codex size ${size}(모델 강제 지정 시 api 경로는 16:9도 1536x1024로 근사)\n- style: ${req.style}\n- brief: ${req.brief}\n` +
       (req.purpose ? `- purpose: ${req.purpose}\n` : '') +
@@ -383,7 +387,7 @@ async function main() {
       `2. \`vendor/prompt-kit/skills/image-prompt/SKILL.md\`의 마스터 템플릿(Format A, 5섹션: Scene·Camera·Lighting·Color grading·Texture/Medium — Text-in-image는 쓰지 않는다. 이 이미지에는 글자를 렌더링하지 않는다)으로 이 브리프를 완성 프롬프트로 컴파일한다.\n` +
       `3. 완성 프롬프트를 lesson.json에서 이 요청의 \`image.prompt\` 필드에 넣거나, 이 폴더에 \`${req.id}.prompt.txt\`로 저장한다(끝은 \`AR ${req.ratio}\`).\n` +
       `4. \`node scripts/images.mjs <lesson.json> --compile-only\`를 다시 실행해 검증을 통과시킨다.\n\n` +
-      `## 참고 팔레트 (교과 강조색 ${accent} 기준)\n${pal.join(' ')}\n`;
+      `## 참고 팔레트 (고정 팔레트 primary·secondary·accent(코럴)·paper)\n${IMAGE_PALETTE.join(' ')}\n`;
     fs.writeFileSync(path.join(imagesDir, `${req.id}.brief.md`), md, 'utf8');
   }
 
@@ -397,9 +401,20 @@ async function main() {
       else if (fs.existsSync(txtFile)) { source = 'file'; text = normalizePromptText(fs.readFileSync(txtFile, 'utf8')); }
       if (!text) { missing.push(req); writeBrief(req); continue; }
 
-      const finalText = ensureClassroomClause(text, req, accent, L.images, prevStates.get(req.id));
+      const finalText = ensureClassroomClause(text, req, L.images, prevStates.get(req.id));
       const result = await runCheckPrompt(finalText);
       if (!result.ok) { invalid.push({ req, errors: result.errors, warnings: result.warnings }); continue; }
+
+      // 팔레트 힌트만 바뀌었고 캐시 이미지가 정확히 옛 프롬프트(text)로 만든 것이면 manifest의 promptHash만
+      // 새 프롬프트로 옮긴다 — 색 힌트 하나 때문에 이미지를 다시 만들지 않는다(새 팔레트로 다시 만들려면 --only).
+      if (samePromptExceptPalette(text, finalText)) {
+        const m = loadManifest(), entry = m.images?.[req.id];
+        if (entry && entry.promptHash === sha256(text)) {
+          entry.promptHash = sha256(finalText);
+          saveManifest(m);
+          console.log(`  [PALETTE] ${req.id}: 팔레트 힌트만 바뀜 — 기존 이미지를 그대로 씁니다(새 팔레트로 다시 만들려면 --only ${req.id})`);
+        }
+      }
 
       if (source === 'lesson') req.prompt = finalText;
       // 소스가 무엇이든 항상 images/<id>.prompt.txt에 최종본을 미러링해 둔다 — 검수할 때 바로 열어 볼 수 있고,

@@ -205,6 +205,7 @@ export function parseIntake(mdText) {
   if (filled.worksheetQCount && filled.worksheetQCount[0] > filled.worksheetQCount[1]) warnings.push({ code: 'W-RANGE', msg: '활동지 문항 수의 최소값이 최대값보다 큽니다' });
   if (filled.worksheetQCount && (filled.worksheetQCount[0] < 5 || filled.worksheetQCount[1] > 14)) warnings.push({ code: 'W-GATE', msg: `활동지 문항 수 ${filled.worksheetQCount[0]}~${filled.worksheetQCount[1]}개가 게이트 기준(5~14개)을 벗어납니다` });
   if (filled.imageCount != null && filled.slidesCount && filled.imageCount > filled.slidesCount[1]) warnings.push({ code: 'W-IMG', msg: `AI 이미지 사용 상한(${filled.imageCount})이 슬라이드 최대 장수(${filled.slidesCount[1]})보다 많아 사실상 상한이 없는 것과 같습니다` });
+  if (filled.accentColor) warnings.push({ code: 'W-ACCENT', msg: `강조색(${filled.accentColor})은 반영하지 않습니다 — 모든 교과가 같은 고정 팔레트를 씁니다(references/design.md "팔레트")` });
   if (filled.hasEssay === 'no' && filled.worksheetTypes?.includes('short')) warnings.push({ code: 'W-ESSAY', msg: '서술형 문항을 넣지 말라고 했는데 활동지 문항 유형에 서술형이 체크되어 있습니다' });
   if (filled.mustExclude) {
     const nrm = s => String(s).replace(/\s+/g, '').toLowerCase();
@@ -529,7 +530,6 @@ export function checkReflection(intake, lesson, outDir) {
   softNote('excludeScope', intake.excludeScope.length, '제외 범위가 실제로 빠졌는지 직접 확인하세요');
   softNote('hookIdea', intake.flow.hookIdea, 'hook 슬라이드가 아이디어를 살렸는지 직접 확인하세요');
   softNote('imageUse', intake.style.imageUse, '이미지 용도가 요청과 맞는지 직접 확인하세요');
-  softNote('accentColor', intake.style.accentColor, 'meta.accent 또는 교과 기본색과 비교해 직접 확인하세요');
   softNote('titleStyle', intake.style.titleStyle, '제목이 메시지형/질문형/명사형 요청과 맞는지 직접 확인하세요');
   softNote('referenceMaterial', intake.reference.material, '기존 자료·참고 슬라이드의 구조(순서·유형)가 설계에 참고됐는지 직접 확인하세요(문장·이미지를 그대로 베끼지 않았는지도)');
   softNote('etcRequest', intake.etcRequest, '자유 요청이 어떤 형태로 반영됐는지 직접 확인하세요(다른 필드로 자동 분류되지 않는 항목)');

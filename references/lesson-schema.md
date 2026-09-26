@@ -7,7 +7,7 @@
 |---|---|---|
 | `**낱말**` | 굵게 | 핵심어 1~2개 |
 | `==낱말==` | 형광펜 밑줄 | 한 슬라이드에 1곳 |
-| `*낱말*` | 강조색 | 한 슬라이드에 1곳 |
+| `*낱말*` | 핵심 낱말(primary 색) | 한 슬라이드에 1곳 |
 | `\n` | 줄바꿈 | 표지 부제 등 |
 | `{{실제 정답}}` | 빈칸(활동지) | 활동지 `concept` 본문, `table` 칸 전체. `{{ }}` 안에는 그 자리의 실제 정답 텍스트를 쓴다(예: `{{높다}}`) — "정답"이라는 낱말 자체를 쓰는 게 아니다(게이트 S1-BLANK-LITERAL이 그 사고를 막는다) |
 
@@ -18,13 +18,12 @@
 "meta": {
   "title": "계절은 왜 생길까?",          // 수업 제목 (표지·활동지·지도안)
   "short": "계절이 생기는 까닭",         // 슬라이드 오른쪽 위 짧은 제목 (없으면 title)
-  "subject": "과학",                    // 교과 → 강조색 자동 (국어·수학·사회·역사·도덕·과학·영어·음악·미술·체육·실과·기술가정·정보·창체)
+  "subject": "과학",                    // 교과 이름(표지·머리말에 표시). 색은 교과와 무관한 고정 팔레트 — design.md "팔레트"
   "grade": "초등 6학년",
   "level": "elem",                      // elem | middle | high → 글자 크기·글자 수 한도가 바뀐다
   "unit": "계절의 변화",
   "lesson": "4/9차시",
   "minutes": 40,                        // 지도안 시간 합과 같아야 한다
-  "accent": "#0B7A6A",                  // (선택) 강조색 직접 지정. 종이색 위 대비 4.5:1 이상
   "school": "", "teacher": "", "date": "",   // (선택) 지도안 머리
   "profile": "evidence",                // (선택) "default"(기본) | "evidence"(증거 중심 탐구 스타일 — 공식 옆에 근거, 대립 설명은 판정 전 대칭 배치, 절제된 디자인. `pedagogy.md` §10)
   "tone": "해요체",                     // (선택) "해요체" | "합쇼체" — 지정 없으면 초·중 해요체, 고 합쇼체 (템플릿 고정 문구에 적용)
@@ -34,13 +33,13 @@
   "standards": [ { "code": "[6과12-03]", "text": "원문 그대로", "verified": true } ]
 }
 ```
-성취기준을 교사에게 받지 못했으면 `"code": ""`, `"verified": false`. 코드를 추측해 넣지 않는다. `profile: "evidence"`는 증거 중심 탐구 스타일이다 — 공식·주장 옆에 그 근거(실험·역사)를 바로 붙이고, 대립 설명은 대칭으로 놓은 뒤 다음 슬라이드에서 실험으로 판정하며, 개념 슬라이드 한 장에 정의 하나만 둔다(저작 규칙은 `references/pedagogy.md` §10). 디자인은 절제되어 제목 두께가 한 단계 낮고 챕터 전환도 흰 배경을 유지하며, 강조색은 움직이는 핵심 요소 하나에만 쓴다(`references/design.md`). B5 게이트의 "내용이 위쪽에만 몰림" 경고는 이 프로파일에서 의도된 여백으로 보고 건너뛴다. 이 세부 저작 규칙은 게이트 E1이 확인한다 — 설계서로 프로파일을 요청한 경우 S7은 `meta.profile`(과 `meta.tone`)이 요청한 값과 같은지만 본다. `tone`은 build.mjs의 문체 고정 문구(안내문 등)가 해요체/합쇼체 중 무엇을 쓸지 정한다. `intake`는 교사가 채운 `templates/수업설계서.md`를 `intake.mjs`로 파싱해 반영한 경우에만 쓴다(`references/intake.md`).
+성취기준을 교사에게 받지 못했으면 `"code": ""`, `"verified": false`. 코드를 추측해 넣지 않는다. `profile: "evidence"`는 증거 중심 탐구 스타일이다 — 공식·주장 옆에 그 근거(실험·역사)를 바로 붙이고, 대립 설명은 대칭으로 놓은 뒤 다음 슬라이드에서 실험으로 판정하며, 개념 슬라이드 한 장에 정의 하나만 둔다(저작 규칙은 `references/pedagogy.md` §10). 디자인은 절제되어 제목 두께가 한 단계 낮고 챕터 전환도 종이 배경을 유지하며, 코럴은 움직이는 핵심 요소 하나에만 쓴다(`references/design.md`). B5 게이트의 "내용이 위쪽에만 몰림" 경고는 이 프로파일에서 의도된 여백으로 보고 건너뛴다. 이 세부 저작 규칙은 게이트 E1이 확인한다 — 설계서로 프로파일을 요청한 경우 S7은 `meta.profile`(과 `meta.tone`)이 요청한 값과 같은지만 본다. `tone`은 build.mjs의 문체 고정 문구(안내문 등)가 해요체/합쇼체 중 무엇을 쓸지 정한다. `intake`는 교사가 채운 `templates/수업설계서.md`를 `intake.mjs`로 파싱해 반영한 경우에만 쓴다(`references/intake.md`).
 
 ## images (선택, 최상위)
 ```json
 "images": {
   "model": "gpt-image-2.5-sunburst", "quality": "high",
-  "style": { "palette": "#F7F4EC #0B7A6A #2952CC", "lighting": "soft daylight", "medium": "clean educational photo" },
+  "style": { "palette": "#F8F6FA #3B1E54 #7A5C9E #FF6F61", "lighting": "soft daylight", "medium": "clean educational photo" },
   "subject": "같은 초록 콩 모종, 같은 학생 손, 같은 투명 컵"
 }
 ```

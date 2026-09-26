@@ -1,15 +1,20 @@
-// classforge 공용 모듈 — 레슨 로드, 교과 강조색, 학교급 규칙, 브라우저 실행
+// classforge 공용 모듈 — 레슨 로드, 고정 팔레트, 학교급 규칙, 브라우저 실행
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 export const SKILL = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
-// 교과별 강조색 — 종이색(#FBFAF6) 위 본문 대비 4.5:1 이상으로 고른 값
-export const ACCENTS = {
-  국어: '#B42318', 수학: '#2952CC', 사회: '#B4480E', 역사: '#8A4B16', 도덕: '#7A3E9D',
-  과학: '#0B7A6A', 영어: '#6D28D9', 음악: '#BE185D', 미술: '#C2410C', 체육: '#15803D',
-  실과: '#4D7C0F', 기술가정: '#4D7C0F', 정보: '#1D4ED8', 창체: '#0E7490', default: '#2952CC',
+// 고정 팔레트 — 모든 교과가 같은 색을 쓴다(교과별 강조색·meta.accent는 없앴다). references/design.md "팔레트".
+// accent(코럴)는 채움·표시 전용이다 — 종이 위 글자색으로 쓰면 대비 2.5:1이라 B3에 걸린다. 코럴 위 글자는 ink.
+export const PALETTE = {
+  primary: '#3B1E54',    // 제목·핵심 낱말·주요 틀·그래프 축, chapter/exit 어두운 면
+  secondary: '#7A5C9E',  // 소제목·아이콘·크롬, 2순위 막대
+  accent: '#FF6F61',     // 코럴: 배지·형광펜 밑줄·핵심 점/막대(채움 전용)
+  ink: '#191520',        // 본문
+  sub: '#211B27',        // 소제목 아래 리드·핵심 설명 문장
+  data: '#1C1E24',       // 표·그래프 값 라벨·자료 설명
+  paper: '#F8F6FA',      // 슬라이드 종이(인쇄물은 흰 종이 위 연한 판)
 };
 
 // 학교급별 한계값 — 게이트와 작성 규칙이 같은 표를 쓴다 (1920×1080 기준 px)
@@ -29,8 +34,7 @@ export function loadLesson(p) {
   const dir = path.dirname(file);
   const out = path.join(dir, 'out');
   const level = lesson.meta?.level in LEVELS ? lesson.meta.level : 'middle';
-  const accent = lesson.meta?.accent || ACCENTS[lesson.meta?.subject] || ACCENTS.default;
-  return { file, dir, out, lesson, level, rules: LEVELS[level], accent };
+  return { file, dir, out, lesson, level, rules: LEVELS[level] };
 }
 
 export function findChrome() {
