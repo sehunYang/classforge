@@ -75,7 +75,7 @@ node "$SKILL_DIR/scripts/images.mjs" <폴더>/lesson.json                  # 실
 node "$SKILL_DIR/scripts/build.mjs" <폴더>/lesson.json
 node "$SKILL_DIR/scripts/gate.mjs"  <폴더>/lesson.json
 ```
-FAIL이 하나라도 있으면 메시지의 `→` 힌트대로 lesson.json을 고치고 다시 빌드·게이트. 템플릿이나 게이트 기준을 느슨하게 바꿔서 통과시키지 않는다. 게이트는 S1~S7(구조·문체·성취기준·설계서 반영)·E1(증거 중심)·I1(이미지)·V1(시각 정책 — 손그림 SVG 금지, 세 갈래 규칙)·B1~B9(브라우저 실측, B9는 KoPub을 쓸 때만)·S8-TRAP(교과별 실험 함정)·R1(7단계 도메인 검토 수행 여부 — 첫 게이트에서는 FAIL이 정상) — 목록과 흔한 해결법은 `references/gates.md`. 설계서(`meta.intake`)가 있으면 S7이, `meta.profile:"evidence"`면 E1이, 이미지 요청이 있으면 I1이, 삽화·도형이 하나라도 있으면(대부분의 수업) V1이 함께 통과해야 한다.
+FAIL이 하나라도 있으면 메시지의 `→` 힌트대로 lesson.json을 고치고 다시 빌드·게이트. 템플릿이나 게이트 기준을 느슨하게 바꿔서 통과시키지 않는다. 게이트는 20개(KoPub을 쓰면 B9까지 21개): S1~S8(구조·문체·성취기준·설계서 반영·교과별 실험 함정)·E1(증거 중심)·I1(이미지)·V1(시각 정책 — 손그림 SVG 금지, 세 갈래 규칙)·R1(7단계 도메인 검토 수행 여부 — 첫 게이트에서는 FAIL이 정상)·B1~B8(브라우저 실측, KoPub을 쓰면 B9 추가) — 목록과 흔한 해결법은 `references/gates.md`. 설계서(`meta.intake`)가 있으면 S7이, `meta.profile:"evidence"`면 E1이, 이미지 요청이 있으면 I1이, 삽화·도형이 하나라도 있으면(대부분의 수업) V1이 함께 통과해야 한다.
 
 ### 7. 캡처 육안 검수 + 도메인 정확성 검토 (게이트 통과 후 필수)
 1. `out/shots/overview.png`, 모든 `slide-NN.png`, `worksheet-p*.png`, `answer-key-p*.png`, `lesson-plan-p*.png`를 Read로 열어 `references/design.md`의 **육안 검수 체크리스트**를 확인한다. 걸리면 고치고 6단계부터 다시.
@@ -102,7 +102,7 @@ FAIL이 하나라도 있으면 메시지의 `→` 힌트대로 lesson.json을 �
 - `references/slides.md` — 슬라이드 15유형 카탈로그, 수업 흐름 템플릿
 - `references/design.md` — 디자인 규칙, SVG 삽화 작성법, 육안 검수 체크리스트
 - `references/pedagogy.md` — 목표·발문·형성평가·활동지·지도안 작성 규칙
-- `references/gates.md` — 게이트 18종(+KoPub 사용 시 B9), 오류 코드별 해결법
+- `references/gates.md` — 게이트 20개(+KoPub 사용 시 B9, 21개), 오류 코드별 해결법
 - `references/intake.md` — 수업 설계서(.md) 반영 절차, intake.json 매핑표, S7 게이트
 - `references/images.md` — 이미지 브리프 → 프롬프트 컴파일 → 생성 절차, I1 게이트
 - `CREDITS.md` — 참고한 오픈소스와 글꼴 라이선스

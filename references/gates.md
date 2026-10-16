@@ -1,6 +1,6 @@
 # 품질 게이트
 
-`node scripts/gate.mjs <lesson.json>` — 정적 검사(S1~S8)·증거 중심 검사(E1)·이미지 검사(I1)·시각 정책(V1)·도메인 검토 기록 검사(R1) 후 브라우저 실측(B1~B8, KoPub을 쓴 경우 B9도). 하나라도 FAIL이면 exit 1. 결과는 `out/gate-report.json`(`{ok, gates:[{id,name,ok,errors:[{code,msg,hint}],warnings}]}`).
+`node scripts/gate.mjs <lesson.json>` — 게이트 20개(KoPub을 쓰면 B9까지 21개): 정적 검사(S1~S8)·증거 중심 검사(E1)·이미지 검사(I1)·시각 정책(V1)·도메인 검토 기록 검사(R1) 후 브라우저 실측(B1~B8, KoPub을 쓴 경우 B9도). 하나라도 FAIL이면 exit 1. 결과는 `out/gate-report.json`(`{ok, gates:[{id,name,ok,errors:[{code,msg,hint}],warnings}]}`).
 
 경고(`!`)는 통과를 막지 않지만 캡처 검수 때 확인한다. 게이트를 통과시키려고 템플릿·한도를 바꾸지 않는다. 내용을 고친다.
 
