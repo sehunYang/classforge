@@ -1531,46 +1531,38 @@ if (missing.length) {
       return res;
     };
     const per = await measureAllSlides(deck);
-    // meta.font가 kopub으로 정해졌을 때만: build.mjs → fonts.py가 남긴 out/.font-mode.json으로 판단한다
-    // (여기서 다시 설치 여부를 재검사하지 않는다 — fonts.py가 이미 한 번 했다, 단일 진실 소스).
-    let fontMode = null;
-    try { fontMode = JSON.parse(fs.readFileSync(path.join(out, '.font-mode.json'), 'utf8')); } catch { /* 구버전 out/ - 건너뜀 */ }
-    const kopubUsed = fontMode?.mode === 'kopub' && fontMode.kopub === 'used';
-    // B1/B2/B5 검사 본문을 함수로 빼 둔다 — 이 PC(KoPub 설치됨)에서 잰 결과(tag='')뿐 아니라,
-    // 아래 B9에서 KoPub 없는 교실 PC를 흉내 낸 두 번째 렌더 결과(tag=' (KoPub 미설치 대체)')에도
-    // 그대로 재사용한다. 같은 잣대로 두 번 잰다.
-    const checkB1 = (per, err, tag = '') => {
+    const checkB1 = (per, err) => {
       per.forEach(m => {
-        m.clipped.forEach(c => err('B1-CLIP', `${m.n}번 슬라이드: 내용이 영역을 넘침 (${c})${tag}`, '글을 줄이거나 슬라이드를 나누세요'));
-        m.outside.forEach(c => err('B1-OUT', `${m.n}번 슬라이드: 안전 영역 밖 요소 (${c})${tag}`));
-        m.overlap.forEach(c => err('B1-OVERLAP', `${m.n}번 슬라이드: 글자끼리 겹침 (${c})${tag}`));
+        m.clipped.forEach(c => err('B1-CLIP', `${m.n}번 슬라이드: 내용이 영역을 넘침 (${c})`, '글을 줄이거나 슬라이드를 나누세요'));
+        m.outside.forEach(c => err('B1-OUT', `${m.n}번 슬라이드: 안전 영역 밖 요소 (${c})`));
+        m.overlap.forEach(c => err('B1-OVERLAP', `${m.n}번 슬라이드: 글자끼리 겹침 (${c})`));
         // lesson.json에 문자열 자리에 객체를 넣으면(예: activity.steps에 {h,t}) 화면에 그대로
         // "[object Object]"가 찍힌다 — S1-SHAPE(정적)와 별개로 실제 렌더 결과에서도 잡는다.
         (m.badRender || []).forEach(c => err('B1-RENDER', `${m.n}번 슬라이드에 "${c}"가 그대로 찍힘 — lesson.json에 문자열 자리에 객체·undefined 값이 들어갔을 가능성`, 'S1-SHAPE 오류를 먼저 확인하세요'));
       });
     };
-    const checkB2 = (per, err, warn, tag = '') => {
+    const checkB2 = (per, err, warn) => {
       per.forEach(m => {
-        m.small.forEach(c => err('B2-SMALL', `${m.n}번 슬라이드: ${c} < ${rules.minSmall}px${tag}`, '뒷자리 학생 기준 최소 크기'));
-        m.bodySmall.forEach(c => err('B2-BODY', `${m.n}번 슬라이드 본문 ${c} < ${rules.minBody}px${tag}`));
-        m.svgSmall.forEach(c => (c.tiny ? err : warn)('B2-SVG', `${m.n}번 삽화 라벨 ${c.msg}${tag}`, c.tiny ? '그래프·삽화의 viewBox를 들어갈 칸 크기에 맞게 줄이세요(라벨이 커짐)' : undefined));
-        (m.svgLong || []).forEach(c => err('B2-SVGTEXT', `${m.n}번 삽화 안에 긴 글: ${c}${tag}`, '두 줄 이상 글은 SVG에 넣지 말고 passage 유형(지문)이나 concept 포인트로 쓰세요'));
-        (m.crossed || []).forEach(c => err('B2-CROSS', `${m.n}번 삽화 라벨을 선/테두리가 관통: ${c}${tag}`, '라벨을 선(또는 테두리 있는 사각형)에서 떨어뜨리세요(위쪽·바깥쪽)'));
-        (m.thin || []).forEach(c => err('B2-THINBAR', `${m.n}번 삽화의 얇은 막대(벽·슬릿 등)가 라벨과 겹침: ${c}${tag}`, '막대와 라벨 사이를 띄우거나 막대를 라벨에서 먼 쪽으로 옮기세요'));
-        (m.labelAnchor || []).forEach(c => err('B2-LABELANCHOR', `${m.n}번 그래프의 점·데이터 라벨이 자기 점에서 너무 멀리 떨어짐: ${c}${tag}`, '라벨이 자기 점·마름모 옆에 붙었는지 확인하세요(visuals.mjs의 라벨 배치 로직 점검)'));
-        (m.labelOwn || []).forEach(c => err('B2-LABELOWN', `${m.n}번 그래프의 직선·곡선 라벨이 자기 선에서 너무 멀거나 다른 선에 더 가까움: ${c}${tag}`, '라벨이 자기 선 가까이 있는지 확인하세요(visuals.mjs의 putSeries 점검) — 자리가 정 없으면 exit 라벨(틀 밖)이나 범례를 씁니다'));
-        (m.occlude || []).forEach(c => err('B2-OCCLUDE', `${m.n}번 삽화: ${c}${tag}`, '그 도형을 라벨보다 먼저(DOM에서 더 위, 즉 더 아래에 그려지게) 옮기거나 라벨을 도형 밖으로 옮기세요'));
-        (m.textOverlap || []).forEach(c => err('B2-TEXTOVERLAP', `${m.n}번 삽화의 라벨끼리 겹치거나 거의 붙음: ${c}${tag}`, '두 라벨 중 하나를 옮기거나(pos 조정), viewBox를 넓혀 자리를 만드세요'));
-        m.invisible.forEach(c => err('B2-STROKE', `${m.n}번 삽화의 선이 보이지 않음: ${c}${tag}`, '선에는 v-accent-s, v-primary-s, v-secondary-s, v-ink-s, v-line만 쓰세요(v-mid·v-soft·v-muted는 채움 전용)'));
+        m.small.forEach(c => err('B2-SMALL', `${m.n}번 슬라이드: ${c} < ${rules.minSmall}px`, '뒷자리 학생 기준 최소 크기'));
+        m.bodySmall.forEach(c => err('B2-BODY', `${m.n}번 슬라이드 본문 ${c} < ${rules.minBody}px`));
+        m.svgSmall.forEach(c => (c.tiny ? err : warn)('B2-SVG', `${m.n}번 삽화 라벨 ${c.msg}`, c.tiny ? '그래프·삽화의 viewBox를 들어갈 칸 크기에 맞게 줄이세요(라벨이 커짐)' : undefined));
+        (m.svgLong || []).forEach(c => err('B2-SVGTEXT', `${m.n}번 삽화 안에 긴 글: ${c}`, '두 줄 이상 글은 SVG에 넣지 말고 passage 유형(지문)이나 concept 포인트로 쓰세요'));
+        (m.crossed || []).forEach(c => err('B2-CROSS', `${m.n}번 삽화 라벨을 선/테두리가 관통: ${c}`, '라벨을 선(또는 테두리 있는 사각형)에서 떨어뜨리세요(위쪽·바깥쪽)'));
+        (m.thin || []).forEach(c => err('B2-THINBAR', `${m.n}번 삽화의 얇은 막대(벽·슬릿 등)가 라벨과 겹침: ${c}`, '막대와 라벨 사이를 띄우거나 막대를 라벨에서 먼 쪽으로 옮기세요'));
+        (m.labelAnchor || []).forEach(c => err('B2-LABELANCHOR', `${m.n}번 그래프의 점·데이터 라벨이 자기 점에서 너무 멀리 떨어짐: ${c}`, '라벨이 자기 점·마름모 옆에 붙었는지 확인하세요(visuals.mjs의 라벨 배치 로직 점검)'));
+        (m.labelOwn || []).forEach(c => err('B2-LABELOWN', `${m.n}번 그래프의 직선·곡선 라벨이 자기 선에서 너무 멀거나 다른 선에 더 가까움: ${c}`, '라벨이 자기 선 가까이 있는지 확인하세요(visuals.mjs의 putSeries 점검) — 자리가 정 없으면 exit 라벨(틀 밖)이나 범례를 씁니다'));
+        (m.occlude || []).forEach(c => err('B2-OCCLUDE', `${m.n}번 삽화: ${c}`, '그 도형을 라벨보다 먼저(DOM에서 더 위, 즉 더 아래에 그려지게) 옮기거나 라벨을 도형 밖으로 옮기세요'));
+        (m.textOverlap || []).forEach(c => err('B2-TEXTOVERLAP', `${m.n}번 삽화의 라벨끼리 겹치거나 거의 붙음: ${c}`, '두 라벨 중 하나를 옮기거나(pos 조정), viewBox를 넓혀 자리를 만드세요'));
+        m.invisible.forEach(c => err('B2-STROKE', `${m.n}번 삽화의 선이 보이지 않음: ${c}`, '선에는 v-accent-s, v-primary-s, v-secondary-s, v-ink-s, v-line만 쓰세요(v-mid·v-soft·v-muted는 채움 전용)'));
       });
     };
-    const checkB5 = (per, err, warn, tag = '') => {
+    const checkB5 = (per, err, warn) => {
       per.forEach(m => {
         if (['cover', 'chapter', 'exit', 'bignum'].includes(m.type)) return;
-        if (m.cover < 0.30) err('B5-EMPTY', `${m.n}번(${m.type}) 내용이 차지하는 면적 ${(m.cover * 100).toFixed(0)}% < 30%${tag}`, '삽화를 넣거나 내용 배치를 넓히세요');
+        if (m.cover < 0.30) err('B5-EMPTY', `${m.n}번(${m.type}) 내용이 차지하는 면적 ${(m.cover * 100).toFixed(0)}% < 30%`, '삽화를 넣거나 내용 배치를 넓히세요');
         // profile:evidence는 절제된 배치상 하단 여백이 의도적으로 남을 수 있어 이 경고를 내지 않는다
-        if (m.reach < 0.55 && M.profile !== 'evidence') warn('B5-REACH', `${m.n}번(${m.type}) 내용이 위쪽 ${(m.reach * 100).toFixed(0)}%에만 몰림${tag}`);
-        m.tinyVisual.forEach(c => err('B5-VISUAL', `${m.n}번(${m.type}) 삽화가 작게 그려짐: ${c}${tag}`, 'viewBox를 그림 크기에 맞게 줄이세요(여백 포함 그림이 viewBox의 20% 이상)'));
+        if (m.reach < 0.55 && M.profile !== 'evidence') warn('B5-REACH', `${m.n}번(${m.type}) 내용이 위쪽 ${(m.reach * 100).toFixed(0)}%에만 몰림`);
+        m.tinyVisual.forEach(c => err('B5-VISUAL', `${m.n}번(${m.type}) 삽화가 작게 그려짐: ${c}`, 'viewBox를 그림 크기에 맞게 줄이세요(여백 포함 그림이 viewBox의 20% 이상)'));
       });
     };
 
@@ -1581,15 +1573,9 @@ if (missing.length) {
       per.forEach(m => m.svgContrast.forEach(c => err('B3-SVG', `${m.n}번 삽화 글자가 아래 도형과 구분되지 않음: ${c}`, '글자 아래 도형은 연한 채움(v-soft·v-mid·v-paper2·v-paper3)만, 진한 채움(v-accent·v-primary·v-secondary·v-ink) 위에는 글자를 두지 마세요')));
     });
     await gate('B4', '글꼴 탑재', async (err, warn) => {
-      // fontMode/kopubUsed는 위(per 직후)에서 이미 읽어 뒀다 — B9도 같은 값을 쓴다.
-      // KoPub이 실제로 쓰였으면(교사가 원한 대로 본문이 통째로 KoPub로 렌더링됨) CF Pretendard는
-      // @font-face로 넣혀는 있어도 화면에 한 번도 안 쓰여 브라우저가 굳이 안 불러온다 — 정상이니
-      // Pretendard 로드는 요구하지 않는다(아래에서 CF KoPub 로드를 대신 요구한다). 그 외에는 기존대로
-      // Pretendard가 로드돼 있어야 한다 — 어느 쪽이든 시스템 대체 글꼴로 새 나가면 안 된다.
-      if (!kopubUsed) {
-        const ok = await deck.evaluate(() => [...document.fonts].some(f => f.family.includes('CF Pretendard') && f.status === 'loaded'));
-        if (!ok) err('B4-FONT', '내장 글꼴(CF Pretendard)이 로드되지 않음', 'build.mjs가 fonts.py로 글꼴을 넣었는지 확인');
-      }
+      // 모든 산출물은 파일 안에 넣은 Pretendard 하나로 보인다 — 시스템 대체 글꼴로 새 나가면 안 된다.
+      const ok = await deck.evaluate(() => [...document.fonts].some(f => f.family.includes('CF Pretendard') && f.status === 'loaded'));
+      if (!ok) err('B4-FONT', '내장 글꼴(CF Pretendard)이 로드되지 않음', 'build.mjs가 fonts.py로 글꼴을 넣었는지 확인');
       const tofu = await deck.evaluate(() => {
         const txt = [...new Set(document.body.innerText.replace(/\s/g, ''))];
         const c = document.createElement('canvas').getContext('2d');
@@ -1598,102 +1584,8 @@ if (missing.length) {
         return miss.slice(0, 10).join('');
       });
       if (tofu) err('B4-GLYPH', `내장 글꼴에 없는 글자: ${tofu}`);
-
-      if (fontMode?.mode === 'kopub') {
-        if (fontMode.kopub === 'not-installed') {
-          // 교사 PC에 KoPub이 없어 Pretendard로 대체된 정상적인 상황 — 통과는 하되 알려준다.
-          warn('B4-KOPUB-MISSING', '이 PC에 KoPubWorld Dotum이 설치돼 있지 않아 Pretendard로 대체됨 — https://www.kopus.org/biz-electronic-font2/ (등록 필요)');
-        } else if (fontMode.kopub === 'used') {
-          const kopub = await deck.evaluate(() => {
-            const has = w => [...document.fonts].some(f => f.family.replace(/["']/g, '').includes('CF KoPub') && f.status === 'loaded' && String(f.weight) === String(w));
-            // KoPub은 두께가 달라도 라틴·숫자 가로폭(hmtx)이 같게 설계돼 있어(줄바꿈이 두께에 안 흔들리게) measureText
-            // 폭 비교로는 못 가른다 — 대신 같은 문자열을 실제로 그려 잉크(불투명 픽셀) 양을 비교한다: Bold가 더 진하다.
-            const ink = weight => {
-              const c = document.createElement('canvas'); c.width = 400; c.height = 80;
-              const g = c.getContext('2d');
-              g.font = `${weight} 40px 'CF KoPub', serif`; g.fillStyle = '#000';
-              g.fillText('Ag019가나', 10, 50);
-              const d = g.getImageData(0, 0, 400, 80).data;
-              let n = 0; for (let i = 3; i < d.length; i += 4) if (d[i] > 20) n++;
-              return n;
-            };
-            return { loaded500: has(500), loaded700: has(700), ink500: ink(500), ink700: ink(700) };
-          });
-          // fonts.py가 설치 확인 후 local()을 넣었는데도 브라우저가 못 읽으면 이름이 실제와 다르거나 폰트가
-          // 그새 지워진 것 — 조용히 Pretendard로 넘어가 눈치채지 못할 수 있으니 FAIL로 잡는다.
-          if (!kopub.loaded500 || !kopub.loaded700) err('B4-KOPUB-LOAD', 'meta.font:"kopub"인데 CF KoPub(500/700)이 브라우저에 로드되지 않음', 'fonts.py가 찾은 로컬 폰트 이름과 실제 설치본이 같은지 확인');
-          else if (kopub.ink700 < kopub.ink500 * 1.05) err('B4-KOPUB-WEIGHT', `CF KoPub 700의 잉크량(${kopub.ink700})이 500(${kopub.ink500})보다 진하지 않음 — 서로 다른 두께로 렌더링되지 않음`);
-        }
-      }
     });
     await gate('B5', '화면 밀도', (err, warn) => checkB5(per, err, warn));
-
-    // ── B9: KoPub 미설치 대체 레이아웃(G4) ──────────────────────────────────────
-    // 이 PC에는 KoPub이 설치돼 있어 위 B1/B2/B5/B4가 전부 CF KoPub로 렌더링된 화면만 봤다.
-    // 그러나 KoPub 미설치 교실 PC는 fonts.py가 만든 CF KoPub @font-face의 local()이 매칭되지
-    // 않아 자동으로 CF Pretendard로 떨어진다(글자폭이 달라 그 PC에서만 넘침·겹침이 생길 수 있다).
-    // meta.font:"kopub"이 실제로 쓰였을 때만: slides.html·worksheet.html·answer-key.html 사본에서
-    // CF KoPub @font-face 규칙만 지워 그 상황을 흉내 내고, 같은 잣대(checkB1/B2/B5, 활동지 쪽수)로
-    // 한 번 더 잰다. 브라우저는 새로 띄우지 않고 이미 연 browser에서 새 페이지만 연다.
-    if (kopubUsed) {
-      await gate('B9', 'KoPub 미설치 대체 레이아웃', async (err, warn) => {
-        const stripKopub = html => html.replace(/@font-face\{font-family:'CF KoPub'[^}]*\}/g, '');
-        // out/ 밑 고정 이름(.nokopub-check)을 쓰면, 같은 레슨을 두 gate.mjs가 동시에 돌릴 때(검토자
-        // + 저자가 같이 재검사하는 경우) 서로의 사본 파일을 같은 폴더에 덮어쓰다가 한쪽이 먼저
-        // finally에서 그 폴더를 통째로 지워 버려 다른 쪽이 ENOENT로 죽는 사고가 있었다. os.tmpdir()
-        // 아래 pid+시각+난수로 매 실행마다 겹치지 않는 이름을 쓴다.
-        const noKopubDir = path.join(os.tmpdir(), `cf-nokopub-${process.pid}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`);
-        fs.mkdirSync(noKopubDir, { recursive: true });
-        const openStripped = async (f, vp) => {
-          fs.writeFileSync(path.join(noKopubDir, f), stripKopub(fs.readFileSync(path.join(out, f), 'utf8')));
-          const p = await browser.newPage({ viewport: vp });
-          await p.goto(fileUrl(path.join(noKopubDir, f)) + '?shot=1');
-          await p.evaluate(() => document.fonts.ready);
-          return p;
-        };
-        try {
-          const deckNK = await openStripped('slides.html', { width: 1920, height: 1080 });
-          // 자가 점검: 정말 CF KoPub이 사라지고 CF Pretendard로 넘어갔는지 두 가지로 확인한다.
-          // (1) document.fonts를 직접 훑어 'CF KoPub'라는 FontFace가 이 문서에 하나라도 있는지
-          // — document.fonts.check()는 이름이 안 걸려도 대체 글꼴로 "그릴 수는 있다"고 true를
-          // 낼 수 있어(제네릭 폴백 인정) 이 용도엔 못 쓴다. B4가 이미 쓰는 방식과 같다.
-          // (2) 제목 글자를 캔버스로 실제 그 폭을 재서 비교(팀 리더가 요청한 "제목 폭 비교") —
-          // h1 요소의 getBoundingClientRect는 컨테이너 폭이라 안 바뀌므로 쓸 수 없고, 캔버스
-          // measureText로 순수 글자폭을 재야 두 글꼴의 실제 차이가 드러난다.
-          const fontProbe = async page => page.evaluate(() => {
-            const registered = [...document.fonts].some(f => f.family.replace(/["']/g, '') === 'CF KoPub');
-            const text = (document.querySelector('h1,h2') || document.body).textContent.trim().slice(0, 20) || '가나다라마바사';
-            const cv = document.createElement('canvas').getContext('2d');
-            cv.font = `700 40px ${getComputedStyle(document.body).fontFamily}`;
-            return { registered, text, width: cv.measureText(text).width };
-          });
-          const [pKopub, pFallback] = await Promise.all([fontProbe(deck), fontProbe(deckNK)]);
-          if (pFallback.registered) {
-            warn('B9-NOFALLBACK', `대체 검증이 CF KoPub를 실제로 없애지 못한 것 같음(사본 document.fonts에 여전히 CF KoPub FontFace가 있음) — @font-face 제거 정규식을 확인하세요`);
-          } else {
-            console.log(`   (B9 자가 점검: CF KoPub 등록 — 원본 ${pKopub.registered}, 대체 사본 ${pFallback.registered}. 제목 "${pKopub.text}" 캔버스 폭 — CF KoPub 렌더 ${pKopub.width.toFixed(1)}px ↔ 대체(CF Pretendard) 렌더 ${pFallback.width.toFixed(1)}px)`);
-          }
-          const perNK = await measureAllSlides(deckNK);
-          checkB1(perNK, err, ' (KoPub 미설치 대체)');
-          checkB2(perNK, err, warn, ' (KoPub 미설치 대체)');
-          checkB5(perNK, err, warn, ' (KoPub 미설치 대체)');
-          await deckNK.close();
-
-          // 활동지·정답지도 같은 대체 상황에서 쪽수·넘침이 늘어날 수 있다("맞추기/채우기" 검사).
-          for (const f of ['worksheet.html', 'answer-key.html']) {
-            const p = await openStripped(f, { width: 1300, height: 1000 });
-            await p.waitForFunction(() => window.__paged === true, null, { timeout: 15000 });
-            const d = await p.evaluate((src) => { (0, eval)(src); return (0, eval)('(' + window.__md + ')')(); }, `window.svgTextChecks = ${svgTextChecks.toString()}; window.segsOf = ${segsOf.toString()}; window.hitRect = ${hitRect.toString()}; window.__md = ${JSON.stringify(measureDoc.toString())}`);
-            await p.close();
-            const lim = { 'worksheet.html': 4, 'answer-key.html': 5 }[f];
-            if (d.overflow) err('B6-OVER', `${f}: 한 쪽보다 큰 블록 ${d.overflow}개 (KoPub 미설치 대체)`, '문항을 나누거나 그리기 칸 높이를 줄이세요');
-            if (d.pages > lim) err('B6-PAGES', `${f}: ${d.pages}쪽 > ${lim}쪽 (KoPub 미설치 대체)`, '문항 수를 줄이세요');
-          }
-        } finally {
-          fs.rmSync(noKopubDir, { recursive: true, force: true });
-        }
-      });
-    }
     await deck.close();
 
     // A4 문서

@@ -27,7 +27,6 @@
   "school": "", "teacher": "", "date": "",   // (선택) 지도안 머리
   "profile": "evidence",                // (선택) "default"(기본) | "evidence"(증거 중심 탐구 스타일 — 공식 옆에 근거, 대립 설명은 판정 전 대칭 배치, 절제된 디자인. `pedagogy.md` §10)
   "tone": "해요체",                     // (선택) "해요체" | "합쇼체" — 지정 없으면 초·중 해요체, 고 합쇼체 (템플릿 고정 문구에 적용)
-  "font": "auto",                       // (선택) "auto"(기본, evidence 프로파일이고 PC에 설치돼 있으면 KoPub) | "kopub" | "pretendard" — `design.md` "글꼴"
   "intake": "수업설계서.txt",            // (선택) 수업 설계서(.txt·.md) 또는 intake.json 경로(lesson.json 기준 상대 경로) — 있으면 게이트 S7이 반영 여부를 확인
   "objectivesStudent": ["실험 결과로 두 가설 중 타당한 쪽을 판단할 수 있다."],  // (선택, evidence) 학생용 목표 — 아래 "meta.objectivesStudent" 참고
   "standards": [ { "code": "[6과12-03]", "text": "원문 그대로", "verified": true } ]

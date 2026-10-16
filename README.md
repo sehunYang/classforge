@@ -5,7 +5,7 @@
 **수업 설계서 한 장으로, 교실에서 바로 쓰는 수업 자료 한 벌.**
 
 Claude Code 스킬 — 수업 슬라이드 · 학생 활동지 · 정답지 · 교수·학습 과정안을 함께 만들고,<br>
-20개(+KoPub을 쓰면 21개) 자동 품질 게이트, 별도 검토자의 도메인 정확성 검토(`review.json`), 캡처 육안 검수를 통과시킵니다.
+20개 자동 품질 게이트, 별도 검토자의 도메인 정확성 검토(`review.json`), 캡처 육안 검수를 통과시킵니다.
 
 ![광전 효과 수업 한 벌 — 16장 슬라이드](docs/images/photoelectric-overview.png)
 
@@ -58,7 +58,7 @@ flowchart LR
   B --> C[lesson.json<br/>거꾸로 설계]
   C --> D[images.mjs · diagrams.mjs<br/>생성 이미지 · TikZ 도식]
   D --> E[build.mjs<br/>HTML · PDF · 캡처]
-  E --> F{gate.mjs<br/>20~21개 게이트}
+  E --> F{gate.mjs<br/>20개 게이트}
   F -- FAIL --> C
   F -- ALL PASS --> G[별도 검토자 도메인 검토<br/>review.json + 캡처 육안 검수]
   G --> H[교사에게 전달 · 회고]
@@ -133,7 +133,7 @@ node scripts/images.mjs lesson.json --prune           # lesson.json이 더는 �
 node scripts/gate.mjs lesson.json --review-stamp   # review.json에 stamp{lesson, images} 기록
 ```
 
-## 품질 게이트 (20개, +KoPub을 쓰면 B9, 21개)
+## 품질 게이트 (20개)
 
 | 구분 | 게이트 | 검사 |
 |---|---|---|
@@ -142,7 +142,7 @@ node scripts/gate.mjs lesson.json --review-stamp   # review.json에 stamp{lesson
 | 이미지 | I1(프롬프트·캐시·해상도·중복 파일 I1-DUPHASH) | `node scripts/images.mjs` |
 | 시각 정책 | V1(손그림 SVG 금지, 그래프/도해/이미지 세 갈래 강제, 판정 슬라이드에 이미지로 값 대체 금지) | `node scripts/diagrams.mjs`/`images.mjs` |
 | 도메인 검토 | R1(review.json 존재·미해결 문제·내용 해시 신선도) | `references/review-schema.md` |
-| 브라우저 실측 | B1 넘침·겹침 · B2 글자 크기·선(+가림 B2-OCCLUDE·겹친 라벨 B2-TEXTOVERLAP) · B3 명암 대비 · B4 글꼴 · B5 화면 밀도 · B6 A4 쪽 · B7 정답 분리 · B8 실행 오류 · B9 KoPub 미설치 대체 배치(KoPub 쓸 때만) | Playwright로 실제 렌더링을 재어 판정 |
+| 브라우저 실측 | B1 넘침·겹침 · B2 글자 크기·선(+가림 B2-OCCLUDE·겹친 라벨 B2-TEXTOVERLAP) · B3 명암 대비 · B4 글꼴 · B5 화면 밀도 · B6 A4 쪽 · B7 정답 분리 · B8 실행 오류 | Playwright로 실제 렌더링을 재어 판정 |
 
 게이트가 못 잡는 것(그림의 과학적 정확성, 어색한 줄바꿈)은 캡처 육안 검수와 **작성자가 아닌 별도 검토자**의 도메인 정확성 검토(`review.json`)로 잡습니다.
 
@@ -169,8 +169,8 @@ node scripts/gate.mjs  examples/season/lesson.json
 | 폴더 | 수업 | 비고 |
 |---|---|---|
 | [`examples/season`](examples/season) | 초6 과학 · 계절의 변화 | 기본 예시(SKILL.md가 가리키는 모델 레슨). 지구-태양 거리 자료로 오개념을 반박하는 판정, TikZ 각도·궤도 도해, 사진+TikZ 혼합 절차 |
-| [`examples/photoelectric`](examples/photoelectric) | 고1 물리 · 광전 효과 | evidence 프로필 · KoPub. 교사 설계서(일부 기입) → 생성, Codex 표지·절차 사진, TikZ/circuitikz 정지 전압 측정 회로(V1-APPARATUS-INSTRUMENT), 도메인 검토 기록 |
-| [`examples/photosynthesis`](examples/photosynthesis) | 중2 과학 · 광합성 | evidence 프로필 · KoPub. 반 헬몬트 실험(출처 있는 역사), 교사 시범으로 처리한 향불 확인(S8-TRAP) |
+| [`examples/photoelectric`](examples/photoelectric) | 고1 물리 · 광전 효과 | evidence 프로필. 교사 설계서(일부 기입) → 생성, Codex 표지·절차 사진, TikZ/circuitikz 정지 전압 측정 회로(V1-APPARATUS-INSTRUMENT), 도메인 검토 기록 |
+| [`examples/photosynthesis`](examples/photosynthesis) | 중2 과학 · 광합성 | evidence 프로필. 반 헬몬트 실험(출처 있는 역사), 교사 시범으로 처리한 향불 확인(S8-TRAP) |
 | [`examples/territory`](examples/territory) | 초5 사회 · 국토의 위치와 영역 | TikZ 좌표로 그린 단순화 지도(`mapgen.mjs`), 무해통항·기준선 등 법률 정확성 검토 |
 | [`examples/argument-essay`](examples/argument-essay) | 고1 영어 · 설득하는 글의 구조 | 지문(`passage`) 슬라이드, TikZ 박스+화살표 구조도 |
 | [`examples/linear-function`](examples/linear-function) | 중2 수학 · 일차함수의 그래프 | 선언형 그래프(`{plot}`) |
@@ -186,5 +186,5 @@ node scripts/gate.mjs  examples/season/lesson.json
 
 - 코드: [MIT](LICENSE)
 - 설계 참고: 공냥이(gongnyang) 공개 저장소 — deck-factory, awesome-html-scrolline-deck, bookforge, cardprinter, gongnyang-prompt-kit, gongnangi-chart-skill, data-literacy-with-ai (모두 MIT). 코드 복사 없이 구조·원칙만 참고했고, `vendor/prompt-kit/`은 MIT 라이선스와 함께 동봉. 정밀 도식은 시스템 **MiKTeX**/**TeX Live**(선택 설치, 동봉하지 않음, `latex`+`dvisvgm` 외부 호출) 또는 **node-tikzjax**(LPPL-1.3c, circuitikz 포함)로 렌더링합니다. 자세히는 [CREDITS.md](CREDITS.md)
-- 글꼴: [Pretendard](https://github.com/orioncactus/pretendard) — SIL Open Font License 1.1 (`assets/fonts/LICENSE-Pretendard-OFL.txt`), 임베딩됨. **KoPub World 글꼴은 포함·재배포하지 않습니다** — 등록 후 무료지만 가공·재배포가 금지돼 있어, 교사 PC에 이미 설치돼 있으면 CSS `local()`로 참조만 하고 없으면 자동으로 Pretendard로 대체됩니다(게이트 B9가 대체 배치를 확인). `meta.font`: `auto`(기본, evidence 프로필에서 KoPub 시도)/`kopub`/`pretendard`.
+- 글꼴: [Pretendard](https://github.com/orioncactus/pretendard) — SIL Open Font License 1.1 (`assets/fonts/LICENSE-Pretendard-OFL.txt`), 임베딩됨. 모든 산출물이 이 글꼴 하나를 씁니다.
 - 예시 수업의 내용·삽화는 이 프로젝트에서 새로 만든 것이며, 사진형 이미지는 Codex로 생성했습니다. 예시 수업의 성취기준은 원문 확인이 필요하다고 표시되어 있습니다.

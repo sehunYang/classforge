@@ -110,7 +110,7 @@
 
 ## 4. S7 게이트 — 반영 확인
 
-`gate.mjs`는 `meta.intake`(설계서 파일 또는 intake.json 경로)가 있으면 `intake.mjs`의 `loadIntake`/`checkReflection`을 직접 불러와 **S7 "설계서 반영"** 게이트로 돌린다(`gate.mjs` S7 절 참고). 게이트 전체는 S1~S8·E1(증거 중심)·I1(이미지)·V1(시각 정책)·R1(도메인 검토)·B1~B8 총 20개이고, KoPub을 실제로 쓰면 미설치 PC 대체 배치를 재는 **B9**까지 21개가 된다(`references/gates.md`). E1은 항상 실행되지만 evidence 프로파일이 아니면 경고만 남기고 통과한다(세부 저작 규칙은 `pedagogy.md` §10). S7 자체는 evidence의 세부 규칙을 검사하지 않는다 — `meta.profile`이 요청과 같은지만 본다.
+`gate.mjs`는 `meta.intake`(설계서 파일 또는 intake.json 경로)가 있으면 `intake.mjs`의 `loadIntake`/`checkReflection`을 직접 불러와 **S7 "설계서 반영"** 게이트로 돌린다(`gate.mjs` S7 절 참고). 게이트 전체는 S1~S8·E1(증거 중심)·I1(이미지)·V1(시각 정책)·R1(도메인 검토)·B1~B8 총 20개다(`references/gates.md`). E1은 항상 실행되지만 evidence 프로파일이 아니면 경고만 남기고 통과한다(세부 저작 규칙은 `pedagogy.md` §10). S7 자체는 evidence의 세부 규칙을 검사하지 않는다 — `meta.profile`이 요청과 같은지만 본다.
 
 같은 검사를 독립적으로 돌리거나 사람이 직접 읽고 싶으면:
 ```bash

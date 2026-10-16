@@ -14,15 +14,16 @@ if (!lessonPath) { console.error('사용: node build.mjs <lesson.json> [--no-pdf
 const ctx = loadLesson(lessonPath);
 const { lesson: L, out, level, rules } = ctx;
 const M = L.meta || {};
-// 색은 모든 교과가 같은 고정 팔레트(lib.mjs PALETTE, templates/*.css :root)다 — 예전 meta.accent·설계서의
-// 강조색(style.accentColor)이 남아 있으면 조용히 무시하지 말고 경고 한 줄로 알린다(design.md "팔레트").
+// 색은 모든 교과가 같은 고정 팔레트(lib.mjs PALETTE, templates/*.css :root)이고 글꼴은 Pretendard 하나다 — 예전 meta.accent·
+// meta.font·설계서의 강조색(style.accentColor)이 남아 있으면 조용히 무시하지 말고 경고 한 줄로 알린다(design.md "팔레트").
 {
   const ignored = [];
   if (M.accent) ignored.push(`meta.accent(${M.accent})`);
+  if (M.font) ignored.push(`meta.font(${M.font})`);
   const formPath = M.intake && path.resolve(ctx.dir, M.intake);
   const formAccent = formPath && fs.existsSync(formPath) && loadIntake(formPath).style.accentColor;
   if (formAccent) ignored.push(`설계서 강조색(${formAccent})`);
-  if (ignored.length) console.warn(`경고: ${ignored.join('·')}은 무시합니다 — 모든 교과가 같은 고정 팔레트를 씁니다(references/design.md "팔레트").`);
+  if (ignored.length) console.warn(`경고: ${ignored.join('·')}은 무시합니다 — 모든 교과가 같은 고정 팔레트와 Pretendard 글꼴을 씁니다(references/design.md "팔레트"·"글꼴").`);
 }
 fs.mkdirSync(path.join(out, 'shots'), { recursive: true });
 
@@ -402,11 +403,8 @@ const charsFile = path.join(out, '.chars.txt');
 fs.writeFileSync(charsFile, [...new Set(probe.replace(/<[^>]*>/g, ''))].join(''), 'utf8');
 const fontCssFile = path.join(out, '.fonts.css');
 const py = process.env.CLASSFORGE_PYTHON || (process.platform === 'win32' ? 'python' : 'python3');
-// meta.font: "pretendard"|"kopub"|"auto"(기본). auto는 profile:"evidence"일 때만 KoPub을 시도한다
-// (원작 자료가 그 서체였던 수업만) — 그 외는 항상 Pretendard(내장 서브셋)로 어느 PC에서나 같게 보인다.
-// 실제로 설치돼 있는지, 이름이 뭔지는 fonts.py가 확인해 out/.font-mode.json에 남긴다(gate.mjs의 B4가 읽는다).
-const fontMode = M.font === 'pretendard' ? 'pretendard' : (M.font === 'kopub' || M.profile === 'evidence') ? 'kopub' : 'pretendard';
-console.log(execFileSync(py, [path.join(SKILL, 'scripts', 'fonts.py'), charsFile, fontCssFile, fontMode], { encoding: 'utf8' }).trim());
+// 글꼴은 모든 수업이 Pretendard 하나(문서에 쓰인 글자만 서브셋해 파일 안에 넣음 — 어느 PC에서나 같게 보인다).
+console.log(execFileSync(py, [path.join(SKILL, 'scripts', 'fonts.py'), charsFile, fontCssFile], { encoding: 'utf8' }).trim());
 const fontCss = fs.readFileSync(fontCssFile, 'utf8');
 
 const files = {

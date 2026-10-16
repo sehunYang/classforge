@@ -29,4 +29,3 @@
 
 ## 글꼴
 - **Pretendard** (Regular·Medium·SemiBold·Bold·ExtraBold) — SIL Open Font License 1.1, `assets/fonts/LICENSE-Pretendard-OFL.txt`. 빌드 때 문서에 쓰인 글자만 서브셋해 파일 안에 넣는다(OFL이 허용하는 방식).
-- **KoPub World**(한국출판인회의, 문화체육관광부 지원) — 문체부·한국출판인회의가 무료 배포하되 등록이 필요하고, "가공(서브셋 포함)"과 "웹서비스·프로그램에 넣어 배포"는 별도 승인이 필요하며 재배포는 금지된 라이선스(`kopus.org` 이용약관). 그래서 이 스킬은 KoPub 폰트 파일을 **동봉·서브셋·base64 임베딩하지 않는다** — `scripts/fonts.py`가 그 PC에 이미 설치된 KoPub World Dotum을 `local()`로 참조만 한다(`meta.font:"kopub"` 또는 `"auto"`+`profile:"evidence"`일 때, 설치돼 있을 때만). 배포처: https://www.kopus.org/biz-electronic-font2/ · `references/design.md` "글꼴".

@@ -10,9 +10,8 @@
   --sec-mid:color-mix(in srgb,var(--secondary) 32%,#fff);
   --accent-soft:color-mix(in srgb,var(--accent) 12%,#fff);
   --accent-mid:color-mix(in srgb,var(--accent) 40%,#fff);
-  /* 'CF KoPub'은 meta.font 판단에 따라 fonts.py가 만들 때만 존재한다(local() 참조, 설치 PC 전용) —
-     없으면 브라우저가 그냥 다음 이름인 내장 'CF Pretendard'로 넘어간다. references/design.md "글꼴". */
-  --font:'CF KoPub','CF Pretendard','Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  /* 'CF Pretendard'는 fonts.py가 문서에 쓰인 글자만 서브셋해 파일 안에 넣는다. references/design.md "글꼴". */
+  --font:'CF Pretendard','Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
   --fs:10.5pt; --fs-q:11pt; --fs-s:9pt; --fs-h:13pt;
   --pw:210mm; --ph:297mm; --mx:17mm; --mt:14mm; --mb:14mm;
 }
