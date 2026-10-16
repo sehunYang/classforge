@@ -27,23 +27,8 @@
 - 연한 채움·선·보조 글자(`--paper-2/3`, `--soft`/`--mid`, `--line`, `--muted #5E566B`)는 모두 보라 기운 중립색으로 맞췄다(`--muted`는 종이 위 6.5:1).
 - 지도 색(`v-land`·`v-sea`·`v-sky`)과 맞음/주의(`v-good`·`v-warn`)는 뜻이 있는 색이라 팔레트와 무관하게 그대로 둔다.
 
-## 글꼴 (`meta.font`)
-기본은 **Pretendard**를 문서에 쓰인 글자만 서브셋해 파일 안에 넣는다(OFL, `CREDITS.md`) — 인터넷도 폰트 설치도 없는 학교 PC에서 항상 같게 보이는 게 목적이다.
-
-`meta.profile:"evidence"`(원작 교사 자료를 분석해 가져온 스타일, 아래)의 원본은 실제로 **KoPub World Dotum**(Bold 제목·Medium 본문·Light는 드묾)을 썼다. `meta.font`로 고를 수 있다:
-- `"auto"`(기본) — profile이 `evidence`이고 **이 PC에 KoPub World Dotum이 설치돼 있으면** KoPub, 아니면 Pretendard.
-- `"kopub"` — profile과 무관하게 KoPub을 시도. 미설치면 Pretendard로 조용히 대체하고 빌드 로그에 설치 안내가 뜬다(경고, 빌드는 계속됨).
-- `"pretendard"` — 항상 Pretendard.
-
-**KoPub은 절대 파일 안에 넣지 않는다.** 등록하면 무료지만, "가공(서브셋 포함)"과 "웹서비스·프로그램에 넣어 배포"는 별도 승인이 필요하고 재배포는 금지되어 있다(`kopus.org` 이용약관). 그래서 `scripts/fonts.py`는 KoPub 파일을 절대 읽어 서브셋·base64 임베딩하지 않고, **그 PC에 이미 설치된 폰트를 `local()`로 가리키기만** 한다:
-```css
-@font-face{font-family:'CF KoPub';font-weight:700;src:local('KoPubWorldDotum Bold'),local('KoPubWorldDotumBold');}
-```
-글꼴 스택은 `'CF KoPub'(로컬)` → `'CF Pretendard'(내장 서브셋)` → 시스템 순이다(`templates/deck.css`·`print.css`의 `--font`). 설치 안 된 PC에서는 `'CF KoPub'`이라는 이름의 폰트가 아예 없으니 브라우저가 자연히 다음 이름으로 넘어간다 — 그래서 `slides.html`은 PC마다 다르게(설치본이면 KoPub, 아니면 Pretendard) 보일 수 있지만, **Chrome이 인쇄하는 PDF는 그 순간 화면에 쓰인 폰트를 그대로 인쇄물에 넣으므로** 두 경우 다 항상 같은 결과가 나온다. 수식(`$...$`)의 Cambria Math 계열 스택은 이 선택과 무관하게 그대로다.
-
-두께는 evidence 프로파일이 이미 700(제목)·500(본문)으로 낮춰 쓰고 있어(§ 아래) KoPub의 Bold·Medium과 정확히 맞는다 — 이 두 두께 말고 다른 값(600·800 등)을 쓰는 요소는 KoPub에 그 두께가 없어 가장 가까운 값(700)으로 자동 대체된다.
-
-**설치 방법**(교사 PC): kopus.org에서 회원가입 후 "KoPub 세계 서체" 신청 → 받은 TTF(Light/Medium/Bold)를 더블클릭해 설치. 스킬은 설치를 대신 해 주지 않는다.
+## 글꼴
+모든 수업은 **Pretendard** 하나를 쓴다. `scripts/fonts.py`가 문서에 쓰인 글자만 서브셋해 다섯 두께(400·500·600·700·800)를 파일 안에 넣는다(OFL, `CREDITS.md`) — 인터넷도 폰트 설치도 없는 학교 PC에서 항상 같게 보이는 게 목적이다. 글꼴 스택은 `'CF Pretendard'(내장 서브셋)` → 시스템 순이다(`templates/deck.css`·`print.css`의 `--font`). 수식(`$...$`)의 Cambria Math 계열 스택은 이와 무관하게 그대로다. 예전 lesson.json에 `meta.font`가 남아 있으면 빌드가 경고 한 줄을 남기고 무시한다.
 
 ## `meta.profile: "evidence"` — 증거 중심 스타일 (원작 교사의 스타일)
 한 고교 물리 교사의 실제 수업 자료(사용자 제공)를 분석해 가져온 절제된 스타일 프로파일. `lesson.json`의 `meta.profile`에 `"evidence"`를 쓰면 `body[data-profile="evidence"]`가 적용되어:
@@ -96,7 +81,7 @@
 | 정확한 값·라벨이 필요 없는 훅·표지·실제 사진 장면 | `{image:{...}}` 생성 이미지 | `references/images.md` |
 
 ### 한글은 오버레이로, 수식·라틴 기호는 TikZ가 직접 — TeX 글꼴에 한글이 없다
-TeX 글꼴(Computer Modern/AMS)에는 한글이 없다. 그래서 `refraction`/`circuit`/`particles`/`geometry`/`vectors` 다섯 헬퍼의 **한글 라벨**(매질·소자 이름 등)은 TikZ에 넘기지 않고 우리 테마 글꼴(Pretendard)로 직접 `<text>`를 겹쳐 그린다 — KoPub처럼 글꼴 파일 자체를 벡터 경로로 바꿔 배포하는 방식은 라이선스상 안 되므로(`design.md` "글꼴"), 항상 우리 자신이 이미 서브셋해 넣는 Pretendard로만 그린다. 반대로 **수식·라틴 기호 라벨**(θᵢ, n₁, 점 이름 A/B/C 등 한글이 없는 "글자 하나(+아래첨자+프라임)" 모양)은 이제 TikZ가 `\node`로 직접 조판한다 — 진짜 LaTeX이라 더 정확하고, 시스템 LaTeX이면 폰트 임베딩도 필요 없다(위 "정밀 도식은 TikZ로"). "3cm"처럼 자유 문장인 라벨은 수식으로 잘못 조판되지 않도록(이탤릭 등) 여전히 오버레이로 남는다 — 이 자동 판단은 `diagrams.mjs`의 `labelAuto`가 한다.
+TeX 글꼴(Computer Modern/AMS)에는 한글이 없다. 그래서 `refraction`/`circuit`/`particles`/`geometry`/`vectors` 다섯 헬퍼의 **한글 라벨**(매질·소자 이름 등)은 TikZ에 넘기지 않고 우리 테마 글꼴(Pretendard)로 직접 `<text>`를 겹쳐 그린다 — 화면의 다른 글자와 같은 글꼴이 되도록 항상 우리 자신이 이미 서브셋해 넣는 Pretendard로 그린다. 반대로 **수식·라틴 기호 라벨**(θᵢ, n₁, 점 이름 A/B/C 등 한글이 없는 "글자 하나(+아래첨자+프라임)" 모양)은 이제 TikZ가 `\node`로 직접 조판한다 — 진짜 LaTeX이라 더 정확하고, 시스템 LaTeX이면 폰트 임베딩도 필요 없다(위 "정밀 도식은 TikZ로"). "3cm"처럼 자유 문장인 라벨은 수식으로 잘못 조판되지 않도록(이탤릭 등) 여전히 오버레이로 남는다 — 이 자동 판단은 `diagrams.mjs`의 `labelAuto`가 한다.
 
 한글(오버레이) 라벨은 TikZ **좌표(cm, 그 tikzpicture가 쓰는 좌표계 그대로)**로 자리를 지정한다: `{ x, y, text, anchor?, cls? }`. `diagrams.mjs`는 그 좌표에 안 보이는 작은 점을 찍어 렌더링한 뒤 그 점의 실제 화면 좌표를 읽어(scope·rotate·scale을 우리가 다시 계산하지 않는다) 우리 `<text>`를 정확히 그 자리에 겹친다. `cls`는 `v-label`(본문, 기본값)·`v-label-a`(강조)·`v-label-s`(보조) 중 하나, `anchor`는 SVG `text-anchor`(기본 `middle`).
 

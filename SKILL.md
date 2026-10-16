@@ -1,6 +1,6 @@
 ---
 name: classforge
-description: 학교 수업 자료 제작 스킬 — 수업 주제 하나로 교실 프로젝터용 HTML 슬라이드, A4 학생 활동지와 정답지 PDF, 교수·학습 과정안(지도안) PDF를 함께 만들고 20~21개 자동 품질 게이트(KoPub을 쓰면 미설치 PC 대체 배치 검사 B9 추가)와 별도 검토자의 도메인 검토(R1), 캡처 육안 검수를 통과시킨다. 교사가 채운 수업 설계서(.md)나 생성 이미지 삽화도 반영한다. "수업 자료 만들어줘", "수업 PPT", "수업 슬라이드", "학습지/활동지 만들어줘", "지도안/교수학습 과정안", "N학년 OO 단원 N차시 수업 준비", "형성평가 문항", "공개수업 자료" 같은 요청에 사용한다. 초·중·고 전 교과 대상.
+description: 학교 수업 자료 제작 스킬 — 수업 주제 하나로 교실 프로젝터용 HTML 슬라이드, A4 학생 활동지와 정답지 PDF, 교수·학습 과정안(지도안) PDF를 함께 만들고 20개 자동 품질 게이트와 별도 검토자의 도메인 검토(R1), 캡처 육안 검수를 통과시킨다. 교사가 채운 수업 설계서(.md)나 생성 이미지 삽화도 반영한다. "수업 자료 만들어줘", "수업 PPT", "수업 슬라이드", "학습지/활동지 만들어줘", "지도안/교수학습 과정안", "N학년 OO 단원 N차시 수업 준비", "형성평가 문항", "공개수업 자료" 같은 요청에 사용한다. 초·중·고 전 교과 대상.
 ---
 
 # classforge — 수업 자료 한 벌 만들기
@@ -9,7 +9,7 @@ description: 학교 수업 자료 제작 스킬 — 수업 주제 하나로 교�
 
 | 산출물 | 파일 | 용도 |
 |---|---|---|
-| 수업 슬라이드 | `out/slides.html` (+`slides.pdf`) | 교실 프로젝터. Pretendard를 파일 안에 넣어 인터넷 없이 어느 PC에서나 열린다(evidence 수업이 KoPub을 쓰면 KoPub이 설치된 PC에서는 KoPub, 없는 PC에서는 Pretendard로 보이며 — 게이트가 두 경우의 배치를 모두 잰다). →/Space 넘김, 단계 공개, 퀴즈 정답 공개, 활동 타이머(T), 발표자 노트(N) |
+| 수업 슬라이드 | `out/slides.html` (+`slides.pdf`) | 교실 프로젝터. Pretendard를 파일 안에 넣어 인터넷 없이 어느 PC에서나 같게 보인다. →/Space 넘김, 단계 공개, 퀴즈 정답 공개, 활동 타이머(T), 발표자 노트(N) |
 | 학생 활동지 | `out/worksheet.pdf` | A4 인쇄. 정답 글자는 파일에 아예 들어가지 않는다 |
 | 정답지 | `out/answer-key.pdf` | 같은 배치에 정답과 풀이 |
 | 교수·학습 과정안 | `out/lesson-plan.pdf` | A4 가로. 도입·전개·정리, 평가 계획, 예상 질문 |
@@ -31,7 +31,7 @@ cd "$SKILL_DIR" && [ -d node_modules/playwright-core ] || npm install
 python -c "import fontTools" || pip install fonttools
 ```
 Chrome(또는 Edge)이 필요하다. 다른 경로면 `CLASSFORGE_CHROME` 환경변수로 지정.
-`meta.font` 기본은 `"auto"` — evidence 수업은 이 PC에 KoPubWorld Dotum이 설치돼 있으면 자동으로 쓰고(`local()` 참조, 파일은 넣지 않는다), 없으면 Pretendard로 대체하고 경고만 남긴다. 설치는 kopus.org 사용 등록 후 받는다. 자세히는 `references/design.md`의 "글꼴".
+글꼴은 모든 수업이 Pretendard 하나다(문서에 쓰인 글자만 서브셋해 파일 안에 넣는다, `references/design.md` "글꼴").
 
 정밀 도식(`{tikz}`/`{refraction}`/`{circuit}`/`{particles}`/`{geometry}`/`{vectors}`)과 인라인 수식(`$...$`)은 실제 LaTeX으로 조판한다. **MiKTeX(Windows) 또는 TeX Live(macOS·Linux)를 설치**하면(예: `winget install MiKTeX.MiKTeX`) `build.mjs`가 자동으로 찾아 쓴다(`scripts/diagrams.mjs`의 `findTexBin` — PATH → 흔한 설치 경로 → `CLASSFORGE_TEX_BIN` 환경변수 순으로 찾는다, 설치 안 해도 동작은 하되 도식은 node-tikzjax 오프라인 WASM 대체·수식은 CSS 근사 대체로 품질이 낮아진다). MiKTeX는 처음 쓰는 패키지(circuitikz 등)를 자동 설치하므로(AutoInstall) 한 번은 `initexmf --set-config-value=[MPM]AutoInstall=1`로 켜 둔다 — 그 뒤 첫 컴파일만 패키지를 받느라 느리고(수십 초), 그다음은 도식 하나에 1초 안팎이다. 어느 엔진을 썼는지는 `out/.diagram-engine.json`에 남는다. 자세히는 `references/design.md`의 "정밀 도식은 TikZ로"·"수식 인라인 표기".
 
@@ -89,7 +89,7 @@ node "$SKILL_DIR/scripts/images.mjs" <폴더>/lesson.json                  # 실
 node "$SKILL_DIR/scripts/build.mjs" <폴더>/lesson.json
 node "$SKILL_DIR/scripts/gate.mjs"  <폴더>/lesson.json
 ```
-FAIL이 하나라도 있으면 메시지의 `→` 힌트대로 lesson.json을 고치고 다시 빌드·게이트. 템플릿이나 게이트 기준을 느슨하게 바꿔서 통과시키지 않는다. 게이트는 20개(KoPub을 쓰면 B9까지 21개): S1~S8(구조·문체·성취기준·설계서 반영·교과별 실험 함정)·E1(증거 중심)·I1(이미지)·V1(시각 정책 — 손그림 SVG 금지, 세 갈래 규칙)·R1(7단계 도메인 검토 수행 여부 — 첫 게이트에서는 FAIL이 정상)·B1~B8(브라우저 실측, KoPub을 쓰면 B9 추가) — 목록과 흔한 해결법은 `references/gates.md`. 설계서(`meta.intake`)가 있으면 S7이, `meta.profile:"evidence"`면 E1이, 이미지 요청이 있으면 I1이, 삽화·도형이 하나라도 있으면(대부분의 수업) V1이 함께 통과해야 한다.
+FAIL이 하나라도 있으면 메시지의 `→` 힌트대로 lesson.json을 고치고 다시 빌드·게이트. 템플릿이나 게이트 기준을 느슨하게 바꿔서 통과시키지 않는다. 게이트는 20개: S1~S8(구조·문체·성취기준·설계서 반영·교과별 실험 함정)·E1(증거 중심)·I1(이미지)·V1(시각 정책 — 손그림 SVG 금지, 세 갈래 규칙)·R1(7단계 도메인 검토 수행 여부 — 첫 게이트에서는 FAIL이 정상)·B1~B8(브라우저 실측) — 목록과 흔한 해결법은 `references/gates.md`. 설계서(`meta.intake`)가 있으면 S7이, `meta.profile:"evidence"`면 E1이, 이미지 요청이 있으면 I1이, 삽화·도형이 하나라도 있으면(대부분의 수업) V1이 함께 통과해야 한다.
 
 ### 7. 캡처 육안 검수 + 도메인 정확성 검토 (게이트 통과 후 필수)
 1. `out/shots/overview.png`, 모든 `slide-NN.png`, `worksheet-p*.png`, `answer-key-p*.png`, `lesson-plan-p*.png`를 Read로 열어 `references/design.md`의 **육안 검수 체크리스트**를 확인한다. 걸리면 고치고 6단계부터 다시.
@@ -116,7 +116,7 @@ FAIL이 하나라도 있으면 메시지의 `→` 힌트대로 lesson.json을 �
 - `references/slides.md` — 슬라이드 15유형 카탈로그, 수업 흐름 템플릿
 - `references/design.md` — 디자인 규칙, SVG 삽화 작성법, 육안 검수 체크리스트
 - `references/pedagogy.md` — 목표·발문·형성평가·활동지·지도안 작성 규칙
-- `references/gates.md` — 게이트 20개(+KoPub 사용 시 B9, 21개), 오류 코드별 해결법
+- `references/gates.md` — 게이트 20개, 오류 코드별 해결법
 - `references/intake.md` — 설계 입력 세 갈래(설계서 파일·브라우저 양식·대화), intake.json 형식과 매핑표, S7 게이트
 - `references/images.md` — 이미지 브리프 → 프롬프트 컴파일 → 생성 절차, I1 게이트
 - `CREDITS.md` — 참고한 오픈소스와 글꼴 라이선스
