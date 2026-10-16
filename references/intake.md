@@ -5,7 +5,7 @@
 ## 0. 파일
 
 - `templates/수업설계서.txt` — 교사에게 건네는 빈 양식(2판, "라벨: 값"). 메모장으로 바로 열리는 일반 글 파일이고, 마크다운·HTML 같은 개발 문법을 쓰지 않는다(`test-intake.mjs`가 확인). 교사에게는 "수업설계서 파일"이라고 안내한다.
-- `templates/수업설계서.html` — 같은 내용을 브라우저에서 채우는 양식. 인터넷 없이 열리고, "저장하기"를 누르면 `수업설계서-<교과>-<단원>.json`(intake.json 형식)이 다운로드 폴더에 생긴다. 화면에는 개발 용어(json·intake 등)를 쓰지 않는다(`test-intake.mjs`가 확인). 입력한 값은 그 브라우저에 자동 보관되고, "저장한 파일 열기"로 저장한 `intake.json`을 다시 열어 고칠 수 있다.
+- `templates/수업설계서.html` — 같은 내용을 브라우저에서 채우는 양식. 보고서 문서 모양(번호 붙은 절, 항목·값 표, 작성 현황 목차, 모순은 "검토 의견" 상자)이고 "인쇄"로 A4 보고서가 된다. 인터넷 없이 열리고, "저장하기"를 누르면 `수업설계서-<교과>-<단원>.json`(intake.json 형식)이 다운로드 폴더에 생긴다. 화면에는 개발 용어(json·intake 등)를 쓰지 않는다(`test-intake.mjs`가 확인). 입력한 값은 그 브라우저에 자동 보관되고, "저장한 파일 열기"로 저장한 `intake.json`을 다시 열어 고칠 수 있다.
 - `scripts/intake.mjs <설계서 파일|intake.json> [--json out.json]` — 채운 항목을 읽어 요약·경고를 출력(`--json`이면 intake 객체 저장).
 - `scripts/intake.mjs --check <설계서 파일|intake.json> <lesson.json> [--json report.json]` — 채운 항목이 lesson.json(과 빌드된 out/)에 실제로 반영됐는지 되짚어 확인(반영 안 된 항목은 exit 1).
 - `scripts/test-intake.mjs` — 세 입력 경로의 회귀 테스트(브라우저 양식은 Chrome이 있을 때 실제로 채우고 저장해 본다).
