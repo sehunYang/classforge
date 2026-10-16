@@ -27,8 +27,8 @@ await test('옛 양식(1판) 예시가 그대로 읽힌다', () => {
   assert.ok(isLegacyForm(fs.readFileSync(rel('examples/intake/설계서-예시-전체.md'), 'utf8')));
 });
 
-await test('빈 2판 양식은 채운 칸 0개, 경고 0건', () => {
-  const t = loadIntake(rel('templates/수업설계서.md'));
+await test('빈 메모장 양식(2판)은 채운 칸 0개, 경고 0건', () => {
+  const t = loadIntake(rel('templates/수업설계서.txt'));
   assert.equal(t.source, 'md');
   assert.deepEqual(t.fields, {});
   assert.deepEqual(t.warnings, []);
@@ -37,11 +37,53 @@ await test('빈 2판 양식은 채운 칸 0개, 경고 0건', () => {
 
 await test('2판 예시가 같은 내용의 1판 예시와 같은 값을 낸다(학년·반만 나눠 읽음)', () => {
   const v1 = loadIntake(rel('examples/intake/설계서-예시-전체.md')).filled;
-  const v2 = loadIntake(rel('examples/intake/설계서-2판-예시-전체.md')).filled;
+  const v2 = loadIntake(rel('examples/intake/설계서-2판-예시-전체.txt')).filled;
   const diff = [...new Set([...Object.keys(v1), ...Object.keys(v2)])].filter(k => JSON.stringify(v1[k]) !== JSON.stringify(v2[k]));
   assert.deepEqual(diff.sort(), ['classSize', 'grade']);
   assert.equal(v2.grade, '6학년');          // "초6" → 학년만(학교급은 schoolLevel로)
   assert.equal(v2.classSize, '3반 24명');
+});
+
+await test('메모장 양식에는 개발 문법·용어가 없다', () => {
+  const t = fs.readFileSync(rel('templates/수업설계서.txt'), 'utf8');
+  const DEV = /[#`|<>{}]|\*\*|\bhtml\b|\bmd\b|json|intake|마크다운|key\b|field/i;
+  const bad = t.split('\n').filter(l => DEV.test(l));
+  assert.deepEqual(bad, []);
+});
+
+await test('메모장 표시(■ 제목, ※·예) 설명, ━ 구분선, ○·• 글머리)를 알아본다', () => {
+  const r = parseIntake(md(`
+※ 설명 줄: 대상: 이건 값이 아님
+대상: 중3
+예) 고1
+■ ★ 학습 목표
+예) 이런 목표
+○ 첫째를 말할 수 있다.
+• 둘째를 설명할 수 있다.
+-
+━━━━ 여기부터는 선택 ━━━━
+─── 수업 흐름 ───
+활동: 짝
+■ 메모
+- 1. 시간이 빠듯합니다.
+◆ 수치·사실과 출처
+- 물은 100 °C에서 끓는다 (출처: 교과서)
+`));
+  assert.deepEqual(r.fields, {
+    schoolLevel: 'middle', grade: '3학년', objectives: ['첫째를 말할 수 있다.', '둘째를 설명할 수 있다.'], activityMode: 'pair',
+    etcRequest: '1. 시간이 빠듯합니다.', facts: [{ text: '물은 100 °C에서 끓는다', source: '교과서' }],
+  });
+  assert.deepEqual(r.warnings, []);
+});
+
+await test('메모장에서 ANSI(CP949)로 저장한 파일도 읽는다', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'classforge-cp949-'));
+  const f = path.join(dir, '수업설계서.txt');
+  // "대상: 중2 3반\n교과·단원: 과학 · 광합성\n"을 CP949로 인코딩한 바이트
+  fs.writeFileSync(f, Buffer.from('b4ebbbf33a20c1df322033b9dd0ab1b3b0faa1a4b4dcbff83a20b0fac7d020a1a420b1a4c7d5bcba0a', 'hex'));
+  assert.deepEqual(loadIntake(f).fields, { schoolLevel: 'middle', grade: '2학년', classSize: '3반', subject: '과학', unit: '광합성' });
+  fs.writeFileSync(f, '\uFEFF대상: 고2\r\n');                       // UTF-8 BOM + 윈도우 줄바꿈
+  assert.deepEqual(loadIntake(f).fields, { schoolLevel: 'high', grade: '2학년' });
 });
 
 await test('복합 칸(대상·교과·단원·차시·시간)을 나눠 읽는다', () => {
@@ -57,7 +99,7 @@ await test('복합 칸(대상·교과·단원·차시·시간)을 나눠 읽는�
   assert.equal(parseIntake('차시: 4\n').fields.lesson, '4');
 });
 
-await test('예시 줄(>)은 읽지 않고, 값은 예시 아래 줄에 써도 된다', () => {
+await test('마크다운으로 쓴 2판(#, >)도 읽고, 값은 예시 아래 줄에 써도 된다', () => {
   const r = parseIntake(md(`
 대상:
 > 예: 중2 3반 24명
@@ -144,7 +186,7 @@ await test('intake.json 시간 합 경고는 md와 같은 기준', () => {
 });
 
 await test('파싱 결과(--json)를 다시 넣어도 같은 값', () => {
-  const a = loadIntake(rel('examples/intake/설계서-2판-예시-전체.md'));
+  const a = loadIntake(rel('examples/intake/설계서-2판-예시-전체.txt'));
   const b = intakeFromJson(JSON.parse(JSON.stringify(a)));
   assert.deepEqual(b.fields, a.fields);
 });

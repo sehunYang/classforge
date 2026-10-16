@@ -538,13 +538,13 @@ await gate('S6', '성취기준', (err, warn) => {
 });
 
 // ── S7 설계서 반영 ───────────────────────────────────────
-// meta.intake(수업설계서.md 또는 intake.json 경로, lesson.json 기준 상대 경로)가 있을 때만 검사한다. references/intake.md 참고.
+// meta.intake(설계서 파일(.txt·.md) 또는 intake.json 경로, lesson.json 기준 상대 경로)가 있을 때만 검사한다. references/intake.md 참고.
 await gate('S7', '설계서 반영', (err, warn) => {
   if (!M.intake) { warn('S7-NONE', '설계서 없음'); return; }
   const formPath = path.resolve(ctx.dir, M.intake);
   if (!fs.existsSync(formPath)) return err('S7-FILE', `meta.intake 경로에 파일 없음: ${M.intake}`);
   let intake;
-  try { intake = loadIntake(formPath); } catch (e) { return err('S7-FILE', `meta.intake 파일을 읽지 못함: ${e.message}`, '설계서.md 또는 intake.json 형식을 확인하세요(references/intake.md 0.5절)'); }
+  try { intake = loadIntake(formPath); } catch (e) { return err('S7-FILE', `meta.intake 파일을 읽지 못함: ${e.message}`, '설계서 파일 또는 intake.json 형식을 확인하세요(references/intake.md 0.5절)'); }
   intake.warnings.forEach(w => warn('S7-' + w.code, w.msg));
   const report = checkReflection(intake, L, out);
   for (const it of report.items)

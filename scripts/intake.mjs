@@ -1,11 +1,11 @@
 // classforge intake — 교사가 준 수업 설계를 intake 객체로 읽고,
 // lesson.json(및 out/ 산출물)이 채운 항목을 실제로 반영했는지 되짚어 확인한다(--check).
 // 입력은 세 가지 모두 같은 intake 객체가 된다:
-//   설계서.md 2판(templates/수업설계서.md, "라벨: 값") · 설계서.md 1판(<!-- key:... --> 주석, 하위 호환)
+//   설계서 2판(templates/수업설계서.txt — 메모장용 "라벨: 값", 마크다운으로 써도 됨) · 설계서 1판(.md, <!-- key:... --> 주석, 하위 호환)
 //   intake.json(templates/수업설계서.html 브라우저 양식으로 저장했거나, 대화로 받은 값을 에이전트가 쓴 것)
 // 사용:
-//   node intake.mjs <설계서.md|intake.json> [--json out.json]
-//   node intake.mjs --check <설계서.md|intake.json> <lesson.json> [--json report.json]
+//   node intake.mjs <설계서 파일|intake.json> [--json out.json]
+//   node intake.mjs --check <설계서 파일|intake.json> <lesson.json> [--json report.json]
 import fs from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -187,11 +187,11 @@ function extractOne(field, r, warnings) {
 }
 
 // ── 두 번째 양식(라벨형) 파싱 ───────────────────────────────
-// templates/수업설계서.md(2판)는 숨은 key 주석 없이 "라벨: 값" 한 줄이나 "## 라벨" 아래 블록으로 쓴다.
+// templates/수업설계서.txt(2판)는 숨은 key 주석 없이 "라벨: 값" 한 줄이나 "■ 라벨"(마크다운이면 "## 라벨") 아래 블록으로 쓴다.
 // "> "로 시작하는 줄(예시·안내)은 미리보기에서도 보이지만 값으로 읽지 않는다. 고를 칸은 보기 낱말을 그대로
 // 쓰면 된다("모둠", "중2"). 라벨은 비슷한 말(별칭)도 받아들인다 — LABELS에 정규화한 이름으로 적는다.
 // "@"로 시작하는 값은 한 칸에 여러 항목을 함께 쓰는 복합 칸(대상 = 학교급+학년+인원 등)이다.
-const labelKey = s => String(s).replace(/<[^>]+>/g, '').replace(/[★*_`]/g, '').replace(/\([^)]*\)|（[^）]*）/g, '').replace(/[\s·・/\\,.:：\-–—?]/g, '').toLowerCase();
+const labelKey = s => String(s).replace(/<[^>]+>/g, '').replace(/[★☆*_`]/g, '').replace(/\([^)]*\)|（[^）]*）/g, '').replace(/[\s·・/\\,.:：\-–—?]/g, '').toLowerCase();
 const LABELS = {
   대상: '@target', 학습대상: '@target', 학년: '@target', 학년반: '@target', 학교급학년: '@target',
   학교급: 'schoolLevel',
@@ -215,7 +215,8 @@ const LABELS = {
   난이도: 'difficulty', 서술형: 'hasEssay', 서술형문항: 'hasEssay', 서술형문항포함: 'hasEssay',
   슬라이드장수: 'slidesCount', 슬라이드수: 'slidesCount', 스타일: 'profile', 스타일프로필: 'profile',
   제목문체: 'titleStyle', 말투: 'tone',
-  이미지상한: 'imageCount', ai이미지사용상한: 'imageCount', 이미지용도: 'imageUse', 강조색: 'accentColor',
+  이미지상한: 'imageCount', ai이미지사용상한: 'imageCount', ai그림최대장수: 'imageCount', 그림최대장수: 'imageCount',
+  이미지용도: 'imageUse', ai그림쓸곳: 'imageUse', 그림쓸곳: 'imageUse', ai그림용도: 'imageUse', 강조색: 'accentColor',
   교과서쪽수: 'textbookPages', 기존자료: 'referenceMaterial', 참고자료: 'referenceMaterial', 기존자료참고슬라이드: 'referenceMaterial',
   수치사실과출처: 'facts', 수치사실: 'facts', 사실과출처: 'facts',
   만들것: 'deliverables', 산출물: 'deliverables', 산출물선택: 'deliverables',
@@ -299,7 +300,8 @@ function parseComposite(kind, label, v, put, warnings) {
   }
 }
 
-const stripBullet = l => String(l).replace(/^\s*(?:[-*+]|\d+[.)])\s*/, '').trim();
+const BULLET = /^\s*(?:[-*+•○◦·▪]|\d+[.)])\s*/;   // 교사가 메모장에서 흔히 쓰는 글머리 기호까지
+const stripBullet = l => String(l).replace(BULLET, '').trim();
 function parseFactLine(line, warnings) {
   const l = stripBullet(line).replace(/^수치\s*\/?\s*사실\s*[:：]\s*/, '');
   if (!l) return null;
@@ -319,7 +321,8 @@ function coerce(field, value, warnings) {
   if (value == null) return null;
   switch (field.kind) {
     case 'text': case 'block': {
-      const t = asLines(value).map(l => typeof l === 'string' ? l.trim() : String(l)).filter(Boolean).join('\n');
+      // 글머리 기호(- • ○ 등)만 떼고 번호("1.")는 남긴다 — 메모 같은 글 칸도 "- " 줄에 쓰기 때문
+      const t = asLines(value).map(l => typeof l === 'string' ? l.replace(/^\s*[-*+•○◦·▪]\s*/, '').trim() : String(l)).filter(Boolean).join('\n');
       return t || null;
     }
     case 'number': {
@@ -369,15 +372,22 @@ function coerce(field, value, warnings) {
   }
 }
 
+// 메모장용 양식(templates/수업설계서.txt)과 마크다운 양식이 같은 규칙으로 읽힌다:
+//   제목      "■ 학습 목표"(◆ ▶도 됨) 또는 "## 학습 목표"
+//   안내·예시 "※ …", "예) …", "예: …"로 시작하는 줄, 또는 "> …"
+//   구분선    "───", "━━━", "===", "---"(가운데 글이 있어도 됨), <details>/<summary> 태그
+const SKIP_LINE = /^\s*(?:>|※|예\s*[):：])/;
+const RULE_LINE = /^\s*(?:[-─━═=_*~]{3,}.*|<\/?(?:details|summary)\b.*)$/i;
+const HEAD_LINE = /^\s*(?:#{1,6}|[■◆▶]+)\s*(.*)$/;
 function parseLabeled(mdText) {
   const warnings = [];
-  const lines = mdText.replace(/<!--[\s\S]*?-->/g, '').split(/\r?\n/);
+  const lines = mdText.replace(/^\uFEFF/, '').replace(/<!--[\s\S]*?-->/g, '').split(/\r?\n/);
   const sections = []; // {key, label, inline, lines}
   let cur = null;
   for (const line of lines) {
-    if (/^\s*>/.test(line)) continue;                                  // 예시·안내 줄
-    if (/^\s*<\/?(details|summary)\b/i.test(line) || /^\s*(-{3,}|\*{3,}|_{3,})\s*$/.test(line)) { cur = null; continue; }
-    const h = line.match(/^\s*#{1,6}\s+(.*)$/);
+    if (SKIP_LINE.test(line)) continue;                                // 예시·안내 줄
+    if (RULE_LINE.test(line)) { cur = null; continue; }
+    const h = line.match(HEAD_LINE);
     if (h) {
       const key = LABELS[labelKey(h[1])];
       cur = key ? { key, label: labelKey(h[1]), inline: '', lines: [] } : null;
@@ -385,7 +395,7 @@ function parseLabeled(mdText) {
       continue;
     }
     const lm = line.match(/^\s*(?:[-*]\s+)?([^:：|]{1,30}?)\s*[:：]\s*(.*)$/);
-    const isBullet = /^\s*[-*]\s/.test(line);
+    const isBullet = /^\s*[-*•○◦·▪]\s/.test(line);
     if (lm && LABELS[labelKey(lm[1])] && !(cur && isBullet)) {
       cur = { key: LABELS[labelKey(lm[1])], label: labelKey(lm[1]), inline: lm[2].trim(), lines: [] };
       sections.push(cur);
@@ -396,7 +406,7 @@ function parseLabeled(mdText) {
   const filled = {};
   const put = (key, val) => { if (val == null || val === '' || (Array.isArray(val) && !val.length)) return; if (filled[key] === undefined) filled[key] = val; };
   for (const sec of sections) {
-    const body = [sec.inline, ...sec.lines].filter(l => l.trim() !== '' && !/^\s*[-*]\s*$/.test(l));
+    const body = [sec.inline, ...sec.lines].filter(l => stripBullet(l) !== '');
     if (!body.length) continue;
     if (sec.key.startsWith('@')) { parseComposite(sec.key, sec.label, body.join(' '), put, warnings); continue; }
     put(sec.key, coerce(FIELD_BY_KEY[sec.key], body, warnings));
@@ -444,7 +454,11 @@ export function intakeFromJson(obj) {
 // 파일 경로 하나로 읽는다: .json이거나 내용이 JSON 객체면 intake.json(브라우저 양식이 저장한
 // "수업설계서-교과-단원.json" 포함), 그 밖에는 설계서(.md, 1판·2판 자동 판별).
 export function loadIntake(filePath) {
-  const text = fs.readFileSync(filePath, 'utf8').replace(/^\uFEFF/, '');
+  // 메모장에서 "ANSI"로 저장한 한국어 윈도우 파일(CP949)도 읽는다 — UTF-8로 안 풀리면 EUC-KR로 다시 푼다.
+  const buf = fs.readFileSync(filePath);
+  let text;
+  try { text = new TextDecoder('utf-8', { fatal: true }).decode(buf); } catch { text = new TextDecoder('euc-kr').decode(buf); }
+  text = text.replace(/^\uFEFF/, '');
   if (/\.json$/i.test(filePath) || /^\s*\{/.test(text)) return intakeFromJson(JSON.parse(text));
   return parseIntake(text);
 }
@@ -830,7 +844,7 @@ function main() {
   const argv = process.argv.slice(2);
   if (argv[0] === '--check') {
     const [, formPath, lessonPath, ...rest] = argv;
-    if (!formPath || !lessonPath) { console.error('사용: node intake.mjs --check <설계서.md|intake.json> <lesson.json> [--json report.json]'); process.exit(2); }
+    if (!formPath || !lessonPath) { console.error('사용: node intake.mjs --check <설계서 파일|intake.json> <lesson.json> [--json report.json]'); process.exit(2); }
     const lesson = JSON.parse(fs.readFileSync(lessonPath, 'utf8'));
     const outDir = path.join(path.dirname(path.resolve(lessonPath)), 'out');
     const intake = loadIntake(formPath);
@@ -846,7 +860,7 @@ function main() {
   }
 
   const [formPath, ...rest] = argv;
-  if (!formPath) { console.error('사용: node intake.mjs <설계서.md|intake.json> [--json out.json]'); process.exit(2); }
+  if (!formPath) { console.error('사용: node intake.mjs <설계서 파일|intake.json> [--json out.json]'); process.exit(2); }
   const intake = loadIntake(formPath);
   printReport(intake);
   const jsonIdx = rest.indexOf('--json');

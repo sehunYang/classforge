@@ -37,7 +37,7 @@ Chrome(또는 Edge)이 필요하다. 다른 경로면 `CLASSFORGE_CHROME` 환경
 
 ### 1. 입력 확인
 교사의 설계는 세 가지 길로 받는다. 어느 길이든 `intake.mjs`가 같은 intake 객체로 읽고, S7 게이트가 같은 기준으로 반영 여부를 검사한다(`references/intake.md`).
-- **설계서.md** — `templates/수업설계서.md`("라벨: 값"으로 쓰는 2판. 옛 `<!-- key: -->` 1판도 그대로 읽힌다)
+- **설계서 파일** — `templates/수업설계서.txt`(메모장으로 쓰는 2판, "라벨: 값". 마크다운 `.md`나 옛 `<!-- key: -->` 1판도 그대로 읽힌다). 교사에게는 "수업설계서 파일"이라고 안내하고 마크다운·md 같은 말은 쓰지 않는다
 - **브라우저 양식** — 교사가 `templates/수업설계서.html`을 열어 채우고 "저장하기"로 받은 `수업설계서-<교과>-<단원>.json`(intake.json 형식, 인터넷 없이 동작). 교사에게 안내할 때는 "양식에서 저장한 수업설계서 파일"이라고 말하고 json·intake 같은 말은 쓰지 않는다
 - **대화** — 파일 없이 요청만 받은 경우. 아래 "대화로 받기"대로 묻고 `<폴더>/intake.json`을 직접 쓴다.
 
@@ -117,6 +117,6 @@ FAIL이 하나라도 있으면 메시지의 `→` 힌트대로 lesson.json을 �
 - `references/design.md` — 디자인 규칙, SVG 삽화 작성법, 육안 검수 체크리스트
 - `references/pedagogy.md` — 목표·발문·형성평가·활동지·지도안 작성 규칙
 - `references/gates.md` — 게이트 20개(+KoPub 사용 시 B9, 21개), 오류 코드별 해결법
-- `references/intake.md` — 설계 입력 세 갈래(설계서.md·브라우저 양식·대화), intake.json 형식과 매핑표, S7 게이트
+- `references/intake.md` — 설계 입력 세 갈래(설계서 파일·브라우저 양식·대화), intake.json 형식과 매핑표, S7 게이트
 - `references/images.md` — 이미지 브리프 → 프롬프트 컴파일 → 생성 절차, I1 게이트
 - `CREDITS.md` — 참고한 오픈소스와 글꼴 라이선스
