@@ -441,10 +441,11 @@ export function intakeFromJson(obj) {
   return buildIntake(filled, warnings, obj.source || 'json');
 }
 
-// 파일 경로 하나로 읽는다: .json이면 intake.json, 그 밖에는 설계서(.md, 1판·2판 자동 판별).
+// 파일 경로 하나로 읽는다: .json이거나 내용이 JSON 객체면 intake.json(브라우저 양식이 저장한
+// "수업설계서-교과-단원.json" 포함), 그 밖에는 설계서(.md, 1판·2판 자동 판별).
 export function loadIntake(filePath) {
-  const text = fs.readFileSync(filePath, 'utf8');
-  if (/\.json$/i.test(filePath)) return intakeFromJson(JSON.parse(text));
+  const text = fs.readFileSync(filePath, 'utf8').replace(/^\uFEFF/, '');
+  if (/\.json$/i.test(filePath) || /^\s*\{/.test(text)) return intakeFromJson(JSON.parse(text));
   return parseIntake(text);
 }
 

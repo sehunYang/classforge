@@ -5,7 +5,7 @@
 ## 0. 파일
 
 - `templates/수업설계서.md` — 교사에게 건네는 빈 양식(2판, "라벨: 값").
-- `templates/수업설계서.html` — 같은 내용을 브라우저에서 채우는 양식. 인터넷 없이 열리고, 저장하면 `intake.json`이 내려받아진다. 입력한 값은 그 브라우저에 자동 보관되고, "불러오기"로 저장한 `intake.json`을 다시 열어 고칠 수 있다.
+- `templates/수업설계서.html` — 같은 내용을 브라우저에서 채우는 양식. 인터넷 없이 열리고, "저장하기"를 누르면 `수업설계서-<교과>-<단원>.json`(intake.json 형식)이 다운로드 폴더에 생긴다. 화면에는 개발 용어(json·intake 등)를 쓰지 않는다(`test-intake.mjs`가 확인). 입력한 값은 그 브라우저에 자동 보관되고, "저장한 파일 열기"로 저장한 `intake.json`을 다시 열어 고칠 수 있다.
 - `scripts/intake.mjs <설계서.md|intake.json> [--json out.json]` — 채운 항목을 읽어 요약·경고를 출력(`--json`이면 intake 객체 저장).
 - `scripts/intake.mjs --check <설계서.md|intake.json> <lesson.json> [--json report.json]` — 채운 항목이 lesson.json(과 빌드된 out/)에 실제로 반영됐는지 되짚어 확인(반영 안 된 항목은 exit 1).
 - `scripts/test-intake.mjs` — 세 입력 경로의 회귀 테스트(브라우저 양식은 Chrome이 있을 때 실제로 채우고 저장해 본다).
@@ -17,7 +17,7 @@
 |---|---|---|---|
 | 설계서.md 2판 | 필요한 칸만 채운 .md를 준다 | `intake.mjs <설계서.md>` | `md` |
 | 설계서.md 1판 | 예전 양식(`<!-- key:... -->` 주석)을 준다 | 그대로 읽힌다(파서가 자동 판별) | `md-v1` |
-| 브라우저 양식 | `수업설계서.html`에서 채우고 저장한 `intake.json`을 준다 | `intake.mjs <intake.json>` | `form` |
+| 브라우저 양식 | `수업설계서.html`에서 채우고 "저장하기"로 받은 `수업설계서-…json` 파일을 준다 | `intake.mjs <그 파일>` (확장자가 바뀌어도 내용으로 알아본다) | `form` |
 | 대화 | 파일 없이 말로 요청한다 | SKILL.md 1단계 "대화로 받기"대로 묻고 `intake.json`을 직접 쓴다 | `chat` |
 
 `meta.intake`에는 받은 파일(설계서.md 또는 intake.json)의 경로를 lesson.json 기준 상대 경로로 적는다. S7은 확장자로 형식을 가린다(`.json`이면 intake.json, 그 밖에는 설계서.md).

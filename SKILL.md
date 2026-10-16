@@ -38,7 +38,7 @@ Chrome(또는 Edge)이 필요하다. 다른 경로면 `CLASSFORGE_CHROME` 환경
 ### 1. 입력 확인
 교사의 설계는 세 가지 길로 받는다. 어느 길이든 `intake.mjs`가 같은 intake 객체로 읽고, S7 게이트가 같은 기준으로 반영 여부를 검사한다(`references/intake.md`).
 - **설계서.md** — `templates/수업설계서.md`("라벨: 값"으로 쓰는 2판. 옛 `<!-- key: -->` 1판도 그대로 읽힌다)
-- **브라우저 양식** — 교사가 `templates/수업설계서.html`을 열어 채우고 저장한 `intake.json`(인터넷 없이 동작)
+- **브라우저 양식** — 교사가 `templates/수업설계서.html`을 열어 채우고 "저장하기"로 받은 `수업설계서-<교과>-<단원>.json`(intake.json 형식, 인터넷 없이 동작). 교사에게 안내할 때는 "양식에서 저장한 수업설계서 파일"이라고 말하고 json·intake 같은 말은 쓰지 않는다
 - **대화** — 파일 없이 요청만 받은 경우. 아래 "대화로 받기"대로 묻고 `<폴더>/intake.json`을 직접 쓴다.
 
 파일을 받았으면 `node "$SKILL_DIR/scripts/intake.mjs" <파일> --json <폴더>/intake.json`으로 먼저 파싱하고 질문은 건너뛴다. 교사가 양식을 원하면 두 템플릿 경로를 알려 준다(md가 낯설면 html을 권한다).

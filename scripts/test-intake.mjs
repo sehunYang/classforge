@@ -162,7 +162,10 @@ await test('브라우저 양식이 모든 필드를 다룬다(강조색 제외)'
   }
 });
 
-await test('브라우저 양식으로 채워 저장한 intake.json이 그대로 읽힌다', async () => {
+await test('브라우저 양식으로 채워 저장한 파일이 그대로 읽힌다(화면에 개발 용어 없음)', async () => {
+  // 로캘이 비어 있는 리눅스 컨테이너의 Chromium은 한글 파일 이름을 "download"로 바꾼다(교사 PC에서는 그대로).
+  // 그래도 intake.mjs는 내용으로 알아보지만, 파일 이름 검사를 위해 UTF-8 로캘로 띄운다.
+  if (!process.env.LC_ALL && !/utf-?8/i.test(process.env.LANG || '')) process.env.LC_ALL = 'C.UTF-8';
   let browser;
   try { browser = await launch(); } catch (e) { console.log(`        (건너뜀: ${e.message})`); return; }
   try {
@@ -193,8 +196,14 @@ await test('브라우저 양식으로 채워 저장한 intake.json이 그대로 
     assert.ok(warns.some(w => w.includes('시간 배분 합 40분')), `시간 합 경고가 떠야 함: ${warns.join(' / ')}`);
     assert.ok(warns.some(w => w.includes('서술형을 빼 달라고')), '서술형 모순 경고가 떠야 함');
     assert.ok(warns.some(w => w.includes('출처가 없는')), '출처 경고가 떠야 함');
+    // 교사가 보는 화면(안내·단추·경고·입력칸 예시)에는 개발 용어가 없어야 한다
+    const screen = await page.evaluate(() => [document.body.innerText, ...[...document.querySelectorAll('[placeholder]')].map(e => e.placeholder), document.title].join('\n'));
+    const DEV = /json|intake|key|field|null|undefined|true|false|\.md\b|mjs|lesson|meta|schema|파싱|스키마/i;
+    assert.ok(!DEV.test(screen), `화면에 개발 용어: ${screen.match(DEV)?.[0]}`);
     const [dl] = await Promise.all([page.waitForEvent('download'), page.click('#saveBtn')]);
-    const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'classforge-intake-')), 'intake.json');
+    assert.equal(dl.suggestedFilename(), '수업설계서-과학-광합성.json');
+    assert.ok(await page.isVisible('#savedMsg'), '저장 안내가 보여야 함');
+    const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'classforge-intake-')), dl.suggestedFilename());
     await dl.saveAs(out);
     const r = loadIntake(out);
     assert.equal(r.source, 'form');
@@ -211,7 +220,7 @@ await test('브라우저 양식으로 채워 저장한 intake.json이 그대로 
     await page2.goto(fileUrl(HTML));
     await page2.setInputFiles('#fileIn', out);
     const [dl2] = await Promise.all([page2.waitForEvent('download'), page2.click('#saveBtn')]);
-    const out2 = out.replace(/intake\.json$/, 'intake2.json');
+    const out2 = path.join(path.dirname(out), '다시 저장.txt');   // 확장자가 바뀌어도 내용으로 알아본다
     await dl2.saveAs(out2);
     assert.deepEqual(loadIntake(out2).fields, r.fields);
     assert.deepEqual(errors, []);

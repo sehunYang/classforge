@@ -6,7 +6,7 @@
 <title>수업 설계서</title>
 <!--
   classforge 수업 설계서 — 브라우저 양식(인터넷 없이 동작).
-  채운 값을 intake.json으로 저장하면 scripts/intake.mjs가 설계서.md와 똑같이 읽는다.
+  채운 값을 수업설계서-<교과>-<단원>.json(intake.json 형식)으로 저장하면 scripts/intake.mjs가 설계서.md와 똑같이 읽는다.
   필드 key는 scripts/intake.mjs의 FIELDS와 같아야 한다(scripts/test-intake.mjs가 확인).
 -->
 <style>
@@ -69,7 +69,7 @@ details.card > summary span { font-weight: 400; color: var(--muted); font-size: 
 <body>
 <main>
   <h1>수업 설계서</h1>
-  <p class="lead">아는 것만 채우세요. <b>비운 칸은 AI가 정합니다.</b> <span class="star">★</span> 칸을 채우면 결과가 가장 크게 좋아집니다. 다 쓰면 아래 <b>저장</b>을 눌러 <code>intake.json</code>을 Claude에게 주세요. 입력한 내용은 이 브라우저에 자동으로 보관됩니다.</p>
+  <p class="lead">아는 것만 채우세요. <b>비운 칸은 AI가 정합니다.</b> <span class="star">★</span> 칸을 채우면 결과가 가장 크게 좋아집니다. 다 쓰면 아래 <b>저장하기</b>를 누르세요. 다운로드 폴더에 생긴 <b>수업설계서 파일</b>을 Claude에게 보내 주면 됩니다. 쓰던 내용은 창을 닫아도 남아 있습니다.</p>
 
   <ul id="warnings" aria-live="polite"></ul>
 
@@ -185,7 +185,7 @@ details.card > summary span { font-weight: 400; color: var(--muted); font-size: 
       </div>
     </div>
     <div class="row">
-      <div class="f"><label for="imageCount">생성 이미지 상한</label><input id="imageCount" type="number" min="0" data-key="imageCount" placeholder="비우면 필요한 만큼"></div>
+      <div class="f"><label for="imageCount">AI 그림 최대 장수</label><input id="imageCount" type="number" min="0" data-key="imageCount" placeholder="비우면 필요한 만큼"></div>
       <div class="f"><label for="imageUse">이미지 용도</label><input id="imageUse" type="text" data-key="imageUse" placeholder="예: 표지, 도입 장면, 실험 절차 사진"></div>
     </div>
     <div class="f"><span class="lbl">만들 것 <span class="hint">(안 고르면 네 가지 모두)</span></span>
@@ -206,11 +206,11 @@ details.card > summary span { font-weight: 400; color: var(--muted); font-size: 
 
 <div class="bar"><div class="bar-in">
   <div id="status"></div>
-  <span class="saved" id="savedMsg" hidden>저장했습니다</span>
-  <button type="button" class="btn" id="loadBtn">불러오기</button>
-  <button type="button" class="btn" id="resetBtn">비우기</button>
-  <button type="button" class="btn primary" id="saveBtn">intake.json 저장</button>
-  <input type="file" id="fileIn" accept=".json,application/json" hidden>
+  <span class="saved" id="savedMsg" hidden>다운로드 폴더에 저장했습니다 — 이 파일을 Claude에게 보내 주세요</span>
+  <button type="button" class="btn" id="loadBtn">저장한 파일 열기</button>
+  <button type="button" class="btn" id="resetBtn">모두 지우기</button>
+  <button type="button" class="btn primary" id="saveBtn">저장하기</button>
+  <input type="file" id="fileIn" accept=".json" hidden>
 </div></div>
 
 <script>
@@ -313,7 +313,7 @@ details.card > summary span { font-weight: 400; color: var(--muted); font-size: 
     const f = collect();
     const ws = warnings(f);
     $('warnings').innerHTML = '';
-    ws.forEach(t => { const li = document.createElement('li'); li.textContent = '! ' + t; $('warnings').appendChild(li); });
+    ws.forEach(t => { const li = document.createElement('li'); li.textContent = '확인해 주세요: ' + t; $('warnings').appendChild(li); });
     const n = Object.keys(f).length;
     const miss = STAR.filter(k => f[k] == null).map(k => LABEL[k]);
     $('status').innerHTML = `채운 칸 <b>${n}</b>개` + (miss.length ? ` · <span class="star">★</span> 비어 있음: ${miss.join(', ')}` : ' · ★ 모두 채움');
@@ -334,7 +334,9 @@ details.card > summary span { font-weight: 400; color: var(--muted); font-size: 
     const blob = new Blob([JSON.stringify(doc, null, 2) + '\n'], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'intake.json';
+    // 파일 이름은 교과·단원으로 알아보기 쉽게(파일 이름에 못 쓰는 글자는 뺀다)
+    const name = ['수업설계서', doc.fields.subject, doc.fields.unit].filter(Boolean).join('-').replace(/[\\/:*?"<>|\s]+/g, '_').slice(0, 60);
+    a.download = name + '.json';
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
     $('savedMsg').hidden = false;
@@ -346,11 +348,11 @@ details.card > summary span { font-weight: 400; color: var(--muted); font-size: 
       const doc = JSON.parse(await file.text());
       fill(doc.fields || doc.filled || {});
       changed();
-    } catch (err) { alert('intake.json을 읽지 못했습니다: ' + err.message); }
+    } catch (err) { alert('이 파일을 열 수 없습니다. 이 양식의 "저장하기"로 만든 수업설계서 파일을 골라 주세요.'); }
     e.target.value = '';
   });
   $('resetBtn').addEventListener('click', () => {
-    if (!confirm('입력한 내용을 모두 지울까요?')) return;
+    if (!confirm('쓴 내용을 모두 지울까요? 저장해 둔 파일은 지워지지 않습니다.')) return;
     fill({}); $('more').open = false; changed();
   });
 
