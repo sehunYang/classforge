@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>수업 설계서</title>
+<!--
+  classforge 수업 설계서 — 브라우저 양식(인터넷 없이 동작).
+  채운 값을 intake.json으로 저장하면 scripts/intake.mjs가 설계서.md와 똑같이 읽는다.
+  필드 key는 scripts/intake.mjs의 FIELDS와 같아야 한다(scripts/test-intake.mjs가 확인).
+-->
+<style>
+@font-face { font-family: "Pretendard"; font-weight: 400; src: local("Pretendard Regular"), local("Pretendard-Regular"), url("../assets/fonts/Pretendard-Regular.ttf") format("truetype"); }
+@font-face { font-family: "Pretendard"; font-weight: 600; src: local("Pretendard SemiBold"), local("Pretendard-SemiBold"), url("../assets/fonts/Pretendard-SemiBold.ttf") format("truetype"); }
+@font-face { font-family: "Pretendard"; font-weight: 800; src: local("Pretendard ExtraBold"), local("Pretendard-ExtraBold"), url("../assets/fonts/Pretendard-ExtraBold.ttf") format("truetype"); }
+:root {
+  --primary: #3B1E54; --secondary: #7A5C9E; --coral: #FF6F61;
+  --ink: #191520; --muted: #6B6475; --paper: #F8F6FA; --card: #FFFFFF; --line: #E2DCE9;
+  --chip: #F1ECF6; --warn-bg: #FFF4E5; --warn-ink: #8A4B00; --ok: #1F7A4D;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --primary: #D9C6F0; --secondary: #B9A2D6; --ink: #ECE8F1; --muted: #A79FB3; --paper: #16121B; --card: #211B29; --line: #3A3145;
+    --chip: #2C2436; --warn-bg: #3A2A12; --warn-ink: #FFCB80; --ok: #6FD39E;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.6 "Pretendard", system-ui, -apple-system, "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; }
+main { max-width: 860px; margin: 0 auto; padding: 24px 16px 120px; }
+h1 { color: var(--primary); font-size: 30px; font-weight: 800; margin: 8px 0 4px; }
+.lead { color: var(--muted); margin: 0 0 20px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px; margin: 0 0 16px; }
+.card > h2 { font-size: 18px; color: var(--primary); margin: 0 0 14px; font-weight: 800; }
+h3 { font-size: 15px; color: var(--secondary); margin: 22px 0 10px; font-weight: 800; }
+h3:first-child { margin-top: 4px; }
+.row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px 16px; }
+.f { margin: 0 0 14px; }
+.f > label, .f > .lbl { display: block; font-weight: 600; margin: 0 0 6px; }
+.star { color: var(--coral); margin-right: 2px; }
+.hint { color: var(--muted); font-size: 13px; margin: 4px 0 0; }
+input[type=text], input[type=number], textarea, select {
+  width: 100%; font: inherit; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px;
+}
+textarea { min-height: 76px; resize: vertical; }
+input:focus, textarea:focus, select:focus { outline: 2px solid var(--secondary); outline-offset: 1px; }
+::placeholder { color: var(--muted); opacity: .75; }
+.inline { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; white-space: nowrap; }
+.inline input { width: 76px; flex: 0 0 auto; }
+.pair { display: inline-flex; align-items: center; gap: 6px; margin-right: 6px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips button { font: inherit; border: 1px solid var(--line); background: var(--chip); color: var(--ink); border-radius: 999px; padding: 6px 14px; cursor: pointer; }
+.chips button[aria-pressed="true"] { background: var(--primary); border-color: var(--primary); color: var(--paper); }
+details.card > summary { cursor: pointer; font-weight: 800; color: var(--primary); font-size: 18px; list-style: none; }
+details.card > summary::before { content: "▸ "; color: var(--coral); }
+details.card[open] > summary::before { content: "▾ "; }
+details.card > summary span { font-weight: 400; color: var(--muted); font-size: 14px; }
+#warnings { list-style: none; padding: 0; margin: 0 0 16px; }
+#warnings li { background: var(--warn-bg); color: var(--warn-ink); border-radius: 10px; padding: 8px 12px; margin: 0 0 6px; font-size: 14px; }
+.bar { position: fixed; left: 0; right: 0; bottom: 0; background: var(--card); border-top: 1px solid var(--line); padding: 10px 16px; }
+.bar-in { max-width: 860px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
+#status { flex: 1 1 200px; color: var(--muted); font-size: 14px; }
+#status b { color: var(--ink); }
+.btn { font: inherit; font-weight: 600; border-radius: 10px; padding: 9px 16px; border: 1px solid var(--line); background: var(--chip); color: var(--ink); cursor: pointer; }
+.btn.primary { background: var(--primary); color: var(--paper); border-color: var(--primary); }
+.saved { color: var(--ok); font-size: 14px; }
+@media print { .bar, #warnings { display: none; } body { background: #fff; } details.card { display: block; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>수업 설계서</h1>
+  <p class="lead">아는 것만 채우세요. <b>비운 칸은 AI가 정합니다.</b> <span class="star">★</span> 칸을 채우면 결과가 가장 크게 좋아집니다. 다 쓰면 아래 <b>저장</b>을 눌러 <code>intake.json</code>을 Claude에게 주세요. 입력한 내용은 이 브라우저에 자동으로 보관됩니다.</p>
+
+  <ul id="warnings" aria-live="polite"></ul>
+
+  <section class="card">
+    <h2>기본 정보</h2>
+    <div class="f"><span class="lbl">학교급</span>
+      <div class="chips" data-key="schoolLevel" data-single>
+        <button type="button" data-v="elem">초등학교</button><button type="button" data-v="middle">중학교</button><button type="button" data-v="high">고등학교</button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="f"><label for="grade">학년</label>
+        <select id="grade" data-key="grade"><option value="">—</option><option>1학년</option><option>2학년</option><option>3학년</option><option>4학년</option><option>5학년</option><option>6학년</option></select>
+      </div>
+      <div class="f"><label for="classSize">반 · 인원</label><input id="classSize" type="text" data-key="classSize" placeholder="예: 3반 24명"></div>
+      <div class="f"><label for="subject">교과</label><input id="subject" type="text" data-key="subject" list="subjects" placeholder="예: 과학"></div>
+      <div class="f"><label for="unit">단원</label><input id="unit" type="text" data-key="unit" placeholder="예: 계절의 변화"></div>
+    </div>
+    <div class="row">
+      <div class="f"><span class="lbl">차시</span>
+        <div class="inline"><input type="number" min="1" id="lessonN" aria-label="몇 차시" placeholder="4"> / <input type="number" min="1" id="lessonT" aria-label="전체 차시" placeholder="9"> 차시</div>
+      </div>
+      <div class="f"><label for="minutes">수업 시간(분)</label><input id="minutes" type="number" min="10" max="120" data-key="minutes" placeholder="초 40 · 중 45 · 고 50"></div>
+    </div>
+    <div class="f"><span class="lbl">시간 배분 (분)</span>
+      <div class="inline"><span class="pair">도입 <input type="number" min="0" id="tIntro" aria-label="도입 분"></span><span class="pair">전개 <input type="number" min="0" id="tDev" aria-label="전개 분"></span><span class="pair">정리 <input type="number" min="0" id="tWrap" aria-label="정리 분"></span></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>목표와 학생</h2>
+    <div class="f"><label for="standards"><span class="star">★</span>성취기준</label>
+      <textarea id="standards" data-key="standards" placeholder="예: [6과12-03] 태양 고도와 기온의 관계, 계절에 따른 태양의 남중 고도 변화를 관찰하고 …"></textarea>
+      <p class="hint">교과서·지도서 문장을 그대로 붙여넣으세요. 코드는 몰라도 됩니다. 비우면 AI가 지어내지 않고 "(교사 입력 필요)"로 둡니다.</p>
+    </div>
+    <div class="f"><label for="objectives"><span class="star">★</span>학습 목표 <span class="hint">(1~3개, 한 줄에 하나)</span></label>
+      <textarea id="objectives" data-key="objectives" data-list placeholder="예: 자전축이 기울어진 채 지구가 공전하기 때문에 계절이 생긴다는 것을 모형으로 설명할 수 있다."></textarea>
+    </div>
+    <div class="f"><label for="misconceptions"><span class="star">★</span>학생들이 자주 하는 잘못된 생각 <span class="hint">(한 줄에 하나)</span></label>
+      <textarea id="misconceptions" data-key="misconceptions" data-list placeholder="예: 여름에는 지구가 태양과 가까워서 덥다고 생각한다."></textarea>
+    </div>
+    <div class="row">
+      <div class="f"><label for="mustInclude"><span class="star">★</span>꼭 넣을 것 <span class="hint">(한 줄에 하나)</span></label>
+        <textarea id="mustInclude" data-key="mustInclude" data-list placeholder="예: 손전등 실험 결과를 모둠 발표로 공유하는 시간"></textarea>
+      </div>
+      <div class="f"><label for="mustExclude">빼 줄 것 <span class="hint">(한 줄에 하나)</span></label>
+        <textarea id="mustExclude" data-key="mustExclude" data-list placeholder="예: 케플러 법칙"></textarea>
+      </div>
+    </div>
+    <div class="f"><label for="etcRequest">메모</label>
+      <textarea id="etcRequest" data-key="etcRequest" placeholder="학급 분위기, 도입 아이디어, 부탁하고 싶은 것 — 무엇이든"></textarea>
+    </div>
+  </section>
+
+  <details class="card" id="more">
+    <summary>더 정하고 싶으면 <span>(선택) — 필요한 칸만</span></summary>
+
+    <h3>학생</h3>
+    <div class="row">
+      <div class="f"><label for="classLevel">학급 수준</label><input id="classLevel" type="text" data-key="classLevel" placeholder="예: 실험 결과 해석을 어려워함"></div>
+      <div class="f"><label for="classNeeds">배려가 필요한 학생</label><input id="classNeeds" type="text" data-key="classNeeds" placeholder="예: 느린 학습자 2명 — 문항 수를 줄여 주세요"></div>
+    </div>
+    <div class="f"><label for="priorKnowledge">사전 지식</label><textarea id="priorKnowledge" data-key="priorKnowledge" placeholder="예: 하루 동안 태양 고도가 달라진다는 것은 지난 차시에 배움"></textarea></div>
+
+    <h3>내용</h3>
+    <div class="f"><label for="keyTerms">핵심 낱말</label><input id="keyTerms" type="text" data-key="keyTerms" data-list data-comma placeholder="쉼표로 구분 — 예: 태양 고도, 남중 고도, 자전축"></div>
+    <div class="f"><label for="excludeScope">다루지 않을 범위 <span class="hint">(한 줄에 하나)</span></label><textarea id="excludeScope" data-key="excludeScope" data-list placeholder="예: 지구 자전(낮과 밤)은 이전 차시에서 다룸"></textarea></div>
+
+    <h3>수업 흐름</h3>
+    <div class="row">
+      <div class="f"><label for="model">수업 모형</label><input id="model" type="text" data-key="model" placeholder="예: 모형 탐구 수업 (예상 → 실험 → 설명)"></div>
+      <div class="f"><label for="materials">준비물</label><input id="materials" type="text" data-key="materials" data-list data-comma placeholder="쉼표로 구분 — 예: 손전등, 지구본"></div>
+    </div>
+    <div class="f"><span class="lbl">활동 형태</span>
+      <div class="chips" data-key="activityMode" data-single><button type="button" data-v="individual">개인</button><button type="button" data-v="pair">짝</button><button type="button" data-v="group">모둠</button></div>
+    </div>
+    <div class="f"><label for="hookIdea">도입 아이디어</label><textarea id="hookIdea" data-key="hookIdea" placeholder="예: 여름 낮·겨울 낮 사진을 나란히 보여 주고 왜 다른지 예상하게 하기"></textarea></div>
+
+    <h3>평가</h3>
+    <div class="row">
+      <div class="f"><label for="quizStyle">형성평가 방식</label><input id="quizStyle" type="text" data-key="quizStyle" placeholder="예: 손가락으로 번호 동시에 들기"></div>
+      <div class="f"><label for="quizCount">형성평가 개수</label><input id="quizCount" type="number" min="0" data-key="quizCount" placeholder="예: 2"></div>
+    </div>
+    <div class="f"><span class="lbl">활동지 문항 수 <span class="hint">(5~14개 안에서)</span></span>
+      <div class="inline"><input type="number" min="1" id="wqLo" aria-label="최소 문항 수" placeholder="8"> ~ <input type="number" min="1" id="wqHi" aria-label="최대 문항 수" placeholder="10"> 개</div>
+    </div>
+    <div class="f"><span class="lbl">문항 유형 <span class="hint">(여러 개 고를 수 있음)</span></span>
+      <div class="chips" data-key="worksheetTypes"><button type="button" data-v="choice">선택형</button><button type="button" data-v="ox">OX</button><button type="button" data-v="match">짝짓기</button><button type="button" data-v="table">표</button><button type="button" data-v="short">서술형</button><button type="button" data-v="draw">그리기</button></div>
+    </div>
+    <div class="row">
+      <div class="f"><span class="lbl">난이도</span>
+        <div class="chips" data-key="difficulty" data-single><button type="button" data-v="easy">쉬움</button><button type="button" data-v="normal">보통</button><button type="button" data-v="hard">어려움</button></div>
+      </div>
+      <div class="f"><span class="lbl">서술형 문항</span>
+        <div class="chips" data-key="hasEssay" data-single><button type="button" data-v="yes">넣기</button><button type="button" data-v="no">빼기</button></div>
+      </div>
+    </div>
+
+    <h3>자료 모양</h3>
+    <div class="f"><span class="lbl">슬라이드 장수 <span class="hint">(8~20장 안에서)</span></span>
+      <div class="inline"><input type="number" min="1" id="slLo" aria-label="최소 장수" placeholder="12"> ~ <input type="number" min="1" id="slHi" aria-label="최대 장수" placeholder="16"> 장</div>
+    </div>
+    <div class="f"><span class="lbl">스타일</span>
+      <div class="chips" data-key="profile" data-single><button type="button" data-v="default">기본</button><button type="button" data-v="evidence">증거 중심</button></div>
+      <p class="hint">증거 중심: 주장·공식 바로 옆에 근거(실험·역사)를 붙이고, 대립하는 설명은 다음 장에서 자료로 판정하는 탐구 스타일.</p>
+    </div>
+    <div class="row">
+      <div class="f"><span class="lbl">제목 문체</span>
+        <div class="chips" data-key="titleStyle" data-single><button type="button" data-v="message">메시지형</button><button type="button" data-v="question">질문형</button><button type="button" data-v="noun">명사형</button></div>
+      </div>
+      <div class="f"><span class="lbl">말투</span>
+        <div class="chips" data-key="tone" data-single><button type="button" data-v="해요체">해요체</button><button type="button" data-v="합쇼체">합쇼체</button></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="f"><label for="imageCount">생성 이미지 상한</label><input id="imageCount" type="number" min="0" data-key="imageCount" placeholder="비우면 필요한 만큼"></div>
+      <div class="f"><label for="imageUse">이미지 용도</label><input id="imageUse" type="text" data-key="imageUse" placeholder="예: 표지, 도입 장면, 실험 절차 사진"></div>
+    </div>
+    <div class="f"><span class="lbl">만들 것 <span class="hint">(안 고르면 네 가지 모두)</span></span>
+      <div class="chips" data-key="deliverables"><button type="button" data-v="slides">슬라이드</button><button type="button" data-v="worksheet">활동지</button><button type="button" data-v="answerKey">정답지</button><button type="button" data-v="lessonPlan">지도안</button></div>
+    </div>
+
+    <h3>참고 자료</h3>
+    <div class="f"><label for="textbookPages">교과서 쪽수</label><input id="textbookPages" type="text" data-key="textbookPages" placeholder="예: 132~137쪽"></div>
+    <div class="f"><label for="referenceMaterial">기존 자료</label><textarea id="referenceMaterial" data-key="referenceMaterial" placeholder="참고할 PPT·학습지의 파일 이름이나 설명 — 순서·구성만 참고하고 문장·그림은 베끼지 않습니다"></textarea></div>
+    <div class="f"><label for="facts">수치·사실과 출처 <span class="hint">(한 줄에 하나, "내용 | 출처")</span></label>
+      <textarea id="facts" data-key="facts" placeholder="예: 지구의 자전축은 약 23.5° 기울어져 있다 | 초등 과학 6-2 교과서"></textarea>
+      <p class="hint">화면·활동지에 나오는 모든 수치는 출처가 있어야 합니다.</p>
+    </div>
+  </details>
+
+  <datalist id="subjects"><option>국어</option><option>수학</option><option>사회</option><option>과학</option><option>영어</option><option>도덕</option><option>실과</option><option>기술·가정</option><option>정보</option><option>음악</option><option>미술</option><option>체육</option><option>역사</option><option>통합과학</option><option>물리학</option><option>화학</option><option>생명과학</option><option>지구과학</option></datalist>
+</main>
+
+<div class="bar"><div class="bar-in">
+  <div id="status"></div>
+  <span class="saved" id="savedMsg" hidden>저장했습니다</span>
+  <button type="button" class="btn" id="loadBtn">불러오기</button>
+  <button type="button" class="btn" id="resetBtn">비우기</button>
+  <button type="button" class="btn primary" id="saveBtn">intake.json 저장</button>
+  <input type="file" id="fileIn" accept=".json,application/json" hidden>
+</div></div>
+
+<script>
+(() => {
+  const STORE = 'classforge-intake-form-v2';
+  const $ = id => document.getElementById(id);
+  const STAR = ['standards', 'objectives', 'misconceptions', 'mustInclude'];
+  const LABEL = { standards: '성취기준', objectives: '학습 목표', misconceptions: '잘못된 생각', mustInclude: '꼭 넣을 것' };
+  const DEFAULT_MIN = { elem: 40, middle: 45, high: 50 };
+  const lines = s => String(s || '').split(/\r?\n/).map(l => l.replace(/^\s*[-*•]\s*/, '').trim()).filter(Boolean);
+  const num = el => el.value === '' ? null : Number(el.value);
+
+  // 고르는 칸(chips): data-single이면 하나만, 다시 누르면 해제
+  document.querySelectorAll('.chips').forEach(group => {
+    group.querySelectorAll('button').forEach(b => {
+      b.setAttribute('aria-pressed', 'false');
+      b.addEventListener('click', () => {
+        const on = b.getAttribute('aria-pressed') !== 'true';
+        if (group.hasAttribute('data-single')) group.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', 'false'));
+        b.setAttribute('aria-pressed', String(on));
+        changed();
+      });
+    });
+  });
+
+  function collect() {
+    const f = {};
+    document.querySelectorAll('[data-key]').forEach(el => {
+      const key = el.dataset.key;
+      if (el.classList.contains('chips')) {
+        const vs = [...el.querySelectorAll('button[aria-pressed="true"]')].map(b => b.dataset.v);
+        if (vs.length) f[key] = el.hasAttribute('data-single') ? vs[0] : vs;
+      } else if (key === 'facts') {
+        const items = lines(el.value).map(l => { const i = l.indexOf('|'); return i < 0 ? { text: l, source: '' } : { text: l.slice(0, i).trim(), source: l.slice(i + 1).trim() }; });
+        if (items.length) f.facts = items;
+      } else if (el.hasAttribute('data-list')) {
+        const items = el.hasAttribute('data-comma') ? el.value.split(/[,，、·]/).map(s => s.trim()).filter(Boolean) : lines(el.value);
+        if (items.length) f[key] = items;
+      } else if (el.type === 'number') {
+        if (el.value !== '') f[key] = Number(el.value);
+      } else if (el.value.trim()) f[key] = el.value.trim();
+    });
+    const n = num($('lessonN')), t = num($('lessonT'));
+    if (n != null) f.lesson = t != null ? `${n} / ${t}` : String(n);
+    const ta = { intro: num($('tIntro')), develop: num($('tDev')), wrap: num($('tWrap')) };
+    if (Object.values(ta).some(v => v != null)) f.timeAllocation = ta;
+    const range = (a, b) => { const lo = num($(a)), hi = num($(b)); return lo == null && hi == null ? null : [lo ?? hi, hi ?? lo]; };
+    const wq = range('wqLo', 'wqHi'); if (wq) f.worksheetQCount = wq;
+    const sl = range('slLo', 'slHi'); if (sl) f.slidesCount = sl;
+    return f;
+  }
+
+  function fill(f) {
+    document.querySelectorAll('[data-key]').forEach(el => {
+      const key = el.dataset.key, v = f[key];
+      if (el.classList.contains('chips')) {
+        const vs = v == null ? [] : [].concat(v);
+        el.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(vs.includes(b.dataset.v))));
+      } else if (key === 'facts') {
+        el.value = (v || []).map(x => typeof x === 'string' ? x : (x.source ? `${x.text} | ${x.source}` : x.text)).join('\n');
+      } else if (el.hasAttribute('data-list')) {
+        el.value = [].concat(v || []).join(el.hasAttribute('data-comma') ? ', ' : '\n');
+      } else el.value = v == null ? '' : (Array.isArray(v) ? v.join('\n') : v);
+    });
+    const m = String(f.lesson || '').match(/(\d+)\s*(?:\/\s*(\d+))?/);
+    $('lessonN').value = m ? m[1] : ''; $('lessonT').value = m && m[2] ? m[2] : '';
+    const ta = f.timeAllocation || {};
+    $('tIntro').value = ta.intro ?? ''; $('tDev').value = ta.develop ?? ''; $('tWrap').value = ta.wrap ?? '';
+    const r = (a, b, v) => { $(a).value = v ? v[0] : ''; $(b).value = v ? v[1] : ''; };
+    r('wqLo', 'wqHi', f.worksheetQCount); r('slLo', 'slHi', f.slidesCount);
+    if (['classLevel', 'classNeeds', 'priorKnowledge', 'keyTerms', 'excludeScope', 'model', 'materials', 'activityMode', 'hookIdea', 'quizStyle', 'quizCount', 'worksheetQCount', 'worksheetTypes', 'difficulty', 'hasEssay', 'slidesCount', 'profile', 'titleStyle', 'tone', 'imageCount', 'imageUse', 'deliverables', 'textbookPages', 'referenceMaterial', 'facts'].some(k => f[k] != null)) $('more').open = true;
+  }
+
+  // scripts/intake.mjs의 모순 경고와 같은 기준(설계 전에 미리 보이게)
+  function warnings(f) {
+    const w = [];
+    const minutes = f.minutes ?? DEFAULT_MIN[f.schoolLevel];
+    const ta = f.timeAllocation;
+    if (ta && minutes && [ta.intro, ta.develop, ta.wrap].every(v => v != null)) {
+      const sum = ta.intro + ta.develop + ta.wrap;
+      if (sum !== minutes) w.push(`시간 배분 합 ${sum}분이 수업 시간 ${minutes}분과 다릅니다.`);
+    }
+    if (f.objectives && f.objectives.length > 3) w.push(`학습 목표가 ${f.objectives.length}개입니다 — 한 차시에 1~3개가 기준입니다.`);
+    const wq = f.worksheetQCount, sl = f.slidesCount;
+    if (wq && wq[0] > wq[1]) w.push('활동지 문항 수의 최소값이 최대값보다 큽니다.');
+    if (wq && (wq[0] < 5 || wq[1] > 14)) w.push(`활동지 문항 ${wq[0]}~${wq[1]}개는 기준(5~14개)을 벗어납니다.`);
+    if (sl && sl[0] > sl[1]) w.push('슬라이드 장수의 최소값이 최대값보다 큽니다.');
+    if (sl && (sl[0] < 8 || sl[1] > 20)) w.push(`슬라이드 ${sl[0]}~${sl[1]}장은 기준(8~20장)을 벗어납니다.`);
+    if (f.quizCount != null && sl && f.quizCount > sl[1] / 4) w.push(`형성평가 ${f.quizCount}개는 슬라이드 수에 비해 많습니다(대략 4장당 1개).`);
+    if (f.hasEssay === 'no' && (f.worksheetTypes || []).includes('short')) w.push('서술형을 빼 달라고 했는데 문항 유형에 서술형이 골라져 있습니다.');
+    if (f.profile === 'evidence' && f.titleStyle === 'question') w.push('증거 중심 스타일에는 메시지형·명사형 제목이 어울립니다.');
+    if (f.standards && f.standards.length < 10) w.push('성취기준이 너무 짧아 보입니다 — 문장 전체를 붙여넣었는지 확인하세요.');
+    const nrm = s => s.replace(/\s+/g, '').toLowerCase();
+    for (const x of f.mustExclude || []) if ([...(f.mustInclude || []), ...(f.keyTerms || [])].some(y => nrm(y) === nrm(x))) w.push(`"${x}"가 빼 줄 것과 꼭 넣을 것(또는 핵심 낱말)에 모두 있습니다.`);
+    for (const x of f.facts || []) if (!x.source) w.push(`출처가 없는 수치·사실: "${x.text.slice(0, 30)}" — "내용 | 출처"로 쓰세요.`);
+    return w;
+  }
+
+  function render() {
+    const f = collect();
+    const ws = warnings(f);
+    $('warnings').innerHTML = '';
+    ws.forEach(t => { const li = document.createElement('li'); li.textContent = '! ' + t; $('warnings').appendChild(li); });
+    const n = Object.keys(f).length;
+    const miss = STAR.filter(k => f[k] == null).map(k => LABEL[k]);
+    $('status').innerHTML = `채운 칸 <b>${n}</b>개` + (miss.length ? ` · <span class="star">★</span> 비어 있음: ${miss.join(', ')}` : ' · ★ 모두 채움');
+    $('minutes').placeholder = f.schoolLevel ? `비우면 ${DEFAULT_MIN[f.schoolLevel]}` : '초 40 · 중 45 · 고 50';
+    return f;
+  }
+
+  function changed() {
+    const f = render();
+    try { localStorage.setItem(STORE, JSON.stringify(f)); } catch (e) { /* 저장소를 못 쓰는 환경 */ }
+    $('savedMsg').hidden = true;
+  }
+
+  document.addEventListener('input', e => { if (e.target.matches('input, textarea, select')) changed(); });
+
+  $('saveBtn').addEventListener('click', () => {
+    const doc = { classforge: 'intake', version: 2, source: 'form', createdAt: new Date().toISOString(), fields: collect() };
+    const blob = new Blob([JSON.stringify(doc, null, 2) + '\n'], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'intake.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    $('savedMsg').hidden = false;
+  });
+  $('loadBtn').addEventListener('click', () => $('fileIn').click());
+  $('fileIn').addEventListener('change', async e => {
+    const file = e.target.files[0]; if (!file) return;
+    try {
+      const doc = JSON.parse(await file.text());
+      fill(doc.fields || doc.filled || {});
+      changed();
+    } catch (err) { alert('intake.json을 읽지 못했습니다: ' + err.message); }
+    e.target.value = '';
+  });
+  $('resetBtn').addEventListener('click', () => {
+    if (!confirm('입력한 내용을 모두 지울까요?')) return;
+    fill({}); $('more').open = false; changed();
+  });
+
+  try { const saved = JSON.parse(localStorage.getItem(STORE) || 'null'); if (saved) fill(saved); } catch (e) { /* 무시 */ }
+  render();
+})();
+</script>
+</body>
+</html>

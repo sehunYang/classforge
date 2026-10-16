@@ -36,7 +36,21 @@ Chrome(또는 Edge)이 필요하다. 다른 경로면 `CLASSFORGE_CHROME` 환경
 정밀 도식(`{tikz}`/`{refraction}`/`{circuit}`/`{particles}`/`{geometry}`/`{vectors}`)과 인라인 수식(`$...$`)은 실제 LaTeX으로 조판한다. **MiKTeX(Windows) 또는 TeX Live(macOS·Linux)를 설치**하면(예: `winget install MiKTeX.MiKTeX`) `build.mjs`가 자동으로 찾아 쓴다(`scripts/diagrams.mjs`의 `findTexBin` — PATH → 흔한 설치 경로 → `CLASSFORGE_TEX_BIN` 환경변수 순으로 찾는다, 설치 안 해도 동작은 하되 도식은 node-tikzjax 오프라인 WASM 대체·수식은 CSS 근사 대체로 품질이 낮아진다). MiKTeX는 처음 쓰는 패키지(circuitikz 등)를 자동 설치하므로(AutoInstall) 한 번은 `initexmf --set-config-value=[MPM]AutoInstall=1`로 켜 둔다 — 그 뒤 첫 컴파일만 패키지를 받느라 느리고(수십 초), 그다음은 도식 하나에 1초 안팎이다. 어느 엔진을 썼는지는 `out/.diagram-engine.json`에 남는다. 자세히는 `references/design.md`의 "정밀 도식은 TikZ로"·"수식 인라인 표기".
 
 ### 1. 입력 확인
-교사가 수업 설계서를 채워 줬다면(`templates/수업설계서.md` 양식, 전부든 일부든) `intake.mjs`로 먼저 파싱하고 아래 질문은 건너뛴다(`references/intake.md`). 설계서가 없으면 요청에서 다음을 뽑는다. 빠진 것 중 **성취기준과 학교급/학년만** 물어보고 나머지는 합리적으로 정한 뒤 알린다.
+교사의 설계는 세 가지 길로 받는다. 어느 길이든 `intake.mjs`가 같은 intake 객체로 읽고, S7 게이트가 같은 기준으로 반영 여부를 검사한다(`references/intake.md`).
+- **설계서.md** — `templates/수업설계서.md`("라벨: 값"으로 쓰는 2판. 옛 `<!-- key: -->` 1판도 그대로 읽힌다)
+- **브라우저 양식** — 교사가 `templates/수업설계서.html`을 열어 채우고 저장한 `intake.json`(인터넷 없이 동작)
+- **대화** — 파일 없이 요청만 받은 경우. 아래 "대화로 받기"대로 묻고 `<폴더>/intake.json`을 직접 쓴다.
+
+파일을 받았으면 `node "$SKILL_DIR/scripts/intake.mjs" <파일> --json <폴더>/intake.json`으로 먼저 파싱하고 질문은 건너뛴다. 교사가 양식을 원하면 두 템플릿 경로를 알려 준다(md가 낯설면 html을 권한다).
+
+**대화로 받기**(설계서가 없을 때): 이미 요청에 있는 것은 빼고, 필요한 질문을 **한 번에 묶어** 묻는다(여러 번 오가지 않는다).
+- 꼭 묻는 것: 학교급·학년, 성취기준 원문(모르면 비워 둬도 된다고 알린다)
+- 같이 물으면 결과가 크게 좋아지는 것(★): 학습 목표, 학생들이 자주 하는 잘못된 생각, 꼭 넣을 것·빼 줄 것
+- 그 밖에는 묻지 않고 합리적으로 정한 뒤 알린다.
+
+답을 받으면 **교사가 실제로 말한 값만** `fields`에 넣어 `<폴더>/intake.json`을 쓴다 — `{"classforge":"intake","version":2,"source":"chat","fields":{...}}`, key는 `references/intake.md` 2절 표. AI가 정한 값은 넣지 않는다(S7이 "교사 요청"으로 검사하기 때문). 쓴 뒤 `node "$SKILL_DIR/scripts/intake.mjs" <폴더>/intake.json`으로 검증하고, lesson.json의 `meta.intake`에 `"intake.json"`을 적는다.
+
+어느 길이든 lesson.json에 들어갈 기본값은 다음과 같다.
 - 학교급(`elem`/`middle`/`high`)·학년, 교과, 단원, 차시(예: 4/9차시), 수업 시간(초 40분, 중 45분, 고 50분)
 - 성취기준: 교사가 준 원문을 그대로 쓴다. 받지 못했으면 코드는 비우고 `"verified": false`로 둔다. **성취기준 코드도 문장도 지어내지 않는다** — 원문이 없으면 text에 정확히 `"(교사 입력 필요)"`만 쓴다. 지도안에 그대로 표시된다.
 - 수업 형태(모둠/짝/개인), 준비물 제약, 참고 자료(교과서 쪽, 기존 PPT·학습지 사진)
@@ -85,7 +99,7 @@ FAIL이 하나라도 있으면 메시지의 `→` 힌트대로 lesson.json을 �
 - 산출물 경로 4개와 사용법(슬라이드는 Chrome으로 열고 F 전체화면, →/Space 넘김, N 노트, T 타이머)
 - 교사가 확인해야 할 것: `verified:false` 성취기준, `facts`의 출처, 교과서 표현과의 차이
 - 수정 요청은 lesson.json만 고쳐 다시 빌드하면 된다는 점
-- 설계서를 받았다면: 채운 항목 중 반영된 것/AI가 정한 것, `intake.mjs`의 경고, `--check`(S7)에서 `n/a`로 남아 사람이 마지막으로 확인해야 할 항목(`references/intake.md` 5절)
+- 설계서·양식·대화로 intake를 받았다면: 채운 항목 중 반영된 것/AI가 정한 것, `intake.mjs`의 경고, `--check`(S7)에서 `n/a`로 남아 사람이 마지막으로 확인해야 할 항목(`references/intake.md` 5절)
 
 ### 9. 회고
 `<폴더>/retro.md`에 3~5줄: 걸린 게이트, 원인, 고친 방법, 다음에 처음부터 다르게 할 것.
@@ -103,6 +117,6 @@ FAIL이 하나라도 있으면 메시지의 `→` 힌트대로 lesson.json을 �
 - `references/design.md` — 디자인 규칙, SVG 삽화 작성법, 육안 검수 체크리스트
 - `references/pedagogy.md` — 목표·발문·형성평가·활동지·지도안 작성 규칙
 - `references/gates.md` — 게이트 20개(+KoPub 사용 시 B9, 21개), 오류 코드별 해결법
-- `references/intake.md` — 수업 설계서(.md) 반영 절차, intake.json 매핑표, S7 게이트
+- `references/intake.md` — 설계 입력 세 갈래(설계서.md·브라우저 양식·대화), intake.json 형식과 매핑표, S7 게이트
 - `references/images.md` — 이미지 브리프 → 프롬프트 컴파일 → 생성 절차, I1 게이트
 - `CREDITS.md` — 참고한 오픈소스와 글꼴 라이선스

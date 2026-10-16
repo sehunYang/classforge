@@ -6,7 +6,7 @@ import path from 'node:path';
 import os from 'node:os';
 import crypto from 'node:crypto';
 import { loadLesson, launch, fileUrl, plain, SLIDE_TYPES, ITEM_TYPES } from './lib.mjs';
-import { parseIntake, checkReflection } from './intake.mjs';
+import { loadIntake, checkReflection } from './intake.mjs';
 import { collect as collectImageRequests, stepChainPrevStates, ensureClassroomClause, samePromptExceptPalette, runCheckPrompt, sha256, normalizePromptText } from './images.mjs';
 import { compileCurve } from './visuals.mjs';
 import { toTikzSpec } from './diagrams.mjs';
@@ -538,12 +538,13 @@ await gate('S6', '성취기준', (err, warn) => {
 });
 
 // ── S7 설계서 반영 ───────────────────────────────────────
-// meta.intake(수업설계서.md 경로, lesson.json 기준 상대 경로)가 있을 때만 검사한다. references/intake.md 참고.
+// meta.intake(수업설계서.md 또는 intake.json 경로, lesson.json 기준 상대 경로)가 있을 때만 검사한다. references/intake.md 참고.
 await gate('S7', '설계서 반영', (err, warn) => {
   if (!M.intake) { warn('S7-NONE', '설계서 없음'); return; }
   const formPath = path.resolve(ctx.dir, M.intake);
   if (!fs.existsSync(formPath)) return err('S7-FILE', `meta.intake 경로에 파일 없음: ${M.intake}`);
-  const intake = parseIntake(fs.readFileSync(formPath, 'utf8'));
+  let intake;
+  try { intake = loadIntake(formPath); } catch (e) { return err('S7-FILE', `meta.intake 파일을 읽지 못함: ${e.message}`, '설계서.md 또는 intake.json 형식을 확인하세요(references/intake.md 0.5절)'); }
   intake.warnings.forEach(w => warn('S7-' + w.code, w.msg));
   const report = checkReflection(intake, L, out);
   for (const it of report.items)
@@ -911,7 +912,7 @@ await gate('E1', '증거 중심', (err, warn) => {
   if (!hasMisconceptions && M.intake) {
     try {
       const formPath = path.resolve(ctx.dir, M.intake);
-      if (fs.existsSync(formPath)) hasMisconceptions = parseIntake(fs.readFileSync(formPath, 'utf8')).misconceptions.length > 0;
+      if (fs.existsSync(formPath)) hasMisconceptions = loadIntake(formPath).misconceptions.length > 0;
     } catch { /* 파싱 실패는 S7이 이미 알린다 */ }
   }
   const hasCompare = slides.some(s => s.type === 'compare' && s.kind !== 'contrast');   // contrast는 판정이 아니라 대비이므로 그 자체로는 역사 서사를 요구하지 않는다
