@@ -28,12 +28,12 @@
   "profile": "evidence",                // (선택) "default"(기본) | "evidence"(증거 중심 탐구 스타일 — 공식 옆에 근거, 대립 설명은 판정 전 대칭 배치, 절제된 디자인. `pedagogy.md` §10)
   "tone": "해요체",                     // (선택) "해요체" | "합쇼체" — 지정 없으면 초·중 해요체, 고 합쇼체 (템플릿 고정 문구에 적용)
   "font": "auto",                       // (선택) "auto"(기본, evidence 프로파일이고 PC에 설치돼 있으면 KoPub) | "kopub" | "pretendard" — `design.md` "글꼴"
-  "intake": "설계서.md",                // (선택) 수업 설계서 경로(lesson.json 기준 상대 경로) — 있으면 게이트 S7이 반영 여부를 확인
+  "intake": "수업설계서.txt",            // (선택) 수업 설계서(.txt·.md) 또는 intake.json 경로(lesson.json 기준 상대 경로) — 있으면 게이트 S7이 반영 여부를 확인
   "objectivesStudent": ["실험 결과로 두 가설 중 타당한 쪽을 판단할 수 있다."],  // (선택, evidence) 학생용 목표 — 아래 "meta.objectivesStudent" 참고
   "standards": [ { "code": "[6과12-03]", "text": "원문 그대로", "verified": true } ]
 }
 ```
-성취기준을 교사에게 받지 못했으면 `"code": ""`, `"verified": false`. 코드를 추측해 넣지 않는다. `profile: "evidence"`는 증거 중심 탐구 스타일이다 — 공식·주장 옆에 그 근거(실험·역사)를 바로 붙이고, 대립 설명은 대칭으로 놓은 뒤 다음 슬라이드에서 실험으로 판정하며, 개념 슬라이드 한 장에 정의 하나만 둔다(저작 규칙은 `references/pedagogy.md` §10). 디자인은 절제되어 제목 두께가 한 단계 낮고 챕터 전환도 종이 배경을 유지하며, 코럴은 움직이는 핵심 요소 하나에만 쓴다(`references/design.md`). B5 게이트의 "내용이 위쪽에만 몰림" 경고는 이 프로파일에서 의도된 여백으로 보고 건너뛴다. 이 세부 저작 규칙은 게이트 E1이 확인한다 — 설계서로 프로파일을 요청한 경우 S7은 `meta.profile`(과 `meta.tone`)이 요청한 값과 같은지만 본다. `tone`은 build.mjs의 문체 고정 문구(안내문 등)가 해요체/합쇼체 중 무엇을 쓸지 정한다. `intake`는 교사가 채운 `templates/수업설계서.md`를 `intake.mjs`로 파싱해 반영한 경우에만 쓴다(`references/intake.md`).
+성취기준을 교사에게 받지 못했으면 `"code": ""`, `"verified": false`. 코드를 추측해 넣지 않는다. `profile: "evidence"`는 증거 중심 탐구 스타일이다 — 공식·주장 옆에 그 근거(실험·역사)를 바로 붙이고, 대립 설명은 대칭으로 놓은 뒤 다음 슬라이드에서 실험으로 판정하며, 개념 슬라이드 한 장에 정의 하나만 둔다(저작 규칙은 `references/pedagogy.md` §10). 디자인은 절제되어 제목 두께가 한 단계 낮고 챕터 전환도 종이 배경을 유지하며, 코럴은 움직이는 핵심 요소 하나에만 쓴다(`references/design.md`). B5 게이트의 "내용이 위쪽에만 몰림" 경고는 이 프로파일에서 의도된 여백으로 보고 건너뛴다. 이 세부 저작 규칙은 게이트 E1이 확인한다 — 설계서로 프로파일을 요청한 경우 S7은 `meta.profile`(과 `meta.tone`)이 요청한 값과 같은지만 본다. `tone`은 build.mjs의 문체 고정 문구(안내문 등)가 해요체/합쇼체 중 무엇을 쓸지 정한다. `intake`는 교사가 준 설계(`templates/수업설계서.txt`로 쓴 파일, 브라우저 양식으로 저장한 파일, 대화로 받아 적은 intake.json)를 `intake.mjs`로 읽어 반영한 경우에만 쓴다(`references/intake.md`).
 
 ## images (선택, 최상위)
 ```json

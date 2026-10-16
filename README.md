@@ -54,7 +54,7 @@ Claude Code 스킬 — 수업 슬라이드 · 학생 활동지 · 정답지 · �
 
 ```mermaid
 flowchart LR
-  A[수업 설계서.md<br/>전부 또는 일부] --> B[intake.mjs<br/>파싱 · 모순 경고]
+  A[설계서 파일 · 브라우저 양식 · 대화<br/>전부 또는 일부] --> B[intake.mjs<br/>intake.json · 모순 경고]
   B --> C[lesson.json<br/>거꾸로 설계]
   C --> D[images.mjs · diagrams.mjs<br/>생성 이미지 · TikZ 도식]
   D --> E[build.mjs<br/>HTML · PDF · 캡처]
@@ -66,12 +66,21 @@ flowchart LR
 
 ## 핵심 기능
 
-### 1. 수업 설계서 — 채운 만큼 그대로
-[`templates/수업설계서.md`](templates/수업설계서.md)를 교사가 필요한 칸만 채웁니다. 비운 칸은 AI가 수업 설계 규칙으로 정하고, 채운 칸은 게이트 **S7**이 결과물(학생이 보는 화면·활동지)에 실제로 반영됐는지 대조합니다. ★ 표시 4칸(성취기준 · 학습 목표 · 예상 오개념 · 반드시 넣을 것)은 채우면 결과가 가장 크게 좋아집니다. 성취기준을 비우면 AI가 지어내지 않고 `(교사 입력 필요)`로 남깁니다.
+### 1. 수업 설계서 — 채운 만큼 그대로, 편한 방법으로
+교사는 아래 세 가지 중 편한 방법으로 설계를 넘깁니다. 필요한 칸만 채우면 됩니다.
+
+| 방법 | 이렇게 |
+|---|---|
+| **브라우저 양식** | [`templates/수업설계서.html`](templates/수업설계서.html)을 더블클릭해 열고, 고르는 칸은 눌러서 고르고, 다 쓰면 **저장하기** → 다운로드 폴더에 생긴 `수업설계서-교과-단원` 파일을 Claude에게 보냅니다. 보고서 모양의 문서(목차·작성 현황·검토 의견)로 채우고 그대로 인쇄할 수도 있습니다. 개발 용어 없이 쓰도록 만들었고, 인터넷 없이 동작하며 시간 합·문항 수 같은 모순을 바로 알려 줍니다 |
+| **설계서 파일** | [`templates/수업설계서.txt`](templates/수업설계서.txt)를 메모장으로 열어 `대상: 중2 3반 24명`, `활동: 모둠`처럼 낱말로 적습니다. `※`·`예)` 줄은 설명이라 지우지 않아도 되고, 개발 문법 없이 ■ 제목과 `-` 줄만 씁니다 |
+| **대화** | 파일 없이 "중2 광합성 4차시 만들어 줘"라고 하면, Claude가 꼭 필요한 것만 한 번에 묻고 답을 `intake.json`으로 기록합니다 |
+
+어느 방법이든 같은 `intake.json`이 되어, 비운 칸은 AI가 수업 설계 규칙으로 정하고 채운 칸은 게이트 **S7**이 결과물(학생이 보는 화면·활동지)에 실제로 반영됐는지 대조합니다. ★ 표시 4칸(성취기준 · 학습 목표 · 학생들이 자주 하는 잘못된 생각 · 꼭 넣을 것)은 채우면 결과가 가장 크게 좋아집니다. 성취기준을 비우면 AI가 지어내지 않고 `(교사 입력 필요)`로 남깁니다. 예전 양식(`<!-- key: -->` 주석)으로 쓴 설계서도 그대로 읽힙니다.
 
 ```bash
-node scripts/intake.mjs 수업설계서.md                    # 채운 항목 / AI가 정할 항목, 모순 경고
-node scripts/intake.mjs --check 수업설계서.md lesson.json # 반영 검사 (자동 확인 / 사람 확인 분리)
+node scripts/intake.mjs 수업설계서.txt                    # 채운 항목 / AI가 정할 항목, 모순 경고 (.txt · .md · intake.json 모두)
+node scripts/intake.mjs --check intake.json lesson.json   # 반영 검사 (자동 확인 / 사람 확인 분리)
+node scripts/test-intake.mjs                              # 입력 경로 회귀 테스트
 ```
 
 ### 2. 삽화는 손으로 그리지 않는다 — 세 갈래 규칙
@@ -165,7 +174,7 @@ node scripts/gate.mjs  examples/season/lesson.json
 | [`examples/territory`](examples/territory) | 초5 사회 · 국토의 위치와 영역 | TikZ 좌표로 그린 단순화 지도(`mapgen.mjs`), 무해통항·기준선 등 법률 정확성 검토 |
 | [`examples/argument-essay`](examples/argument-essay) | 고1 영어 · 설득하는 글의 구조 | 지문(`passage`) 슬라이드, TikZ 박스+화살표 구조도 |
 | [`examples/linear-function`](examples/linear-function) | 중2 수학 · 일차함수의 그래프 | 선언형 그래프(`{plot}`) |
-| [`examples/intake`](examples/intake) | 설계서 예시 | 일부 기입 · 전체 기입 · 일부러 어긴 예 |
+| [`examples/intake`](examples/intake) | 설계서 예시 | 2판(메모장 양식) 전체 기입 · 1판(옛 양식) 일부 기입 · 전체 기입 · 일부러 어긴 예 |
 
 모든 예시는 `review.json`(별도 검토자의 도메인 검토 기록 + `--review-stamp`)을 포함해 게이트 **ALL PASS**입니다. `out/`은 저장소에 없습니다. 위 `build.mjs`로 만드세요.
 

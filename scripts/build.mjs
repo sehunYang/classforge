@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { SKILL, PALETTE, loadLesson, launch, fileUrl } from './lib.mjs';
-import { parseIntake } from './intake.mjs';
+import { loadIntake } from './intake.mjs';
 import { declarative } from './visuals.mjs';
 import { prepareDiagrams, lookupDiagramSync, prepareFormulas, lookupFormulaSync, findTexBin } from './diagrams.mjs';
 
@@ -20,7 +20,7 @@ const M = L.meta || {};
   const ignored = [];
   if (M.accent) ignored.push(`meta.accent(${M.accent})`);
   const formPath = M.intake && path.resolve(ctx.dir, M.intake);
-  const formAccent = formPath && fs.existsSync(formPath) && parseIntake(fs.readFileSync(formPath, 'utf8')).style.accentColor;
+  const formAccent = formPath && fs.existsSync(formPath) && loadIntake(formPath).style.accentColor;
   if (formAccent) ignored.push(`설계서 강조색(${formAccent})`);
   if (ignored.length) console.warn(`경고: ${ignored.join('·')}은 무시합니다 — 모든 교과가 같은 고정 팔레트를 씁니다(references/design.md "팔레트").`);
 }

@@ -1,8 +1,11 @@
-// classforge intake — 교사가 채운 수업 설계서(.md)를 intake.json으로 파싱하고,
+// classforge intake — 교사가 준 수업 설계를 intake 객체로 읽고,
 // lesson.json(및 out/ 산출물)이 채운 항목을 실제로 반영했는지 되짚어 확인한다(--check).
+// 입력은 세 가지 모두 같은 intake 객체가 된다:
+//   설계서 2판(templates/수업설계서.txt — 메모장용 "라벨: 값", 마크다운으로 써도 됨) · 설계서 1판(.md, <!-- key:... --> 주석, 하위 호환)
+//   intake.json(templates/수업설계서.html 브라우저 양식으로 저장했거나, 대화로 받은 값을 에이전트가 쓴 것)
 // 사용:
-//   node intake.mjs <설계서.md> [--json out.json]
-//   node intake.mjs --check <설계서.md> <lesson.json> [--json report.json]
+//   node intake.mjs <설계서 파일|intake.json> [--json out.json]
+//   node intake.mjs --check <설계서 파일|intake.json> <lesson.json> [--json report.json]
 import fs from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -183,14 +186,285 @@ function extractOne(field, r, warnings) {
   }
 }
 
-export function parseIntake(mdText) {
+// ── 두 번째 양식(라벨형) 파싱 ───────────────────────────────
+// templates/수업설계서.txt(2판)는 숨은 key 주석 없이 "라벨: 값" 한 줄이나 "■ 라벨"(마크다운이면 "## 라벨") 아래 블록으로 쓴다.
+// "> "로 시작하는 줄(예시·안내)은 미리보기에서도 보이지만 값으로 읽지 않는다. 고를 칸은 보기 낱말을 그대로
+// 쓰면 된다("모둠", "중2"). 라벨은 비슷한 말(별칭)도 받아들인다 — LABELS에 정규화한 이름으로 적는다.
+// "@"로 시작하는 값은 한 칸에 여러 항목을 함께 쓰는 복합 칸(대상 = 학교급+학년+인원 등)이다.
+const labelKey = s => String(s).replace(/<[^>]+>/g, '').replace(/[★☆*_`]/g, '').replace(/\([^)]*\)|（[^）]*）/g, '').replace(/[\s·・/\\,.:：\-–—?]/g, '').toLowerCase();
+const LABELS = {
+  대상: '@target', 학습대상: '@target', 학년: '@target', 학년반: '@target', 학교급학년: '@target',
+  학교급: 'schoolLevel',
+  교과단원: '@subjectUnit', 교과: 'subject', 과목: 'subject', 단원: 'unit',
+  차시시간: '@lessonTime', 차시: '@lessonTime', 수업시간: '@lessonTime', 수업시간분: '@lessonTime',
+  시간배분: 'timeAllocation', 시간배분희망: 'timeAllocation',
+  학급인원: 'classSize', 학급수준: 'classLevel',
+  배려가필요한학생: 'classNeeds',
+  성취기준: 'standards', 성취기준원문: 'standards',
+  학습목표: 'objectives', 이번차시학습목표: 'objectives', 목표: 'objectives', 학생이할수있게될것: 'objectives', 이번시간에학생이할수있게될것: 'objectives',
+  핵심낱말: 'keyTerms', 핵심개념: 'keyTerms', 핵심개념낱말: 'keyTerms', 꼭다룰낱말: 'keyTerms',
+  다루지않을범위: 'excludeScope', 다루지않을것: 'excludeScope',
+  사전지식: 'priorKnowledge', 학생사전지식: 'priorKnowledge', 이미배운것: 'priorKnowledge',
+  예상오개념: 'misconceptions', 오개념: 'misconceptions', 잘못된생각: 'misconceptions', 학생들이자주하는잘못된생각: 'misconceptions',
+  수업모형: 'model', 도입아이디어: 'hookIdea', 도입소재: 'hookIdea', 동기유발: 'hookIdea', 도입소재동기유발아이디어: 'hookIdea',
+  활동: 'activityMode', 활동형태: 'activityMode',
+  준비물: 'materials', 실험준비물: 'materials',
+  꼭넣을것: 'mustInclude', 반드시넣을것: 'mustInclude', 빼줄것: 'mustExclude', 넣지말것: 'mustExclude',
+  형성평가방식: 'quizStyle', 형성평가개수: 'quizCount', 퀴즈개수: 'quizCount', 형성평가퀴즈개수: 'quizCount',
+  활동지문항수: 'worksheetQCount', 문항수: 'worksheetQCount', 문항유형: 'worksheetTypes', 활동지문항유형: 'worksheetTypes',
+  난이도: 'difficulty', 서술형: 'hasEssay', 서술형문항: 'hasEssay', 서술형문항포함: 'hasEssay',
+  슬라이드장수: 'slidesCount', 슬라이드수: 'slidesCount', 스타일: 'profile', 스타일프로필: 'profile',
+  제목문체: 'titleStyle', 말투: 'tone',
+  이미지상한: 'imageCount', ai이미지사용상한: 'imageCount', ai그림최대장수: 'imageCount', 그림최대장수: 'imageCount',
+  이미지용도: 'imageUse', ai그림쓸곳: 'imageUse', 그림쓸곳: 'imageUse', ai그림용도: 'imageUse', 강조색: 'accentColor',
+  교과서쪽수: 'textbookPages', 기존자료: 'referenceMaterial', 참고자료: 'referenceMaterial', 기존자료참고슬라이드: 'referenceMaterial',
+  수치사실과출처: 'facts', 수치사실: 'facts', 사실과출처: 'facts',
+  만들것: 'deliverables', 산출물: 'deliverables', 산출물선택: 'deliverables',
+  메모: 'etcRequest', 기타요청: 'etcRequest', 자유롭게적어주세요: 'etcRequest',
+};
+// 고를 칸의 보기 낱말 → 코드. 앞에 있는 별칭부터 찾는다(짧은 별칭이 긴 낱말 안에서 잘못 걸리지 않게).
+export const OPTION_ALIASES = {
+  schoolLevel: [['elem', ['초등학교', '초등', '초']], ['middle', ['중학교', '중학', '중']], ['high', ['고등학교', '고등', '고']]],
+  activityMode: [['individual', ['개인', '혼자']], ['pair', ['짝', '2인']], ['group', ['모둠', '조별', '그룹']]],
+  difficulty: [['easy', ['쉬움', '쉽게', '쉬운']], ['normal', ['보통', '중간']], ['hard', ['어려움', '어렵게', '어려운']]],
+  hasEssay: [['no', ['아니오', '아니요', '빼기', '빼', '없음', '제외', '안함']], ['yes', ['예', '네', '넣기', '포함', '있음']]],
+  profile: [['evidence', ['증거중심', 'evidence', '증거']], ['default', ['기본', '표준']]],
+  titleStyle: [['message', ['메시지형', '메시지']], ['question', ['질문형', '질문']], ['noun', ['명사형', '명사', '개념이름']]],
+  tone: [['해요체', ['해요체', '해요']], ['합쇼체', ['합쇼체', '하십시오체', '습니다']]],
+  worksheetTypes: [['choice', ['선택형', '객관식']], ['short', ['서술형', '주관식', '단답']], ['ox', ['ox', 'o/x']], ['match', ['짝짓기', '선잇기']], ['table', ['표']], ['draw', ['그리기', '그림']]],
+  deliverables: [['slides', ['슬라이드', 'ppt']], ['worksheet', ['활동지', '학습지']], ['answerKey', ['정답지', '답안지']], ['lessonPlan', ['지도안', '과정안']]],
+};
+// 한 줄로 쓴 목록을 쉼표·가운뎃점으로 나눠도 되는 칸(낱말 목록). 문장 목록(목표·오개념 등)은 나누지 않는다.
+const SPLIT_INLINE = new Set(['keyTerms', 'materials']);
+
+const squash = s => String(s ?? '').replace(/\s+/g, '').toLowerCase();
+function matchOptions(key, value, warnings) {
+  const v = String(value ?? '');
+  const field = FIELD_BY_KEY[key];
+  if (/\[[ xX]\]/.test(v)) return mapOptions(field, checkedLabels(v), warnings, key); // 옛 체크박스 표기도 받는다
+  const codes = Object.values(field.options);
+  if (codes.includes(v.trim())) return [v.trim()];
+  const sv = squash(v);
+  const hits = [];
+  for (const [code, aliases] of OPTION_ALIASES[key] || []) {
+    if (aliases.some(a => sv.includes(squash(a))) && !hits.includes(code)) hits.push(code);
+  }
+  if (!hits.length && v.trim()) warnings.push({ code: 'W-OPTION', msg: `${key}: "${v.trim()}"을(를) 보기에서 찾지 못해 무시함 — 보기: ${Object.keys(field.options).join(', ')}` });
+  return hits;
+}
+
+const LEVEL_OF = { 초: 'elem', 중: 'middle', 고: 'high' };
+function parseAlloc(v, wholeString) {
+  const s = String(v ?? '');
+  const intro = s.match(/도입\s*(\d+)/), dev = s.match(/전개\s*(\d+)/), wrap = s.match(/정리\s*(\d+)/);
+  if (intro || dev || wrap) return { intro: intro ? Number(intro[1]) : null, develop: dev ? Number(dev[1]) : null, wrap: wrap ? Number(wrap[1]) : null };
+  // "5·30·5" 같은 숫자 세 개(도입·전개·정리 순). 차시·시간 칸에서는 괄호 안에서만 찾는다("4/9차시"와 헷갈리지 않게).
+  const scopes = wholeString ? [s] : [...s.matchAll(/[(（]([^)）]*)[)）]/g)].map(m => m[1]);
+  for (const sc of scopes) {
+    const t = sc.match(/(\d+)\s*분?\s*[·・\/,+]\s*(\d+)\s*분?\s*[·・\/,+]\s*(\d+)/);
+    if (t) return { intro: Number(t[1]), develop: Number(t[2]), wrap: Number(t[3]) };
+  }
+  return null;
+}
+// 복합 칸: 한 줄에서 여러 필드를 뽑는다. 찾은 것만 채운다.
+function parseComposite(kind, label, v, put, warnings) {
+  const s = String(v ?? '').trim();
+  if (!s) return;
+  if (kind === '@target') {
+    const lv = s.match(/(초등학교|초등|중학교|중학|고등학교|고등|[초중고])\s*(\d)\s*(?:학년)?/);
+    if (lv) { put('schoolLevel', LEVEL_OF[lv[1][0]]); put('grade', `${lv[2]}학년`); }
+    else {
+      const lw = s.match(/(초등|중학|고등)/); if (lw) put('schoolLevel', LEVEL_OF[lw[1][0]]);
+      const g = s.match(/(\d)\s*학년/); if (g) put('grade', `${g[1]}학년`);
+    }
+    const ban = s.match(/(\d+)\s*반/), ppl = s.match(/(\d+)\s*명/);
+    if (ban || ppl) put('classSize', [ban && `${ban[1]}반`, ppl && `${ppl[1]}명`].filter(Boolean).join(' '));
+    if (!lv && !/(초등|중학|고등)/.test(s) && !/\d\s*학년/.test(s) && !ban && !ppl) warnings.push({ code: 'W-TARGET', msg: `대상 "${s}"에서 학교급·학년을 읽지 못함 — "중2 3반 24명"처럼 쓰세요` });
+  } else if (kind === '@subjectUnit') {
+    const parts = s.split(/\s*[·・\/|,>›:：]\s*|\s+[-–—]\s+/).map(p => p.trim()).filter(Boolean);
+    put('subject', parts[0]);
+    if (parts.length > 1) put('unit', parts.slice(1).join(' '));
+  } else if (kind === '@lessonTime') {
+    const alloc = parseAlloc(s, false);
+    if (alloc) put('timeAllocation', alloc);
+    const rest = s.replace(/[(（][^)）]*[)）]/g, ' ').replace(/(도입|전개|정리)\s*\d+\s*분?/g, ' ');
+    const frac = rest.match(/(\d+)\s*\/\s*(\d+)/);
+    const nth = rest.match(/(\d+)\s*차시/);
+    if (frac) put('lesson', `${frac[1]} / ${frac[2]}`); else if (nth) put('lesson', nth[1]);
+    const min = rest.replace(/(\d+)\s*\/\s*(\d+)/, ' ').match(/(\d+)\s*분/);
+    if (min) put('minutes', Number(min[1]));
+    else if (!frac && !nth) {
+      const bare = rest.match(/^\s*(\d+)\s*$/);
+      if (bare) { if (label === '차시') put('lesson', bare[1]); else put('minutes', Number(bare[1])); }
+    }
+  }
+}
+
+const BULLET = /^\s*(?:[-*+•○◦·▪]|\d+[.)])\s*/;   // 교사가 메모장에서 흔히 쓰는 글머리 기호까지
+const stripBullet = l => String(l).replace(BULLET, '').trim();
+function parseFactLine(line, warnings) {
+  const l = stripBullet(line).replace(/^수치\s*\/?\s*사실\s*[:：]\s*/, '');
+  if (!l) return null;
+  let m = l.match(/^(.*?)\s*\|\s*(?:출처\s*[:：]?\s*)?(.*)$/)
+    || l.match(/^(.*?)\s*[(（]\s*출처\s*[:：]\s*(.*?)\s*[)）]\s*$/)
+    || l.match(/^(.*?)\s*(?:[—–-]\s*)?출처\s*[:：]\s*(.*)$/);
+  if (m) { const text = m[1].trim(), source = m[2].trim(); return text || source ? { text, source } : null; }
+  warnings.push({ code: 'W-FACT-SOURCE', msg: `수치·사실에 출처가 없습니다 — "내용 | 출처"로 쓰세요: ${l.slice(0, 40)}` });
+  return { text: l, source: '' };
+}
+
+// 값 하나(문자열 또는 줄 배열)를 필드 종류에 맞게 바꾼다. md 2판과 intake.json이 같이 쓴다. 비면 null.
+function coerce(field, value, warnings) {
+  const key = field.key;
+  const asLines = v => Array.isArray(v) ? v.flatMap(x => typeof x === 'string' ? x.split(/\r?\n/) : [x]) : String(v ?? '').split(/\r?\n/);
+  const asText = v => Array.isArray(v) ? v.map(x => String(x ?? '')).join('\n').trim() : String(v ?? '').trim();
+  if (value == null) return null;
+  switch (field.kind) {
+    case 'text': case 'block': {
+      // 글머리 기호(- • ○ 등)만 떼고 번호("1.")는 남긴다 — 메모 같은 글 칸도 "- " 줄에 쓰기 때문
+      const t = asLines(value).map(l => typeof l === 'string' ? l.replace(/^\s*[-*+•○◦·▪]\s*/, '').trim() : String(l)).filter(Boolean).join('\n');
+      return t || null;
+    }
+    case 'number': {
+      if (typeof value === 'number') return value;
+      const n = asText(value).match(/-?\d+(?:\.\d+)?/);
+      return n ? Number(n[0]) : null;
+    }
+    case 'list': {
+      let items = asLines(value).map(l => typeof l === 'string' ? stripBullet(l) : String(l)).filter(Boolean);
+      if (SPLIT_INLINE.has(key)) items = items.flatMap(i => i.split(/\s*[,，、·]\s*/)).filter(Boolean);
+      return items.length ? items : null;
+    }
+    case 'listPair': {
+      const items = (Array.isArray(value) ? value : asLines(value)).map(x => {
+        if (x && typeof x === 'object') { const text = String(x.text ?? '').trim(), source = String(x.source ?? '').trim(); return text || source ? { text, source } : null; }
+        return parseFactLine(x, warnings);
+      }).filter(Boolean);
+      return items.length ? items : null;
+    }
+    case 'checkboxSingle': {
+      const codes = matchOptions(key, asText(value), warnings);
+      if (codes.length > 1) warnings.push({ code: 'W-MULTI', msg: `${key}: 여러 항목이 골라짐 — 첫 번째(${reverseLabel(key, codes[0])})만 사용` });
+      return codes[0] ?? null;
+    }
+    case 'checkboxMulti': {
+      const codes = [...new Set((Array.isArray(value) ? value : [value]).flatMap(v => matchOptions(key, String(v), warnings)))];
+      return codes.length ? codes : null;
+    }
+    case 'range': {
+      if (Array.isArray(value) && value.length === 2 && value.every(n => Number.isFinite(Number(n)))) return value.map(Number);
+      if (typeof value === 'number') return [value, value];
+      const v = asText(value);
+      const m2 = v.match(/(\d+(?:\.\d+)?)\s*(?:~|-|–|—|부터)\s*(\d+(?:\.\d+)?)/);
+      if (m2) return [Number(m2[1]), Number(m2[2])];
+      const m1 = v.match(/\d+(?:\.\d+)?/);
+      return m1 ? [Number(m1[0]), Number(m1[0])] : null;
+    }
+    case 'timeAlloc': {
+      if (value && typeof value === 'object' && !Array.isArray(value)) {
+        const n = k => value[k] == null || value[k] === '' ? null : Number(value[k]);
+        const t = { intro: n('intro'), develop: n('develop'), wrap: n('wrap') };
+        return [t.intro, t.develop, t.wrap].some(x => x != null) ? t : null;
+      }
+      return parseAlloc(asText(value), true);
+    }
+    default: return null;
+  }
+}
+
+// 메모장용 양식(templates/수업설계서.txt)과 마크다운 양식이 같은 규칙으로 읽힌다:
+//   제목      "■ 학습 목표"(◆ ▶도 됨) 또는 "## 학습 목표"
+//   안내·예시 "※ …", "예) …", "예: …"로 시작하는 줄, 또는 "> …"
+//   구분선    "───", "━━━", "===", "---"(가운데 글이 있어도 됨), <details>/<summary> 태그
+const SKIP_LINE = /^\s*(?:>|※|예\s*[):：])/;
+const RULE_LINE = /^\s*(?:[-─━═=_*~]{3,}.*|<\/?(?:details|summary)\b.*)$/i;
+const HEAD_LINE = /^\s*(?:#{1,6}|[■◆▶]+)\s*(.*)$/;
+function parseLabeled(mdText) {
+  const warnings = [];
+  const lines = mdText.replace(/^\uFEFF/, '').replace(/<!--[\s\S]*?-->/g, '').split(/\r?\n/);
+  const sections = []; // {key, label, inline, lines}
+  let cur = null;
+  for (const line of lines) {
+    if (SKIP_LINE.test(line)) continue;                                // 예시·안내 줄
+    if (RULE_LINE.test(line)) { cur = null; continue; }
+    const h = line.match(HEAD_LINE);
+    if (h) {
+      const key = LABELS[labelKey(h[1])];
+      cur = key ? { key, label: labelKey(h[1]), inline: '', lines: [] } : null;
+      if (cur) sections.push(cur);
+      continue;
+    }
+    const lm = line.match(/^\s*(?:[-*]\s+)?([^:：|]{1,30}?)\s*[:：]\s*(.*)$/);
+    const isBullet = /^\s*[-*•○◦·▪]\s/.test(line);
+    if (lm && LABELS[labelKey(lm[1])] && !(cur && isBullet)) {
+      cur = { key: LABELS[labelKey(lm[1])], label: labelKey(lm[1]), inline: lm[2].trim(), lines: [] };
+      sections.push(cur);
+      continue;
+    }
+    if (cur) cur.lines.push(line);
+  }
+  const filled = {};
+  const put = (key, val) => { if (val == null || val === '' || (Array.isArray(val) && !val.length)) return; if (filled[key] === undefined) filled[key] = val; };
+  for (const sec of sections) {
+    const body = [sec.inline, ...sec.lines].filter(l => stripBullet(l) !== '');
+    if (!body.length) continue;
+    if (sec.key.startsWith('@')) { parseComposite(sec.key, sec.label, body.join(' '), put, warnings); continue; }
+    put(sec.key, coerce(FIELD_BY_KEY[sec.key], body, warnings));
+  }
+  return { filled, warnings };
+}
+
+// 옛 양식(<!-- key:... --> 주석)을 filled로 — 동작은 1판 그대로.
+function parseLegacy(mdText) {
   const { raw } = parseForm(mdText);
   const warnings = [];
-  const filled = {}, empty = [];
+  const filled = {};
   for (const field of FIELDS) {
     const { value, filled: isFilled } = extractOne(field, raw[field.key], warnings);
-    if (isFilled) filled[field.key] = value; else empty.push(field.key);
+    if (isFilled) filled[field.key] = value;
   }
+  return { filled, warnings };
+}
+
+export const isLegacyForm = mdText => /<!--\s*key:\s*[\w.]+\s*-->/.test(mdText);
+
+export function parseIntake(mdText) {
+  const { filled, warnings } = isLegacyForm(mdText) ? parseLegacy(mdText) : parseLabeled(mdText);
+  return buildIntake(filled, warnings, isLegacyForm(mdText) ? 'md-v1' : 'md');
+}
+
+// intake.json(브라우저 양식·대화로 받은 값) → 같은 intake 객체. 형식:
+//   { "classforge": "intake", "version": 2, "source": "form" | "chat", "fields": { <FIELDS의 key>: 값, ... } }
+// 값은 코드("middle")든 보기 낱말("중학교")이든 받는다. --json으로 저장한 파싱 결과(fields/filled가 있는 것)도 받는다.
+export function intakeFromJson(obj) {
+  const warnings = [];
+  if (!obj || typeof obj !== 'object') throw new Error('intake.json이 객체가 아닙니다');
+  const fields = obj.fields || obj.filled;
+  if (!fields || typeof fields !== 'object') throw new Error('intake.json에 fields가 없습니다 — { "fields": { ... } } 형태로 쓰세요');
+  const filled = {};
+  for (const [key, value] of Object.entries(fields)) {
+    const field = FIELD_BY_KEY[key];
+    if (!field) { warnings.push({ code: 'W-UNKNOWN-KEY', msg: `알 수 없는 항목 "${key}"는 무시함` }); continue; }
+    const v = coerce(field, value, warnings);
+    if (v != null) filled[key] = v;
+  }
+  return buildIntake(filled, warnings, obj.source || 'json');
+}
+
+// 파일 경로 하나로 읽는다: .json이거나 내용이 JSON 객체면 intake.json(브라우저 양식이 저장한
+// "수업설계서-교과-단원.json" 포함), 그 밖에는 설계서(.md, 1판·2판 자동 판별).
+export function loadIntake(filePath) {
+  // 메모장에서 "ANSI"로 저장한 한국어 윈도우 파일(CP949)도 읽는다 — UTF-8로 안 풀리면 EUC-KR로 다시 푼다.
+  const buf = fs.readFileSync(filePath);
+  let text;
+  try { text = new TextDecoder('utf-8', { fatal: true }).decode(buf); } catch { text = new TextDecoder('euc-kr').decode(buf); }
+  text = text.replace(/^\uFEFF/, '');
+  if (/\.json$/i.test(filePath) || /^\s*\{/.test(text)) return intakeFromJson(JSON.parse(text));
+  return parseIntake(text);
+}
+
+export function buildIntake(filled, warnings, source) {
+  const empty = FIELDS.map(f => f.key).filter(k => filled[k] === undefined);
 
   // ── 모순 경고 ──────────────────────────────────────────
   if (filled.timeAllocation && filled.minutes) {
@@ -226,6 +500,8 @@ export function parseIntake(mdText) {
   const meta = { level, grade: filled.grade || null, subject: filled.subject || null, unit: filled.unit || null, lesson: filled.lesson || null, minutes: filled.minutes ?? null };
 
   return {
+    classforge: 'intake', version: 2, source,
+    fields: filled,
     filled, empty,
     mustInclude: filled.mustInclude || [],
     mustExclude: filled.mustExclude || [],
@@ -568,11 +844,10 @@ function main() {
   const argv = process.argv.slice(2);
   if (argv[0] === '--check') {
     const [, formPath, lessonPath, ...rest] = argv;
-    if (!formPath || !lessonPath) { console.error('사용: node intake.mjs --check <설계서.md> <lesson.json> [--json report.json]'); process.exit(2); }
-    const md = fs.readFileSync(formPath, 'utf8');
+    if (!formPath || !lessonPath) { console.error('사용: node intake.mjs --check <설계서 파일|intake.json> <lesson.json> [--json report.json]'); process.exit(2); }
     const lesson = JSON.parse(fs.readFileSync(lessonPath, 'utf8'));
     const outDir = path.join(path.dirname(path.resolve(lessonPath)), 'out');
-    const intake = parseIntake(md);
+    const intake = loadIntake(formPath);
     if (intake.warnings.length) {
       console.log(`\n 설계서 자체 경고 ${intake.warnings.length}건(모순·게이트 한도 초과):`);
       for (const w of intake.warnings) console.log(`   ! [${w.code}] ${w.msg}`);
@@ -585,9 +860,8 @@ function main() {
   }
 
   const [formPath, ...rest] = argv;
-  if (!formPath) { console.error('사용: node intake.mjs <설계서.md> [--json out.json]'); process.exit(2); }
-  const md = fs.readFileSync(formPath, 'utf8');
-  const intake = parseIntake(md);
+  if (!formPath) { console.error('사용: node intake.mjs <설계서 파일|intake.json> [--json out.json]'); process.exit(2); }
+  const intake = loadIntake(formPath);
   printReport(intake);
   const jsonIdx = rest.indexOf('--json');
   if (jsonIdx >= 0 && rest[jsonIdx + 1]) {
