@@ -459,6 +459,32 @@ await gate('S5', '문체와 표현', (err, warn) => {
   const all = JSON.stringify({ slides, W, plan: L.plan, objs });
   const emoji = all.match(/\p{Extended_Pictographic}/gu);
   if (emoji) err('S5-EMOJI', `이모지 ${emoji.length}개 사용 (${[...new Set(emoji)].join('')})`, '이모지 대신 SVG 삽화나 강조 표시를 쓰세요');
+
+  // 수식 표기 — 화면·인쇄물·노트의 수식은 $...$로 조판해야 첨자·분수가 실제로 내려가고 쌓인다. $ 밖에 남은
+  // "P_avg"(한 글자 변수의 _ 첨자), "e^(…)"(^ 위첨자), "ΔΦ/Δt"·"σ_P / P_avg"(Δ나 첨자가 붙은 항의 / 분수)는
+  // 글자 그대로 찍힌다. 단위의 /(m/s, 회/초), 여러 글자 이름(time_ms 같은 CSV 열 이름), URL은 잡지 않는다.
+  // 그래프 라벨(visual)은 $를 쓸 수 없는 자리라 검사하지 않는다(유니코드 첨자 Eₖ·θᵢ를 쓴다, design.md).
+  const MATH_SKIP = new Set(['visual', 'base', 'src', 'fn', 'type', 'id', 'fact', 'evidence', 'img']);
+  const mathStrings = [];
+  const collectMath = (v, where) => {
+    if (typeof v === 'string') mathStrings.push([where, v]);
+    else if (Array.isArray(v)) v.forEach(x => collectMath(x, where));
+    else if (v && typeof v === 'object') Object.entries(v).forEach(([k, x]) => { if (!MATH_SKIP.has(k) && !(k === 'answer' && x && typeof x === 'object' && !Array.isArray(x))) collectMath(x, where); });
+  };
+  slides.forEach((s, i) => collectMath(s, `${i + 1}번 슬라이드`));
+  collectMath(W, '활동지'); collectMath(L.plan, '지도안'); collectMath(objs, '학습 목표');
+  const RAW_MATH = [
+    [/(?<![\p{L}\p{N}_])[A-Za-zΑ-Ωα-ω]_(?:\{|[A-Za-z0-9])/u, '_ 아래첨자'],
+    [/[\p{L}\p{N})\]]\^/u, '^ 위첨자'],
+    [/(?:Δ[^\s/]*|(?<![\p{L}\p{N}_])[A-Za-zΑ-Ωα-ω]_[^\s/]+)\s*\/\s*\S|\S\s*\/\s*(?:Δ|(?<![\p{L}\p{N}_])[A-Za-zΑ-Ωα-ω]_)/u, '/ 분수'],
+  ];
+  mathStrings.forEach(([where, s]) => {
+    const t = s.replace(/\$\$?[^$]*?\$\$?/g, ' ').replace(/https?:\/\/\S+/g, ' ');
+    for (const [re, kind] of RAW_MATH) {
+      const m = t.match(re);
+      if (m) { err('S5-MATH', `${where}에 $ 밖의 수식 표기(${kind}) "${t.slice(Math.max(0, m.index - 8), m.index + m[0].length + 8).trim()}"`, '수식은 $...$로 감싸 LaTeX으로 쓰세요 — 분수는 \\frac{ΔΦ}{Δt}, 첨자는 P_{\\mathrm{avg}}·σ_P·I_0 (단위의 /는 그대로 둬도 됩니다)'); break; }
+    }
+  });
   objs.forEach((o, i) => {
     if (/(이해|알|인식|깨달)(할|을)? ?수 있다/.test(o)) warn('S5-VERB', `학습 목표 ${i + 1}의 동사가 관찰하기 어려움("이해/알다"): ${o} — 설명할/구분할/찾을/그릴 수 있다 권장`);
     if (/않|말고|없이/.test(o)) err('S5-NEG', `학습 목표 ${i + 1}에 부정 표현: ${o}`, '결과를 긍정형으로 서술');
