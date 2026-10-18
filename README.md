@@ -9,7 +9,7 @@ Claude Code 스킬 — 수업 슬라이드 · 학생 활동지 · 정답지 · �
 
 ![광전 효과 수업 한 벌 — 16장 슬라이드](docs/images/photoelectric-overview.png)
 
-<sub>위 슬라이드는 교사가 일부만 채운 설계서(<code>examples/photoelectric/수업설계서.md</code>)를 스킬을 처음 본 에이전트가 받아 만든 결과입니다. 삽화는 손그림 대신 그래프 엔진과 TikZ로 계산해서 그립니다.</sub>
+<sub>위 슬라이드는 교사가 일부만 채운 설계서(<code>examples/photoelectric/수업설계서.txt</code>)를 스킬을 처음 본 에이전트가 받아 만든 결과입니다. 삽화는 손그림 대신 그래프 엔진과 TikZ로 계산해서 그립니다.</sub>
 
 </div>
 

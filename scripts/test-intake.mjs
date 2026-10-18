@@ -18,13 +18,24 @@ const rel = p => path.join(SKILL, p);
 const md = s => s.replace(/^\n/, '');
 
 await test('옛 양식(1판) 예시가 그대로 읽힌다', () => {
-  const pe = loadIntake(rel('examples/photoelectric/수업설계서.md'));
-  assert.equal(pe.source, 'md-v1');
+  const v1 = loadIntake(rel('examples/intake/설계서-예시-전체.md'));
+  assert.equal(v1.source, 'md-v1');
+  assert.equal(v1.filled.schoolLevel, 'elem');
+  assert.equal(v1.filled.lesson, '4 / 9');
+  assert.equal(v1.filled.profile, 'default');
+  assert.ok(isLegacyForm(fs.readFileSync(rel('examples/intake/설계서-예시-전체.md'), 'utf8')));
+});
+
+await test('수업 예시(광전 효과)의 2판 설계서가 읽힌다', () => {
+  const pe = loadIntake(rel('examples/photoelectric/수업설계서.txt'));
+  assert.equal(pe.source, 'md');
+  assert.deepEqual(pe.warnings, []);
   assert.equal(pe.filled.schoolLevel, 'high');
+  assert.equal(pe.filled.grade, '1학년');
   assert.equal(pe.filled.lesson, '7 / 12');
+  assert.equal(pe.filled.minutes, 50);
   assert.equal(pe.filled.profile, 'evidence');
   assert.equal(pe.misconceptions.length, 2);
-  assert.ok(isLegacyForm(fs.readFileSync(rel('examples/intake/설계서-예시-전체.md'), 'utf8')));
 });
 
 await test('빈 메모장 양식(2판)은 채운 칸 0개, 경고 0건', () => {
