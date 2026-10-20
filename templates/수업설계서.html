@@ -332,7 +332,7 @@ details#more > .sec:first-of-type { margin-top: 12px; }
           <div class="v"><input id="quizCount" type="number" min="0" data-key="quizCount" placeholder="예: 2"></div>
         </div>
         <div class="tbl">
-          <div class="k">활동지 문항 수<small>5~14개 안에서</small></div>
+          <div class="k">활동지 문항 수<small>수업 시간 안에 풀 수 있는 만큼</small></div>
           <div class="v"><div class="inline"><input type="number" min="1" id="wqLo" aria-label="최소 문항 수" placeholder="8"> ~ <input type="number" min="1" id="wqHi" aria-label="최대 문항 수" placeholder="10"> 개</div></div>
           <div class="k">문항 유형<small>여러 개 고를 수 있음</small></div>
           <div class="v"><div class="chips" data-key="worksheetTypes"><button type="button" data-v="choice">선택형</button><button type="button" data-v="ox">OX</button><button type="button" data-v="match">짝짓기</button><button type="button" data-v="table">표</button><button type="button" data-v="short">서술형</button><button type="button" data-v="draw">그리기</button></div></div>
@@ -348,7 +348,7 @@ details#more > .sec:first-of-type { margin-top: 12px; }
       <section class="sec" id="s9">
         <div class="sec-head"><span class="sec-no">09</span><h2>자료 모양</h2></div>
         <div class="tbl">
-          <div class="k">슬라이드 장수<small>8~20장 안에서</small></div>
+          <div class="k">슬라이드 장수<small>한 장에 2~3분 정도</small></div>
           <div class="v"><div class="inline"><input type="number" min="1" id="slLo" aria-label="최소 장수" placeholder="12"> ~ <input type="number" min="1" id="slHi" aria-label="최대 장수" placeholder="16"> 장</div></div>
           <div class="k">스타일</div>
           <div class="v"><div class="chips" data-key="profile" data-single><button type="button" data-v="default">기본</button><button type="button" data-v="evidence">증거 중심</button></div>
@@ -489,9 +489,9 @@ details#more > .sec:first-of-type { margin-top: 12px; }
     if (f.objectives && f.objectives.length > 3) w.push(`학습 목표가 ${f.objectives.length}개입니다 — 한 차시에 1~3개가 기준입니다.`);
     const wq = f.worksheetQCount, sl = f.slidesCount;
     if (wq && wq[0] > wq[1]) w.push('활동지 문항 수의 최소값이 최대값보다 큽니다.');
-    if (wq && (wq[0] < 5 || wq[1] > 14)) w.push(`활동지 문항 ${wq[0]}~${wq[1]}개는 기준(5~14개)을 벗어납니다.`);
+    if (wq && minutes && wq[0] > minutes / 2) w.push(`활동지 최소 ${wq[0]}문항은 수업 ${minutes}분에 비해 많습니다(문항당 2분 미만).`);
     if (sl && sl[0] > sl[1]) w.push('슬라이드 장수의 최소값이 최대값보다 큽니다.');
-    if (sl && (sl[0] < 8 || sl[1] > 20)) w.push(`슬라이드 ${sl[0]}~${sl[1]}장은 기준(8~20장)을 벗어납니다.`);
+    if (sl && minutes && sl[0] > minutes) w.push(`슬라이드 최소 ${sl[0]}장은 수업 ${minutes}분에 비해 많습니다(한 장에 1분 미만).`);
     if (f.quizCount != null && sl && f.quizCount > sl[1] / 4) w.push(`형성평가 ${f.quizCount}개는 슬라이드 수에 비해 많습니다(대략 4장당 1개).`);
     if (f.hasEssay === 'no' && (f.worksheetTypes || []).includes('short')) w.push('서술형을 빼 달라고 했는데 문항 유형에 서술형이 골라져 있습니다.');
     if (f.profile === 'evidence' && f.titleStyle === 'question') w.push('증거 중심 스타일에는 메시지형·명사형 제목이 어울립니다.');

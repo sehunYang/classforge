@@ -66,6 +66,30 @@ const slides = L.slides || [];
 const W = L.worksheet || {};
 const items = (W.sections || []).flatMap(s => s.items || []);
 const questions = items.filter(i => !['concept', 'figure', 'passage'].includes(i.type));
+
+// ── 분량 기준(고정 개수 대신 시간 예산) ──────────────────────
+// 기준값의 근거와 문항 유형별 예상 시간 표는 references/pedagogy.md "분량은 시간으로 정한다"에 있다.
+const PACE_MIN = 1.0, PACE_SPARSE = 6;          // 슬라이드 장당 설명 시간(분)
+const WS_TIME_WARN = 1.2, WS_TIME_FAIL = 1.5;   // 섹션 예상 풀이 시간 ÷ 배정 시간
+const DRAW_MIN_MM = 35;                          // 그리기 칸 최소 높이
+const CELL_MIN_W = 14, CELL_MIN_H = 8;           // 활동지 쓰는 표 칸 최소 크기(mm)
+const PLAN_ROW_MAX = 30;                         // 지도안 한 행 권장 최대 분
+const isBlankCell = c => /^\{\{[\s\S]*\}\}$/.test(String(c ?? '').trim());
+// 문항 하나를 학생이 푸는 데 걸리는 예상 시간(분). it.minutes를 적으면 그 값을 우선한다.
+function itemMinutes(it) {
+  if (it.minutes != null) return Number(it.minutes) || 0;
+  switch (it.type) {
+    case 'ox': return 0.5 * (it.rows?.length || 0);
+    case 'choice': return 1;
+    case 'match': return 0.5 * (it.left?.length || 0);
+    case 'table': { const cells = (it.rows || []).flat(); return 0.5 * cells.filter(isBlankCell).length + 0.25 * cells.filter(c => String(c ?? '').trim() === '').length; }
+    case 'short': return Math.max(2, Number(it.lines) || 2);
+    case 'draw': return 3;
+    case 'concept': return 0.5 * (String(it.text || '').match(/\{\{/g) || []).length;
+    case 'passage': return String(it.text || '').length / 400;
+    default: return 0;
+  }
+}
 const objs = L.objectives || [];
 const facts = L.facts || [];
 const stripSvg = s => String(s ?? '').replace(/<[^>]+>/g, ' ');
@@ -106,7 +130,7 @@ const SLIDE_KEYS = {
 // compare·steps는 visual을 받지만 중첩 자리(left.visual/right.visual, steps[].visual)에만 있어야 렌더링되고,
 // 최상위 s.visual은 그 렌더러가 아예 읽지 않아 조용히 사라진다 — S1-VISUAL-IGNORED가 이 사고를 잡는다.
 const VISUAL_TOPLEVEL_TYPES = new Set(['cover', 'hook', 'concept', 'diagram', 'bignum', 'activity', 'exit', 'summary']);
-const ITEM_COMMON_KEYS = ['type', 'obj', 'points'];
+const ITEM_COMMON_KEYS = ['type', 'obj', 'points', 'minutes'];
 const ITEM_KEYS = {
   concept: ['text'], choice: ['q', 'choices', 'answer', 'explain', 'cols'], short: ['q', 'lines', 'answer', 'explain'],
   ox: ['q', 'rows'], match: ['q', 'left', 'right', 'answer'], table: ['q', 'head', 'rows'],
@@ -315,7 +339,20 @@ await gate('S1', '레슨 구조', (err, warn) => {
   if (!(M.level in { elem: 1, middle: 1, high: 1 })) err('S1-LEVEL', `meta.level은 elem|middle|high 중 하나여야 함 (현재 ${M.level})`);
   if (objs.length < 1 || objs.length > 3) err('S1-OBJ-N', `학습 목표 ${objs.length}개 — 1~3개`, '한 차시에 확인 가능한 목표만 남기세요');
   objs.forEach((o, i) => { if (!/수 있다\.?$/.test(o.trim())) err('S1-OBJ-FORM', `학습 목표 ${i + 1}이 "~할 수 있다."로 끝나지 않음: ${o}`, '관찰 가능한 행동 동사 + "수 있다."'); });
-  if (slides.length < 8 || slides.length > 20) err('S1-SLIDES-N', `슬라이드 ${slides.length}장 — 8~20장`);
+  // 슬라이드 장수는 고정 범위로 막지 않는다 — 수업 시간에 비해 설명이 너무 빠른지(장당 시간)로 본다(S1-PACE).
+  // 설명 시간 = 차시 분 − activity 슬라이드 분 합, 그것을 activity가 아닌 슬라이드 수로 나눈 값이 "장당 설명 시간".
+  // 기준(예시 레슨 실측 1.9~3.1분/장): 1분 미만이면 다 설명할 수 없어 FAIL, 6분 초과면 화면이 빈약할 수 있어 경고.
+  // 교사가 장수를 정했으면(설계서 slidesCount) S7이 그 범위를 따로 확인한다.
+  {
+    const actMinutes = slides.filter(s => s.type === 'activity').reduce((a, s) => a + (Number(s.minutes) || 0), 0);
+    const talkSlides = slides.filter(s => s.type !== 'activity').length;
+    const talkMin = (Number(M.minutes) || 0) - actMinutes;
+    if (talkSlides && M.minutes) {
+      const pace = talkMin / talkSlides;
+      if (pace < PACE_MIN) err('S1-PACE', `슬라이드 장당 설명 시간 ${pace.toFixed(1)}분 < ${PACE_MIN}분 (설명 시간 ${talkMin}분 ÷ 활동 외 슬라이드 ${talkSlides}장) — 수업 시간 안에 다 다룰 수 없음`, '슬라이드를 합치거나 덜 중요한 장을 빼세요(또는 activity 시간이 과하게 잡혔는지 확인)');
+      else if (pace > PACE_SPARSE) warn('S1-PACE', `슬라이드 장당 설명 시간 ${pace.toFixed(1)}분 > ${PACE_SPARSE}분 — 화면이 오래 머물러 빈약해 보일 수 있음`, '설명이 긴 구간에 삽화·퀴즈 슬라이드를 더하거나 activity 시간을 다시 보세요');
+    }
+  }
   if (slides[0]?.type !== 'cover') err('S1-FIRST', '첫 슬라이드는 cover여야 함');
   if (!['exit', 'summary'].includes(slides.at(-1)?.type)) err('S1-LAST', '마지막 슬라이드는 summary 또는 exit');
   const need = { goals: 1, quiz: 1, activity: 1, summary: 1 };
@@ -348,7 +385,24 @@ await gate('S1', '레슨 구조', (err, warn) => {
   });
   const secs = W.sections || [];
   if (secs.length < 2) err('S1-WS-SEC', `활동지 섹션 ${secs.length}개 — 2개 이상`);
-  if (questions.length < 5 || questions.length > 14) err('S1-WS-Q', `활동지 문항 ${questions.length}개 — 5~14개`);
+  // 활동지 문항 수도 고정 범위로 막지 않는다 — 섹션마다 예상 풀이 시간(itemMinutes)이 그 섹션에 배정한 minutes 안에
+  // 들어오는지로 본다(S1-WS-TIME). 문항 최소 개수는 "목표마다 1문항 이상"(S3)이 맡는다.
+  if (!questions.length) err('S1-WS-Q', '활동지에 문항이 하나도 없음');
+  let wsMinutes = 0;
+  secs.forEach((sec, si) => {
+    const est = (sec.items || []).reduce((a, it) => a + itemMinutes(it), 0);
+    const m = Number(sec.minutes);
+    if (!m) { warn('S1-WS-TIME', `활동지 ${si + 1}번째 섹션("${plain(sec.title || '').slice(0, 20)}")에 minutes가 없음 — 예상 풀이 ${est.toFixed(1)}분`, '섹션에 배정할 시간(분)을 적으세요'); return; }
+    wsMinutes += m;
+    if (est > m * WS_TIME_FAIL + 1) err('S1-WS-TIME', `활동지 ${si + 1}번째 섹션("${plain(sec.title || '').slice(0, 20)}") 예상 풀이 ${est.toFixed(1)}분 > 배정 ${m}분 — 시간 안에 못 푼다`, '문항을 줄이거나 섹션 minutes를 늘리세요(지도안 시간과 함께)');
+    else if (est > m * WS_TIME_WARN) warn('S1-WS-TIME', `활동지 ${si + 1}번째 섹션 예상 풀이 ${est.toFixed(1)}분이 배정 ${m}분보다 김`);
+  });
+  if (M.minutes && wsMinutes > M.minutes) err('S1-WS-TIME', `활동지 섹션 시간 합 ${wsMinutes}분 > 차시 ${M.minutes}분`, '섹션 minutes를 실제 수업 흐름(지도안)에 맞추세요');
+  // 쓰는 칸을 눌러서 분량을 맞추는 일을 막는다 — 그리기 칸·서술형 줄은 실제로 쓸 수 있는 크기여야 한다.
+  items.forEach(it => {
+    if (it.type === 'draw' && it.height != null && it.height < DRAW_MIN_MM) err('S1-WS-SPACE', `그리기 문항(${plain(it.q).slice(0, 20)}…) 칸 높이 ${it.height}mm < ${DRAW_MIN_MM}mm — 그리기에 너무 좁음`, `height를 ${DRAW_MIN_MM}mm 이상으로`);
+    if (it.type === 'short' && it.lines != null && it.lines < 2) err('S1-WS-SPACE', `서술형 문항(${plain(it.q).slice(0, 20)}…) 줄 ${it.lines}줄 — 2줄 이상`);
+  });
   items.forEach((it, i) => {
     if (!ITEM_TYPES.includes(it.type)) return err('S1-WS-TYPE', `활동지 문항 유형 ${it.type} 없음`, ITEM_TYPES.join(', '));
     const knownItemKeys = new Set([...ITEM_COMMON_KEYS, ...(ITEM_KEYS[it.type] || [])]);
@@ -379,6 +433,7 @@ await gate('S1', '레슨 구조', (err, warn) => {
   const sum = (P.flow || []).reduce((a, r) => a + (r.minutes || 0), 0);
   if (sum !== M.minutes) err('S1-PLAN-MIN', `지도안 시간 합 ${sum}분 ≠ 차시 ${M.minutes}분`);
   (P.flow || []).forEach((r, i) => { if (!r.teacher?.length || !r.student?.length) err('S1-PLAN-ACT', `지도안 ${i + 1}행에 교사/학생 활동이 모두 있어야 함`); });
+  (P.flow || []).forEach((r, i) => { if ((r.minutes || 0) > PLAN_ROW_MAX) warn('S1-PLAN-ROW', `지도안 ${i + 1}행이 ${r.minutes}분 — 한 행이 길면 무엇을 언제 하는지 흐려짐`, `${PLAN_ROW_MAX}분 이하의 학습 요소로 나누는 것을 권장`); });
   const actMin = slides.filter(s => s.type === 'activity').reduce((a, s) => a + (s.minutes || 0), 0);
   if (actMin > M.minutes * 0.6) warn('S1-ACT-MIN', `활동 슬라이드 시간 합 ${actMin}분이 차시의 60%를 넘음`);
   if (!P.checkpoint) err('S1-PLAN-CHECK', '지도안 checkpoint(다음으로 넘어가도 되는 기준 1문장) 없음');
@@ -1623,7 +1678,10 @@ if (missing.length) {
       await p.close();
     }
     await gate('B6', 'A4 쪽 구성', (err, warn) => {
-      const lim = { 'worksheet.html': 4, 'answer-key.html': 5, 'lesson-plan.html': 3 };
+      // 쪽수 상한은 두지 않는다(분량은 S1-PACE·S1-WS-TIME이 시간으로 본다) — 쪽 구성 품질(빈 쪽·밀림·넘침)과
+      // 쓰는 칸 크기만 검사하고, 쪽수는 인쇄 매수 안내로만 남긴다. 교사가 쪽수를 정했으면 그 값과만 비교한다.
+      const lim = { 'worksheet.html': Infinity, 'answer-key.html': Infinity, 'lesson-plan.html': Infinity };
+      if (M.pages) for (const [k, f] of [['worksheet', 'worksheet.html'], ['answerKey', 'answer-key.html'], ['lessonPlan', 'lesson-plan.html']]) if (M.pages[k]) lim[f] = M.pages[k];
       for (const [f, d] of Object.entries(docs)) {
         if (d.overflow) err('B6-OVER', `${f}: 한 쪽보다 큰 블록 ${d.overflow}개`, '문항을 나누거나 그리기 칸 높이를 줄이세요');
         if (d.pages > lim[f]) err('B6-PAGES', `${f}: ${d.pages}쪽 > ${lim[f]}쪽`, '문항 수를 줄이세요');
@@ -1638,6 +1696,10 @@ if (missing.length) {
         (d.badRender || []).forEach(c => err('B6-RENDER', `${f}: "${c}"가 그대로 찍힘 — lesson.json에 문자열 자리에 객체·undefined 값이 들어갔을 가능성`, 'S1-SHAPE 오류를 먼저 확인하세요'));
         (d.matchLine || []).forEach(c => err('B6-MATCHLINE', `${f}: 매칭 정답선이 점에 안 닿음: ${c}`, 'paginate.js의 .match 선 보정(레이아웃 이후 .dot 좌표로 다시 긋기)이 실행됐는지 확인하세요'));
       }
+      const tooSmall = (docs['worksheet.html'].cells || []).filter(c => c.w < CELL_MIN_W || c.h < CELL_MIN_H);
+      if (tooSmall.length) err('B6-CELL', `활동지 쓰는 칸 ${tooSmall.length}개가 ${CELL_MIN_W}×${CELL_MIN_H}mm보다 작음(가장 작은 칸 ${Math.min(...tooSmall.map(c => c.w))}×${Math.min(...tooSmall.map(c => c.h))}mm, "${tooSmall[0].row}" 행)`, '표 열을 줄이거나 머리글·고정 칸 글을 짧게 해서 쓰는 칸을 넓히세요');
+      const sheets = n => Math.ceil(n / 2);
+      warn('B6-INFO', `인쇄 분량(참고): 활동지 ${docs['worksheet.html'].pages}쪽(양면 ${sheets(docs['worksheet.html'].pages)}장) · 정답지 ${docs['answer-key.html'].pages}쪽 · 지도안 ${docs['lesson-plan.html'].pages}쪽`);
       if (docs['worksheet.html'].qMin < rules.wsMinPt - 0.05) err('B6-QSIZE', `활동지 문항 글자 ${docs['worksheet.html'].qMin}pt < ${rules.wsMinPt}pt`);
     });
     await gate('B7', '정답 분리', err => {
@@ -1880,6 +1942,17 @@ function measureDoc() {
     if (blanks.some(b => b.textContent.replace(/^\d+/, '').replace(/ /g, '').trim())) res.leak.push('빈칸에 글자');
     for (const sel of ['.lines .ans', '.explain', '.draw .model', '.choices li.ok', '.ox .box.on', '.tbl td.fill:not(:empty)']) if (document.querySelector(sel)) res.leak.push(sel);
     if ([...document.querySelectorAll('.match svg line')].length) res.leak.push('선 잇기 정답선');
+  }
+  // 학생이 써 넣는 표 칸(빈 칸·{{빈칸}})의 실제 크기 — 분량을 맞추려고 칸을 누르면 쓸 수 없게 된다(B6-CELL)
+  res.cells = [];
+  if (!document.body.classList.contains('key')) {
+    const mm = px => px / (96 / 25.4);
+    for (const td of document.querySelectorAll('.page .tbl td')) {
+      if (td.textContent.replace(/^\d+/, '').trim()) continue;
+      const r = td.getBoundingClientRect(); if (!r.width) continue;
+      const row = td.closest('tr')?.querySelector('td')?.textContent.trim().slice(0, 12) || '';
+      res.cells.push({ w: Math.round(mm(r.width) * 10) / 10, h: Math.round(mm(r.height) * 10) / 10, row });
+    }
   }
   res.lowContrast = [...new Set(res.lowContrast)].slice(0, 6);
   // 활동지·정답지 그림(좌표평면·지도·자료)
