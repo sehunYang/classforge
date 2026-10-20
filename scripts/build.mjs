@@ -369,7 +369,9 @@ function renderPlan(fontCss) {
   const rows = flow.map((r, i) => {
     const first = i === 0 || flow[i - 1].stage !== r.stage;
     const last = i === flow.length - 1 || flow[i + 1].stage !== r.stage;
-    const stageMin = flow.filter(x => x.stage === r.stage).reduce((a, b) => a + (b.minutes || 0), 0);
+    // 같은 단계가 이어진 묶음만 더한다 — 블록 수업(1·2차시)처럼 도입·전개·정리가 두 번 나오면 차시별 시간이 따로 보여야 한다
+    let j = i; while (j > 0 && flow[j - 1].stage === r.stage) j--;
+    let stageMin = 0; for (let k = j; k < flow.length && flow[k].stage === r.stage; k++) stageMin += flow[k].minutes || 0;
     return `<tr><td class="stage${first ? ' first' : ''}${last ? ' last' : ''}" data-stage="${esc(r.stage)}">${first ? `${esc(r.stage)}<br><span style="font-weight:600;font-size:8.5pt">(${stageMin}분)</span>` : ''}</td>
       <td><b>${md(r.element)}</b></td>
       <td><span class="who">교사</span>${li(r.teacher)}${r.student?.length ? `<div style="margin-top:1.2mm"><span class="who">학생</span>${li(r.student)}</div>` : ''}</td>

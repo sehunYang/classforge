@@ -26,7 +26,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 import crypto from 'node:crypto';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import { SKILL, launch } from './lib.mjs';
 
 // ── TeX 엔진 찾기 ────────────────────────────────────────────────────────
@@ -60,6 +60,21 @@ export function findTexBin() {
   return (TEX_BIN_CACHE = null);
 }
 
+// dvisvgm은 TikZ 선·도형(PostScript special)을 Ghostscript 공유 라이브러리로 그린다. TinyTeX처럼
+// dvisvgm이 Ghostscript를 스스로 못 찾는 설치에서는 경고만 남기고 선이 전부 빠진 SVG를 "성공"으로
+// 내보낸다(글자만 남은 회로도 — 게이트도 못 잡았다). 그래서 LIBGS가 없으면 흔한 설치 경로에서 찾아
+// --libgs로 넘긴다. 못 찾으면 null(dvisvgm 자체 탐색에 맡긴다 — MiKTeX 등은 스스로 찾는다).
+let LIBGS_CACHE;
+function findLibgs() {
+  if (LIBGS_CACHE !== undefined) return LIBGS_CACHE;
+  if (process.env.LIBGS) return (LIBGS_CACHE = null);   // dvisvgm이 환경변수를 직접 읽는다
+  const cands = [
+    '/opt/homebrew/lib/libgs.dylib', '/usr/local/lib/libgs.dylib',   // Homebrew(Apple Silicon·Intel)
+    '/usr/lib/x86_64-linux-gnu/libgs.so.10', '/usr/lib/x86_64-linux-gnu/libgs.so.9', '/usr/lib/libgs.so.10', '/usr/lib/libgs.so.9',
+  ];
+  return (LIBGS_CACHE = cands.find(p => fs.existsSync(p)) || null);
+}
+
 // latex(DVI) → dvisvgm(SVG). 임시 폴더에서 실행하고 끝나면 지운다. 실패하면 그대로 throw(호출부가
 // node-tikzjax로 대체하거나 CSS 대체로 넘어간다).
 function runTexToSvg(texDoc, dvisvgmArgs, bin) {
@@ -85,8 +100,17 @@ function runTexToSvg(texDoc, dvisvgmArgs, bin) {
       throw new Error(`latex 실패: ${excerpt || e.message}`);
     }
     const svgFile = path.join(tmp, 'output.svg');
-    execFileSync(bin.dvisvgm, [...dvisvgmArgs, path.join(tmp, 'input.dvi'), '-o', svgFile],
-      { cwd: tmp, stdio: debug ? 'inherit' : 'pipe' });
+    const libgs = findLibgs();
+    const r = spawnSync(bin.dvisvgm, [...dvisvgmArgs, ...(libgs ? [`--libgs=${libgs}`] : []), path.join(tmp, 'input.dvi'), '-o', svgFile],
+      { cwd: tmp, encoding: 'utf8' });
+    const log = `${r.stdout || ''}${r.stderr || ''}`;
+    if (debug) console.error(log);
+    if (r.status !== 0) throw new Error(`dvisvgm 실패: ${log.slice(-400) || r.error?.message}`);
+    // Ghostscript 없이 변환되면 선·도형이 빠진 SVG가 나온다 — 성공으로 넘기지 않고 throw해서
+    // 호출부가 node-tikzjax로 대체하게 한다(빌드 로그에 경고가 남는다).
+    if (/PostScript specials ignored|Ghostscript not found/i.test(log)) {
+      throw new Error('dvisvgm이 Ghostscript를 찾지 못해 TikZ 선을 그리지 못했습니다(LIBGS 환경변수에 libgs 경로를 지정하세요)');
+    }
     return fs.readFileSync(svgFile, 'utf8');
   } finally { fs.rmSync(tmp, { recursive: true, force: true }); }
 }
@@ -242,14 +266,17 @@ function refraction(o) {
 // 교과서 관례(동그라미+글자, 화살표 없음)와 다르다 — 화살표 없는 `rmeter, t=A`/`t=V`/`t=G`를 대신 쓴다
 // (계기는 전부 "글자 있는 동그라미"). rheostat(가변저항)은 circuitikz `vR`(저항 기호 + 화살표),
 // electrode(전극 — 전기분해 등 일반 전극 쌍)는 콘덴서 기호(`C`, 평행판)로 대신한다.
-const BIPOLE = { cell: 'battery1', lamp: 'lamp', ammeter: 'rmeter, t=A', voltmeter: 'rmeter, t=V', galvanometer: 'rmeter, t=G', resistor: 'R', rheostat: 'vR', switch: 'switch', electrode: 'C' };
-const DEFAULT_LABEL = { cell: '전지', lamp: '전구', ammeter: '전류계', voltmeter: '전압계', galvanometer: '검류계', resistor: '저항', rheostat: '가변저항', switch: '스위치', electrode: '전극', photocell: '광전관' };
+const BIPOLE = { cell: 'battery1', lamp: 'lamp', ammeter: 'rmeter, t=A', voltmeter: 'rmeter, t=V', galvanometer: 'rmeter, t=G', resistor: 'R', rheostat: 'vR', switch: 'switch', electrode: 'C', diode: 'sD*', capacitor: 'C' };
+const DEFAULT_LABEL = { cell: '전지', lamp: '전구', ammeter: '전류계', voltmeter: '전압계', galvanometer: '검류계', resistor: '저항', rheostat: '가변저항', switch: '스위치', electrode: '전극', photocell: '광전관', diode: '다이오드', capacitor: '커패시터', source: '전원' };
 // 전지는 항상 (0,0)→(W,0)에 battery1로 그린다(series·parallel 둘 다 이 함수 하나를 쓴다) —
 // cell.variable:true("가변 전원"처럼 전압을 바꿀 수 있는 전원)면 그 위에 대각선 화살표를 얹는다.
 // circuitikz에는 rheostat(vR)처럼 "가변 전지" 전용 내장 기호가 없어, 가변 소자 표기의 일반 관례
 // (기호를 가로지르는 화살표 — vR도 결국 저항 기호 위에 이 화살표를 얹은 것)를 손으로 그린다.
+// type:"source"(발전기·태양광 패널처럼 전지 기호로 그리면 오해를 부르는 전원)는 이름표 상자(generic)로
+// 그린다. 극성은 전지와 같은 규칙(왼쪽 x=0 쪽이 +)이고, 상자에는 극성 표시가 없으므로 호출부가 +/− 라벨을 붙인다.
+const isSource = e => e.type === 'cell' || e.type === 'source';
 function drawCellSymbol(cell, W) {
-  const src = [`\\draw[cfink] (0,0) to[battery1] (${num(W)},0);`];
+  const src = [`\\draw[cfink] (0,0) to[${cell.type === 'source' ? 'generic' : 'battery1'}] (${num(W)},0);`];
   if (cell.variable) {
     const mid = num(W / 2), d = 0.38;
     src.push(`\\draw[cfaccent, thick, -{Stealth[scale=1.1]}] (${num(mid - d)},${num(-d)}) -- (${num(mid + d)},${num(d)});`);
@@ -378,7 +405,7 @@ function circuit(o) {
 }
 function circuitSeries(o) {
   const els = o.elements || [];
-  const cellIdx = els.findIndex(e => e.type === 'cell');
+  const cellIdx = els.findIndex(isSource);
   const cell = cellIdx >= 0 ? els[cellIdx] : null;
   const rest = els.filter((_, i) => i !== cellIdx);
   const n = Math.max(rest.length, 1);
@@ -396,7 +423,7 @@ function circuitSeries(o) {
   // -0.85: concept 슬라이드(칸이 작아 --cf-label-scale이 작게 나오는 쪽)처럼 로컬 단위 라벨이 더 크게
   // 렌더될 때도 전지 기호와 안 겹치도록 여유를 둔다(B2-CROSS 실측으로 확인 — blind2/ohm의 병렬 회로가
   // 더 좁은 -0.9에서도 "전지"가 살짝 걸렸다).
-  if (cell) { src.push(drawCellSymbol(cell, W)); labels.push({ x: num(W / 2), y: -0.85, text: cell.label || DEFAULT_LABEL.cell, cls: 'v-label-s', anchor: 'middle' }); }
+  if (cell) { src.push(drawCellSymbol(cell, W)); labels.push({ x: num(W / 2), y: -0.85, text: cell.label || DEFAULT_LABEL[cell.type], cls: 'v-label-s', anchor: 'middle' }); if (cell.type === 'source') labels.push({ x: 0.35, y: 0.4, text: '+', cls: 'v-label-s', anchor: 'middle' }, { x: num(W - 0.35), y: 0.4, text: '−', cls: 'v-label-s', anchor: 'middle' }); }
   else src.push(`\\draw[cfink] (0,0) -- (${num(W)},0);`);
   segs.push([[0, 0], [num(W), 0]]);
   src.push(`\\draw[cfink] (0,0) -- (0,${H});`, `\\draw[cfink] (${num(W)},0) -- (${num(W)},${H});`);
@@ -419,8 +446,8 @@ function circuitSeries(o) {
 // 라벨은 각 가지 선 "아래"(주회선이나 그 앞 가지 쪽)에 두어 위 가지 선과 안 겹치게 한다.
 function circuitParallel(o) {
   const els = o.elements || [];
-  const cell = els.find(e => e.type === 'cell') || null;
-  const mainEls = els.filter(e => e.type !== 'cell');
+  const cell = els.find(isSource) || null;
+  const mainEls = els.filter(e => !isSource(e));
   const branches = o.branches || [];
   // branchGap은 가지 사이 간격 — 미터 기호(반지름 ~0.55)가 위아래로 튀어나오고, 슬라이드에
   // 맞춰 축소될 때 --cf-label-scale로 라벨 글자·선 굵기가 로컬 단위 기준 커지므로(디코드 참고:
@@ -439,7 +466,7 @@ function circuitParallel(o) {
   // -1.3: concept 슬라이드처럼 칸이 작아 --cf-label-scale이 작을 때(로컬 단위 라벨이 더 크게 렌더)도
   // 여유가 있어야 한다 — blind2/ohm(콘셉트 슬라이드의 병렬 회로)에서 -0.9로는 "전지" 라벨 위쪽이 전지로
   // 내려오는 세로선과 실제로 겹쳤다(B2-CROSS 실측, getBoundingClientRect로 확인).
-  if (cell) { src.push(drawCellSymbol(cell, W)); labels.push({ x: num(W / 2), y: -1.3, text: cell.label || DEFAULT_LABEL.cell, cls: 'v-label-s', anchor: 'middle' }); }
+  if (cell) { src.push(drawCellSymbol(cell, W)); labels.push({ x: num(W / 2), y: -1.3, text: cell.label || DEFAULT_LABEL[cell.type], cls: 'v-label-s', anchor: 'middle' }); if (cell.type === 'source') labels.push({ x: 0.35, y: 0.4, text: '+', cls: 'v-label-s', anchor: 'middle' }, { x: num(W - 0.35), y: 0.4, text: '−', cls: 'v-label-s', anchor: 'middle' }); }
   else src.push(`\\draw[cfink] (0,0) -- (${num(W)},0);`);
   segs.push([[0, 0], [num(W), 0]]);
   src.push(`\\draw[cfink] (0,0) -- (0,${H});`, `\\draw[cfink] (${num(W)},0) -- (${num(W)},${H});`);
@@ -811,7 +838,7 @@ async function compileOne(spec, lessonDir, page) {
       engine = 'system';
     } catch (e) {
       systemErr = e;
-      if (debug) console.error(`시스템 LaTeX 컴파일 실패(${spec.kind}) — node-tikzjax로 대체합니다: ${e.message}`);
+      if (debug || /Ghostscript/.test(e.message)) console.warn(`경고: 시스템 LaTeX 컴파일 실패(${spec.kind}) — node-tikzjax로 대체합니다: ${e.message}`);
     }
   }
   if (!raw) {
