@@ -475,9 +475,10 @@ export function buildIntake(filled, warnings, source) {
     }
   }
   if (filled.slidesCount && filled.slidesCount[0] > filled.slidesCount[1]) warnings.push({ code: 'W-RANGE', msg: '슬라이드 장수의 최소값이 최대값보다 큽니다' });
-  if (filled.slidesCount && (filled.slidesCount[0] < 8 || filled.slidesCount[1] > 20)) warnings.push({ code: 'W-GATE', msg: `슬라이드 장수 ${filled.slidesCount[0]}~${filled.slidesCount[1]}장이 게이트 기준(8~20장)을 벗어납니다` });
+  // 장수·문항 수는 고정 범위가 아니라 수업 시간으로 본다(gate S1-PACE·S1-WS-TIME) — 시간에 비해 명백히 과한 요청만 미리 알린다.
+  if (filled.slidesCount && filled.minutes && filled.slidesCount[0] > filled.minutes) warnings.push({ code: 'W-PACE', msg: `슬라이드 최소 ${filled.slidesCount[0]}장은 수업 ${filled.minutes}분에 비해 많습니다(장당 1분 미만 — 게이트 S1-PACE 기준)` });
   if (filled.worksheetQCount && filled.worksheetQCount[0] > filled.worksheetQCount[1]) warnings.push({ code: 'W-RANGE', msg: '활동지 문항 수의 최소값이 최대값보다 큽니다' });
-  if (filled.worksheetQCount && (filled.worksheetQCount[0] < 5 || filled.worksheetQCount[1] > 14)) warnings.push({ code: 'W-GATE', msg: `활동지 문항 수 ${filled.worksheetQCount[0]}~${filled.worksheetQCount[1]}개가 게이트 기준(5~14개)을 벗어납니다` });
+  if (filled.worksheetQCount && filled.minutes && filled.worksheetQCount[0] > filled.minutes / 2) warnings.push({ code: 'W-PACE', msg: `활동지 최소 ${filled.worksheetQCount[0]}문항은 수업 ${filled.minutes}분에 비해 많습니다(문항당 2분 미만 — 게이트 S1-WS-TIME이 섹션별 풀이 시간으로 확인)` });
   if (filled.imageCount != null && filled.slidesCount && filled.imageCount > filled.slidesCount[1]) warnings.push({ code: 'W-IMG', msg: `AI 이미지 사용 상한(${filled.imageCount})이 슬라이드 최대 장수(${filled.slidesCount[1]})보다 많아 사실상 상한이 없는 것과 같습니다` });
   if (filled.accentColor) warnings.push({ code: 'W-ACCENT', msg: `강조색(${filled.accentColor})은 반영하지 않습니다 — 모든 교과가 같은 고정 팔레트를 씁니다(references/design.md "팔레트")` });
   if (filled.hasEssay === 'no' && filled.worksheetTypes?.includes('short')) warnings.push({ code: 'W-ESSAY', msg: '서술형 문항을 넣지 말라고 했는데 활동지 문항 유형에 서술형이 체크되어 있습니다' });
